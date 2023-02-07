@@ -6,6 +6,8 @@ layout: home
 title: ML Design patterns
 permalink: /
 ---
+
+:book: *Machine Learning Design Patterns by Valliappa Lakshmanan, Sara Robinson, and Michael Munn (O’Reilly). Copyright 2021 Valliappa Lakshmanan, Sara Robinson, and Michael Munn, 978-1-098-11578-4.*
 #### **1. Data Representation Design Patterns**
 - Design Pattern 1: Hashed Feature
 - Design Pattern 2: Embeddings
