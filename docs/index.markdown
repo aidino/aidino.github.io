@@ -14,7 +14,7 @@ permalink: /
 <hr>
 
 #### **1. Data Representation Design Patterns**
-- Design Pattern 1: Hashed Feature
+- [Design Pattern 1: Hashed Feature](contents\design-patterns\pt1-hashed-feature.html)
 - Design Pattern 2: Embeddings
 - Design Pattern 3: Feature Cross
 - Design Pattern 4: Multimodal Input
