@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: home
-title: Machine Learning Design Patterns
+title: ML Design patterns
 permalink: /
 ---
 #### **1. Data Representation Design Patterns**
