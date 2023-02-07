@@ -35,7 +35,7 @@ plugins:
   - jekyll-feed
 
 header_pages:
-  - about.markdown
+# - about.markdown
 #
 exclude:
    - Gemfile
