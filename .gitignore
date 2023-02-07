@@ -127,3 +127,19 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/
+.DS_Store
+MLP301x_asm2_thainhfx16677@funix.edu.vn/
+MLP301x_asm1_thainhFX16677@funix.edu.vn/
+others/data/
+labs/lab13/song_data.csv
+labs/lab11/data/amazon_baby.csv
+data/
+labs/lab12/people_wiki.csv
+labs/c1-ml-basic/lab12/people_wiki.csv
+labs/c3-classification/dataset/amazon_baby.csv
+labs/c3-classification/datasets/amazon_baby.csv
+labs/c3-classification/lab-9-decision-tree/datasets/lending-club-data.csv
+labs/c3-classification/lab-11-feature-selection-with-DT/dataset/dataset_2.csv
+labs/c3-classification/lab-11-feature-selection-with-DT/dataset/houseprice.csv
+labs/c3-classification/lab-13-undersampling/car_eval_34/*
