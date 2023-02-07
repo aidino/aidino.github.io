@@ -67,3 +67,6 @@ Việc mất độ chính xác đặc biệt nghiêm trọng khi phân phối đ
 
 Do đó, một lời khuyên là nên đưa số lượng nhóm băm vào làm một Hyperparameter để điều chỉnh  
 
+
+
+Code Example: https://github.com/aidino/ml-design-patterns/blob/master/02_data_representation/hashed_feature.ipynb

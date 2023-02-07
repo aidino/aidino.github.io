@@ -49,6 +49,8 @@ Feature cross cung cấp một phương tiện có giá trị của Feature engi
 
 Hãy suy nghĩ lại về Feature cross của `is_male` và đa số trong bộ dữ liệu sinh sản. Mẫu Feature Cross này cho phép mô hình xử lý các cặp song sinh nam riêng biệt với cặp song sinh nữ và tách biệt với nam giới sinh ba và tách biệt với nữ giới độc thân, v.v. Khi chúng ta sử dụng một indicator_column, mô hình có thể xử lý từng kết quả chéo như một biến độc lập, về cơ bản thêm 18  các tính năng phân loại nhị phân bổ sung cho mô hình  .
 
-#### Trade-Off and Alternatives
 
-...
+
+
+
+Code Example: https://github.com/aidino/ml-design-patterns/blob/master/02_data_representation/feature_cross.ipynb

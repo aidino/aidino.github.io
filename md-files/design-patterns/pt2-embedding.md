@@ -56,3 +56,7 @@ Có sự mất mát thông tin khi chuyển đổi từ dữ liệu chiều cao 
   Ví dụ để mã hóa một feature có 625 giá trị duy nhất, khi ấy có thể chọn dimention = ` căn bậc 4 của 625` = `5`, hoặc `1.6 x căn bậc 2 của 625` = `40`.
 
   Nếu chúng tôi đang thực hiện điều chỉnh siêu tham số, có thể đáng để tìm kiếm trong phạm vi này  
+
+
+
+Code Example:  https://github.com/aidino/ml-design-patterns/blob/master/02_data_representation/embeddings.ipynb
