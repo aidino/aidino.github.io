@@ -12,6 +12,7 @@ permalink: /
 - *Code:* https://github.com/GoogleCloudPlatform/ml-design-patterns
 
 <hr>
+<br>
 
 #### **1. Data Representation Design Patterns**
 - [Design Pattern 1: Hashed Feature](contents\design-patterns\pt1-hashed-feature.html)
