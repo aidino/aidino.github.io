@@ -8,7 +8,10 @@ permalink: /
 ---
 
 - *Book: Machine Learning Design Patterns by Valliappa Lakshmanan, Sara Robinson, and Michael Munn (O’Reilly). Copyright 2021 Valliappa Lakshmanan, Sara Robinson, and Michael Munn, 978-1-098-11578-4.*
-- *Code: https://github.com/GoogleCloudPlatform/ml-design-patterns*
+  
+- *Code:* https://github.com/GoogleCloudPlatform/ml-design-patterns
+
+<hr>
 
 #### **1. Data Representation Design Patterns**
 - Design Pattern 1: Hashed Feature
