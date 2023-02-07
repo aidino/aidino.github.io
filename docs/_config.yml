@@ -35,6 +35,7 @@ plugins:
   - jekyll-feed
 
 header_pages:
+  - index.markdown
   - labs.markdown
   - solutions.markdown
 #
