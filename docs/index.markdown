@@ -3,11 +3,9 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: home
-title: 
+title: Machine Learning Design Patterns
 permalink: /
 ---
-# Machine Learning Design Patterns
-
 #### **1. Data Representation Design Patterns**
 - Design Pattern 1: Hashed Feature
 - Design Pattern 2: Embeddings
