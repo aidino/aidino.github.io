@@ -1,4 +1,7 @@
-# Machine Learning
+# AIDino
 
-- [x] Languages: Jupyter Notebook, Python
-- [x] Doccuments page: https://aidino.github.io
+:book: ML design patterns: https://aidino.github.io
+
+:book: ML Solutions: https://aidino.github.io/solutions
+
+:book: ML Labs: https://aidino.github.io/labs
