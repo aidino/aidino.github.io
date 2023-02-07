@@ -21,7 +21,7 @@ permalink: /
     *Ánh xạ dữ liệu high-cardinality sang không gian với số chiều thấp hơn*
 - [Design Pattern 3: Feature Cross](contents\design-patterns\pt3-feature-cross.html) <br>
     *Giúp các mô hình tìm hiểu mối quan hệ giữa các yếu tố đầu vào nhanh hơn bằng cách làm cho mỗi kết hợp giá trị đầu vào trở thành một tính năng riêng biệt*
-- [Design Pattern 4: Multimodal Input](docs\contents\design-patterns\pt4-multimodel-input.html) <br>
+- [Design Pattern 4: Multimodal Input](contents\design-patterns\pt4-multimodel-input.html) <br>
     *Giải quyết vấn đề biểu diễn các loại dữ liệu hoặc dữ liệu khác nhau có thể được biểu thị theo những cách phức tạp bằng cách ghép nối tất cả các biểu diễn dữ liệu có sẵn.*
 
 #### **2. Problem Representation Design Patterns**
