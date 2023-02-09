@@ -1,6 +1,6 @@
 # AIDino
 
-:book: ML design patterns: https://aidino.github.io
+:book: ML design patterns: https://aidino.github.io/design-patterns
 
 :book: ML Solutions: https://aidino.github.io/solutions
 
