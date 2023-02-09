@@ -38,6 +38,7 @@ header_pages:
   - index.markdown
   - labs.markdown
   - solutions.markdown
+  - design-patterns.markdown
 #
 exclude:
    - Gemfile
