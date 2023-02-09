@@ -15,13 +15,13 @@ permalink: /design-patterns/
 <br>
 
 #### **1. Data Representation Design Patterns**
-- [Design Pattern 1: Hashed Feature](contents\design-patterns\pt1-hashed-feature.html) <br>
+- [Design Pattern 1: Hashed Feature](https://aidino.github.io/contents/design-patterns/pt1-hashed-feature.html) <br>
     *Thay vì sử dụng One-hot encoder cho các biến categorical có high-cardinality, ta hash chúng để đưa vào các nhóm nhỏ*
-- [Design Pattern 2: Embeddings](contents\design-patterns\pt2-embedding.html) <br>
+- [Design Pattern 2: Embeddings](https://aidino.github.io/contents/design-patterns/pt2-embedding.html) <br>
     *Ánh xạ dữ liệu high-cardinality sang không gian với số chiều thấp hơn*
-- [Design Pattern 3: Feature Cross](contents\design-patterns\pt3-feature-cross.html) <br>
+- [Design Pattern 3: Feature Cross](https://aidino.github.io/contents/design-patterns/pt3-feature-cross.html) <br>
     *Giúp các mô hình tìm hiểu mối quan hệ giữa các yếu tố đầu vào nhanh hơn bằng cách làm cho mỗi kết hợp giá trị đầu vào trở thành một tính năng riêng biệt*
-- [Design Pattern 4: Multimodal Input](contents\design-patterns\pt4-multimodel-input.html) <br>
+- [Design Pattern 4: Multimodal Input](https://aidino.github.io/contents/design-patterns/pt4-multimodel-input.html) <br>
     *Giải quyết vấn đề biểu diễn các loại dữ liệu hoặc dữ liệu khác nhau có thể được biểu thị theo những cách phức tạp bằng cách ghép nối tất cả các biểu diễn dữ liệu có sẵn.*
 
 #### **2. Problem Representation Design Patterns**

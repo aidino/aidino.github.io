@@ -6,3 +6,5 @@ layout: home
 title: ML Notes
 permalink: /
 ---
+
+{% include deep-learning-notes.html %}
