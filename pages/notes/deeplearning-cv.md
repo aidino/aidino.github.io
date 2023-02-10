@@ -7,9 +7,10 @@ description: "Reusable code snippets for computer vision and deep learning."
 order: 1
 ---
 {:toc}
+- *Code:* 
+<br>
 
 ## 0. Getting setup
-
 Import các thư viện cần thiết, hiển thị một số thông số quan trọng về môi trường chạy như: tensorflow version, keras version, có GPU hay không? ...
 
 ### Import libraries
