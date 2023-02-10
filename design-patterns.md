@@ -2,6 +2,7 @@
 layout: libdoc/page
 title: ML Design patterns
 permalink: /design-patterns
+unlisted: true
 description: "Machine Learning Design Patterns by Valliappa Lakshmanan, Sara Robinson, and Michael Munn (O’Reilly). Copyright 2021 Valliappa Lakshmanan, Sara Robinson, and Michael Munn, 978-1-098-11578-4."
 ---
 {:toc}

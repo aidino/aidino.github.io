@@ -1,11 +1,13 @@
 ---
 layout: libdoc/page
-title: Embedding
+title: DP2 - Embedding
 permalink: /embedding
-unlisted: true
+category: Design Pattern
 description: "Embedding là một biểu diễn dữ liệu học được. Nó ánh xạ dữ liệu high-cardinality sang không gian với số chiều thấp hơn mà không làm mất đi thông tin"
+order: 4
 ---
 {:toc}
+
 #### Problem
 
 Xử lý dữ liệu để đưa vào mô hình học máy là một bước vô cùng quan trọng, nó ảnh hưởng rất lớn đến kết quả dự đoán của mô hình. Sử lý dữ liệu Categorical, biến nó thành dữ liệu dạng số để đưa vào mô hình là một bước quan trọng trong data processing.

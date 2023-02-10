@@ -1,11 +1,13 @@
 ---
 layout: libdoc/page
-title: Feature Cross
+title: DB3 - Feature Cross
 permalink: /feature-cross
-unlisted: true
+category: Design Pattern
 description: "Feature Cross design pattern giúp các mô hình tìm hiểu mối quan hệ giữa các yếu tố đầu vào nhanh hơn bằng cách làm cho mỗi kết hợp giá trị đầu vào trở thành một tính năng riêng biệt một cách rõ ràng.  "
+order: 4
 ---
 {:toc}
+
 #### Problem
 
 Xem xét tập dữ liệu trong Hình 2-14 và nhiệm vụ tạo bộ phân loại nhị phân phân tách các nhãn `+` và ` -  `

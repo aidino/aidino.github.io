@@ -3,8 +3,10 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: libdoc/page
-title: ML Notes
-permalink: /notes
-description: "Machine Learning notes."
+title: Example Labs
+permalink: /labs
+category: Labs
+description: "Machine Learning experiments and labs."
+order: 3
 ---
 {:toc}
