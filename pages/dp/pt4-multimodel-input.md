@@ -1,4 +1,4 @@
----
+<!-- ---
 layout: libdoc/page
 title: DB4 - Multimodel Input
 permalink: /multimodel-input
@@ -6,7 +6,7 @@ category: Design Pattern
 description: "Multimodel input design pattern giải quyết vấn đề biểu diễn các loại dữ liệu hoặc dữ liệu khác nhau có thể được biểu thị theo những cách phức tạp bằng cách ghép nối tất cả các biểu diễn dữ liệu có sẵn. "
 order: 4
 ---
-{:toc}
+{:toc} -->
 
 #### Problem
 

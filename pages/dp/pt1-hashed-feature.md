@@ -1,4 +1,4 @@
----
+<!-- ---
 layout: libdoc/page
 title: DP1 - Hashed Feature
 permalink: /hashed-feature
@@ -6,7 +6,7 @@ description: "Thay vì sử dụng One-hot encoder cho các biến categorical c
 category: Design Pattern
 order: 4
 ---
-{:toc}
+{:toc} -->
 
 #### Problem
 
