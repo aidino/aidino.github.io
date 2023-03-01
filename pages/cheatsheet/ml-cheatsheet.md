@@ -3,14 +3,13 @@ layout: libdoc/page
 title: Awesome Data Science Cheatsheet
 permalink: /data-science-cheatsheet
 category: Cheatsheets
-description: " Awesome Data Science Cheatsheet "
+description: " Source: https://www.kaggle.com/code/joydeb28/awesome-data-science-cheatsheet/notebook "
 order: 4
 ---
 {:toc}
 - *Code:* 
 <br>
 
-Source: https://www.kaggle.com/code/joydeb28/awesome-data-science-cheatsheet/notebook
 
 # Business Science
 ### Business Science Problem Framework
