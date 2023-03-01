@@ -3,9 +3,7 @@ layout: libdoc/page
 title: DP2 - Embedding
 permalink: /embedding
 unlisted: true
-category: Design Pattern
 description: "Embedding là một biểu diễn dữ liệu học được. Nó ánh xạ dữ liệu high-cardinality sang không gian với số chiều thấp hơn mà không làm mất đi thông tin"
-order: 4
 ---
 {:toc}
 

@@ -2,10 +2,8 @@
 layout: libdoc/page
 title: DB3 - Feature Cross
 permalink: /feature-cross
-category: Design Pattern
 unlisted: true
 description: "Feature Cross design pattern giúp các mô hình tìm hiểu mối quan hệ giữa các yếu tố đầu vào nhanh hơn bằng cách làm cho mỗi kết hợp giá trị đầu vào trở thành một tính năng riêng biệt một cách rõ ràng.  "
-order: 4
 ---
 {:toc}
 

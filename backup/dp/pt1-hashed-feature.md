@@ -4,8 +4,6 @@ title: DP1 - Hashed Feature
 permalink: /hashed-feature
 unlisted: true
 description: "Thay vì sử dụng One-hot encoder cho các biến categorical có high-cardinality, ta hash chúng để đưa vào các nhóm nhỏ"
-category: Design Pattern
-order: 4
 ---
 {:toc}
 

@@ -6,9 +6,6 @@ category: Cheatsheets
 description: " Source: https://docs.conda.io/en/latest/ "
 order: 4
 ---
-{:toc}
-- *Code:* 
-<br>
 
 ![conda-cheatsheet1](images/conda-cheatsheet1.jpg)
 
