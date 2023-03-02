@@ -66,129 +66,120 @@ print("#-------------------------------------------#")
 
 ## 1.Get data
 
-Tải dữ liệu về, show file structure để có cái nhìn tổng quan về dữ liệu mới tải
+#### Tải dữ liệu về, show file structure để có cái nhìn tổng quan về dữ liệu mới tải
 
-```python
-def download_data(url, filename):
-        """ Download data from url and extract it to filename
-        Args:
-            url (str): Link to download data
-            filename (str): Name of file to extract data to
-        Returns:
-            str: Path to extracted data directory
-        """
-        # Download data
-        data_dir = tf.keras.utils.get_file(filename, url, extract=True, cache_dir=".")
-        # Remove .zip extension
-        data_dir, _ = os.path.splitext(data_dir)
-        print("Data downloaded and extracted to: ", data_dir)
-        return data_dir
+```bash
+!wget https://storage.googleapis.com/mlep-public/course_1/week2/kagglecatsanddogs_3367a.zip
 ```
 
 ```python
-def print_tree(data_dir, level = 0, index = 0):
-        """ Print out a tree structure of data_dir
-        Args:
-            data_dir (str): Path to data directory
-            level (int, optional): Level of directory. Defaults to 0.
-        """    
-        
-        indent = ' ' * 6 * level
-        num_files = len(glob.glob(f'{data_dir}/*'))
-        print(f'{indent}{os.path.basename(data_dir)}/ ({num_files} files)')
-        subindent = ' ' * 6 * (level + 1)
-        subfolders =  glob.glob(f'{data_dir}/*')
-        if index == 10:
-            print(f'{indent}...')
-        max_print = len(subfolders) if len(subfolders) <= 10 else 10
-        for idx in range(max_print+1):
-            if idx >= len(subfolders):
-                return
-            subfolder = subfolders[idx]
-            if os.path.isdir(subfolder):
-                DataManager.print_tree(subfolder, level + 1, idx)
+# Extrax data
+cats_and_dogs_zip = './content/kagglecatsanddogs_3367a.zip'
+caltech_birds_tar = './content/CUB_200_2011.tar'
+base_dir = './tmp/data'
+
+with zipfile.ZipFile(cats_and_dogs_zip, 'r') as my_zip:
+  my_zip.extractall(base_dir)
+  
+with tarfile.open(caltech_birds_tar, 'r') as my_tar:
+  my_tar.extractall(base_dir)
 ```
 
+#### Move data
+
 ```python
-def get_all_files(data_dir):
-        """ Get all files in data_dir
-        Args:
-            data_dir (str): Path to data directory
-        Returns:
-            list: List of all files in data_dir
-        """        
-        
-        filepaths = []
-        for dirpath, dirnames, filenames in os.walk(data_dir):
-            for filename in filenames:
-                filepath = os.path.join(dirpath, filename)
-                filepaths.append(filepath)
-        return filepaths
+raw_birds_dir = './tmp/data/CUB_200_2011/images'
+base_birds_dir = os.path.join(base_dir,'PetImages/Bird')
+os.mkdir(base_birds_dir)
+
+for subdir in os.listdir(raw_birds_dir):
+  subdir_path = os.path.join(raw_birds_dir, subdir)
+  for image in os.listdir(subdir_path):
+    shutil.move(os.path.join(subdir_path, image), os.path.join(base_birds_dir))
+
+print(f"There are {len(os.listdir(base_birds_dir))} images of birds")
 ```
+
+#### Display sample
+
+```python
+from IPython.display import Image, display
+
+print("Sample cat image:")
+display(Image(filename=f"{os.path.join(base_cats_dir, os.listdir(base_cats_dir)[0])}")
+```
+
+#### Train/evaluate split
+
+```python
+train_eval_dirs = ['train/cats', 'train/dogs', 'train/birds',
+                   'eval/cats', 'eval/dogs', 'eval/birds']
+
+for dir in train_eval_dirs:
+  if not os.path.exists(os.path.join(base_dir, dir)):
+    os.makedirs(os.path.join(base_dir, dir))
+```
+
+#### Move to destination
+
+```python
+def move_to_destination(origin, destination, percentage_split):
+  num_images = int(len(os.listdir(origin))*percentage_split)
+  for image_name, image_number in zip(sorted(os.listdir(origin)), range(num_images)):
+    shutil.move(os.path.join(origin, image_name), destination)
+    
+# Move 70% of the images to the train dir
+move_to_destination(base_cats_dir, os.path.join(base_dir, 'train/cats'), 0.7)
+move_to_destination(base_dogs_dir, os.path.join(base_dir, 'train/dogs'), 0.7)
+move_to_destination(base_birds_dir, os.path.join(base_dir, 'train/birds'), 0.7)
+
+# Move the remaining images to the eval dir
+move_to_destination(base_cats_dir, os.path.join(base_dir, 'eval/cats'), 1)
+move_to_destination(base_dogs_dir, os.path.join(base_dir, 'eval/dogs'), 1)
+move_to_destination(base_birds_dir, os.path.join(base_dir, 'eval/birds'), 1)
+```
+
+#### Copy with limit
+
+```python
+# Very similar to the one used before but this one copies instead of moving
+def copy_with_limit(origin, destination, percentage_split):
+  num_images = int(len(os.listdir(origin))*percentage_split)
+  for image_name, image_number in zip(sorted(os.listdir(origin)), range(num_images)):
+    shutil.copy(os.path.join(origin, image_name), destination)
+    
+# Perform the copying
+copy_with_limit(os.path.join(base_dir, 'train/cats'), os.path.join(base_dir, 'imbalanced/train/cats'), 1)
+copy_with_limit(os.path.join(base_dir, 'train/dogs'), os.path.join(base_dir, 'imbalanced/train/dogs'), 0.2)
+copy_with_limit(os.path.join(base_dir, 'train/birds'), os.path.join(base_dir, 'imbalanced/train/birds'), 0.1)
+
+# Print number of available images
+print(f"There are {len(os.listdir(os.path.join(base_dir, 'imbalanced/train/cats')))} images of cats for training")
+print(f"There are {len(os.listdir(os.path.join(base_dir, 'imbalanced/train/dogs')))} images of dogs for training")
+print(f"There are {len(os.listdir(os.path.join(base_dir, 'imbalanced/train/birds')))} images of birds for training\n")
+
+```
+
+#### Clean data folder
+
+```python
+!find ./tmp/data/ -size 0 -exec rm {} +
+!find ./tmp/data/ -type f ! -name "*.jpg" -exec rm {} +
+```
+
 ## 2. Prepare data
 
-Visualize, visualize and visualize ...
+#### Visualize, visualize and visualize ...
+
+```python
+from IPython.display import Image, display
+print("Sample cat image:")
+display(Image(filename=f"{os.path.join(base_cats_dir, os.listdir(base_cats_dir)[0])}")
+```
+
+
 
 Hiển thị các ảnh ngẫu nhiên, các lớp, sau đó chuẩn bị phân chia vào các dataset tương ứng, chuẩn bị sẵn sàng để đưa vào model
-
-```python
-def view_random_images(data_dir, n_samples = 5, seed = 42):
-        """ Show num_images random images from target_dir
-
-        Parameters:
-            data_dir (str): Path to target directory
-            num_images (int, optional): Number of images to show. Defaults to 5.
-            seed (int, optional): Seed for random number generator. Defaults to 42.
-        
-        Returns:
-            Numpy Array: Array of random images directory
-        """
-        
-        np.random.seed(seed)
-        # Get all the images in data_path
-        all_images = [image_path for image_path in Path(data_dir).rglob("*.*")]
-        # Get random images
-        random_images = np.random.choice(all_images, size=n_samples, replace=False)
-        # Plot random images
-        ncols = 5
-        nrows = math.ceil(n_samples/ncols)
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols * 3, nrows * 3+1))
-        axes = axes.ravel()
-        # turn off all the axis
-        for i in range(nrows * ncols):
-            axes[i].axis('off')
-        
-        for i, image_path in enumerate(random_images):
-            image = plt.imread(image_path)
-            axes[i].imshow(image)
-            axes[i].set_title(image_path.parent.name + "\n" + str(image.shape))
-            
-        return random_images
-```
-
-```python
-def view_sample(dataset, class_names, n_sample = 5):
-        """ View sample images from dataset (dataset get from tensorflow_datasets)
-
-        Args:
-            dataset (Dataset): Dataset from tensorflow_datasets
-            class_names (list): List of class names
-            n_sample (int, optional): Number of sample images to show. Defaults to 5.
-        """        
-        
-        samples = dataset.take(n_sample)
-        ncols = 5
-        nrows = math.ceil(n_sample/ncols)
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols * 3, nrows * 3+1))
-        axes = axes.ravel()
-        # turn off all the axis
-        for i in range(nrows * ncols):
-            axes[i].axis('off')
-
-        for i, (image, label) in enumerate(samples):
-            axes[i].imshow(image)
-            axes[i].set_title(f"{class_names[label.numpy()]} \n {image.shape}")
-```
 
 ```python
 train_dir = data_dir + "/train"
@@ -249,6 +240,135 @@ base_model.trainable = True
 for layer in base_model.layers[:-5]:
     layer.trainable = False
 ModelHelper.print_trainable_info(base_model)
+```
+
+#### Full example
+
+```python
+# In another way
+from tensorflow.keras import layers, models, optimizers
+
+def create_model():
+  # A simple CNN architecture based on the one found here: https://www.tensorflow.org/tutorials/images/classification
+  model = models.Sequential([
+  layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+  layers.MaxPooling2D((2, 2)),
+  layers.Conv2D(64, (3, 3), activation='relu'),
+  layers.MaxPooling2D((2, 2)),
+  layers.Conv2D(64, (3, 3), activation='relu'),
+  layers.MaxPooling2D((2, 2)),
+  layers.Conv2D(128, (3, 3), activation='relu'),
+  layers.MaxPooling2D((2, 2)),
+  layers.Flatten(),
+  layers.Dense(512, activation='relu'),
+  layers.Dense(3, activation='softmax')
+  ])
+  # Compile the model
+  model.compile(
+      loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+      optimizer=optimizers.Adam(),
+      metrics=[tf.keras.metrics.SparseCategoricalAccuracy()]
+  )
+  return model
+
+---
+
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# No data augmentation for now, only normalizing pixel values
+train_datagen = ImageDataGenerator(rescale=1./255)
+test_datagen = ImageDataGenerator(rescale=1./255)
+
+# Point to the imbalanced directory
+train_generator = train_datagen.flow_from_directory(
+        './tmp/data/imbalanced/train',
+        target_size=(150, 150),
+        batch_size=32,
+        class_mode='sparse')
+
+validation_generator = test_datagen.flow_from_directory(
+        './tmp/data/imbalanced/eval',
+        target_size=(150, 150),
+        batch_size=32,
+        class_mode='sparse')
+
+print(f"labels for each class in the train generator are: {train_generator.class_indices}")
+print(f"labels for each class in the validation generator are: {validation_generator.class_indices}")
+
+imbalanced_history = imbalanced_model.fit(
+    train_generator,
+    steps_per_epoch=100,
+    epochs=50,
+    validation_data=validation_generator,
+    validation_steps=80)
+
+def get_training_metrics(history):
+  
+  # This is needed depending on if you used the pretrained model or you trained it yourself
+  if not isinstance(history, pd.core.frame.DataFrame):
+    history = history.history
+  
+  acc = history['sparse_categorical_accuracy']
+  val_acc = history['val_sparse_categorical_accuracy']
+
+  loss = history['loss']
+  val_loss = history['val_loss']
+
+  return acc, val_acc, loss, val_loss
+
+def plot_train_eval(history):
+  acc, val_acc, loss, val_loss = get_training_metrics(history)
+
+  acc_plot = pd.DataFrame({"training accuracy":acc, "evaluation accuracy":val_acc})
+  acc_plot = sns.lineplot(data=acc_plot)
+  acc_plot.set_title('training vs evaluation accuracy')
+  acc_plot.set_xlabel('epoch')
+  acc_plot.set_ylabel('sparse_categorical_accuracy')
+  plt.show()
+
+  print("")
+
+  loss_plot = pd.DataFrame({"training loss":loss, "evaluation loss":val_loss})
+  loss_plot = sns.lineplot(data=loss_plot)
+  loss_plot.set_title('training vs evaluation loss')
+  loss_plot.set_xlabel('epoch')
+  loss_plot.set_ylabel('loss')
+  plt.show()
+
+plot_train_eval(imbalanced_history)
+
+---
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, balanced_accuracy_score
+
+# Use the validation generator without shuffle to easily compute additional metrics
+val_gen_no_shuffle = test_datagen.flow_from_directory(
+    './tmp/data/imbalanced/eval',
+    target_size=(150, 150),
+    batch_size=32,
+    class_mode='sparse',
+    shuffle=False)
+
+# Get the true labels from the generator
+y_true = val_gen_no_shuffle.classes
+# Use the model to predict (will take a couple of minutes)
+predictions_imbalanced = imbalanced_model.predict(val_gen_no_shuffle)
+# Get the argmax (since softmax is being used)
+y_pred_imbalanced = np.argmax(predictions_imbalanced, axis=1)
+# Print accuracy score
+print(f"Accuracy Score: {accuracy_score(y_true, y_pred_imbalanced)}")
+# Print balanced accuracy score
+print(f"Balanced Accuracy Score: {balanced_accuracy_score(y_true, y_pred_imbalanced)}")
+
+imbalanced_cm = confusion_matrix(y_true, y_pred_imbalanced)
+ConfusionMatrixDisplay(imbalanced_cm, display_labels=['birds', 'cats', 'dogs']).plot(values_format="d")
+
+misclassified_birds = (imbalanced_cm[0, 1] + imbalanced_cm[0, 2])/np.sum(imbalanced_cm, axis=1)[0]
+misclassified_cats = (imbalanced_cm[1, 0] + imbalanced_cm[1, 2])/np.sum(imbalanced_cm, axis=1)[1]
+misclassified_dogs = (imbalanced_cm[2, 0] + imbalanced_cm[2, 1])/np.sum(imbalanced_cm, axis=1)[2]
+
+print(f"Proportion of misclassified birds: {misclassified_birds*100:.2f}%")
+print(f"Proportion of misclassified cats: {misclassified_cats*100:.2f}%")
+print(f"Proportion of misclassified dogs: {misclassified_dogs*100:.2f}%")
 ```
 
 
@@ -599,8 +719,8 @@ def create_predict_dataframe(y_true, y_pred, pred_probs ,classes, filepaths):
             ```python
             filepaths = [filepath.numpy() for filepath in test_dataset.list_files(test_dir + "/*/*.jpg", shuffle=False)]
             pred_df = Evaluation.create_predict_dataframe(y_true, y_pred, pred_probs ,classes, filepaths)
-            ```
-            
+```
+
         """        
         pred_df = pd.DataFrame({"img_path": filepaths,
                         "pred_conf": pred_probs.max(axis=1), # lấy giá trị xác suất dự đoán lớn nhất
@@ -629,7 +749,7 @@ def get_top_wrong_df(y_true, y_pred, pred_probs ,classes, filepaths, n = 100):
             ```python
             filepaths = [filepath.numpy() for filepath in test_dataset.list_files(test_dir + "/*/*.jpg", shuffle=False)]
             top_wrongs = Evaluation.get_top_wrong_df(y_true, y_pred, pred_probs , classes, filepaths, n = 100)
-            ```
+```
         """        
         
         pred_df = create_predict_dataframe(y_true, y_pred, pred_probs ,classes, filepaths)
