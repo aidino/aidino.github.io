@@ -3,6 +3,7 @@ layout: libdoc/page
 title: EDA - Exploratory Data Analysis.
 permalink: /eda
 category: Notes
+unlisted: true
 description: "Reusable code snippets for computer vision and deep learning."
 order: 1
 ---
