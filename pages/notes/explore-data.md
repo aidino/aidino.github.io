@@ -33,6 +33,53 @@ with tarfile.open(caltech_birds_tar, 'r') as my_tar:
   my_tar.extractall(base_dir)
 ```
 
+#### Check file-type in a folder
+```python
+import os
+import glob
+
+folder_path = "path/to/folder"  # replace with your folder path
+# get a list of file extensions in the folder
+extensions = [os.path.splitext(file)[1] for file in glob.glob(folder_path + "/*")]
+# remove duplicates and sort the extensions alphabetically
+extensions = sorted(set(extensions))
+# print the extensions
+for extension in extensions:
+    print(extension)
+
+```
+
+#### Clean data folder
+
+```python
+import os
+import imghdr
+
+def clean_data(folder_path, allowed_extensions):
+    """
+    Delete files that have a size of 0 or are not of the allowed file types.
+
+    Args:
+        folder_path (str): The path to the folder.
+        allowed_extensions (list): A list of allowed file extensions.
+    """
+    # iterate over all files in the folder
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        
+        # check if the file has a size of 0 or is not of an allowed file type
+        if os.path.getsize(file_path) == 0 or not file_name.lower().endswith(tuple(allowed_extensions)) or imghdr.what(file_path) is None:
+            os.remove(file_path)  # delete the file
+
+```
+**or**
+
+```python
+!find ./tmp/data/ -size 0 -exec rm {} +
+!find ./tmp/data/ -type f ! -name "*.jpg" -exec rm {} +
+```
+
+
 #### Move 
 
 ```python
@@ -106,13 +153,6 @@ copy_with_limit(os.path.join(base_dir, 'train/birds'), os.path.join(base_dir, 'i
 print(f"There are {len(os.listdir(os.path.join(base_dir, 'imbalanced/train/cats')))} images of cats for training")
 print(f"There are {len(os.listdir(os.path.join(base_dir, 'imbalanced/train/dogs')))} images of dogs for training")
 print(f"There are {len(os.listdir(os.path.join(base_dir, 'imbalanced/train/birds')))} images of birds for training\n")
-```
-
-#### Clean data folder
-
-```python
-!find ./tmp/data/ -size 0 -exec rm {} +
-!find ./tmp/data/ -type f ! -name "*.jpg" -exec rm {} +
 ```
 
 #### View random image in folder
