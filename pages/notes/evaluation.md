@@ -101,7 +101,7 @@ def show_top_misclassified_images(cm, test_generator, class_labels, num_images=5
 
 ### Others
 
-#### `plot_loss_curves`
+#### plot_loss_curves
 
 ```python
 def plot_loss_curves(results):
@@ -141,7 +141,7 @@ def plot_loss_curves(results):
         plt.legend()
 ```
 
-#### `make_confusion_matrix`
+#### make_confusion_matrix
 
 ```python
 def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_size=15, norm=False, savefig=False): 
@@ -221,7 +221,7 @@ def make_confusion_matrix(y_true, y_pred, classes=None, figsize=(10, 10), text_s
             fig.savefig("confusion_matrix.png")
 ```
 
-#### `plot_learning_rate_and_loss`
+#### plot_learning_rate_and_loss
 
 ```python
 def plot_learning_rate_and_loss(history, epochs):
@@ -234,7 +234,7 @@ def plot_learning_rate_and_loss(history, epochs):
         plt.title("Learning rate vs. loss")
 ```
 
-#### `compare_historys`
+#### compare_historys
 
 ```python
 def compare_historys(original_history, new_history, initial_epochs=5):
@@ -280,7 +280,7 @@ def compare_historys(original_history, new_history, initial_epochs=5):
         plt.show()
 ```
 
-#### `prepare_for_evaluation`
+#### prepare_for_evaluation
 
 ```python
 def prepare_for_evaluation(model, test_dataset):
@@ -302,7 +302,7 @@ def prepare_for_evaluation(model, test_dataset):
         return y_true, y_pred, pred_probs, test_dataset.class_names
 ```
 
-#### `plot_f1_score`
+#### plot_f1_score
 
 ```python
 def plot_f1_score(y_true, y_pred, classes):
@@ -342,7 +342,7 @@ def plot_f1_score(y_true, y_pred, classes):
         autolabel(scores)
 ```
 
-#### `create_predict_dataframe`
+#### create_predict_dataframe
 
 ```python
 def create_predict_dataframe(y_true, y_pred, pred_probs ,classes, filepaths):
@@ -373,7 +373,7 @@ def create_predict_dataframe(y_true, y_pred, pred_probs ,classes, filepaths):
         return pred_df
 ```
 
-#### `get_top_wrong_df`
+#### get_top_wrong_df
 
 ```python
 def get_top_wrong_df(y_true, y_pred, pred_probs ,classes, filepaths, n = 100):
@@ -400,7 +400,7 @@ def get_top_wrong_df(y_true, y_pred, pred_probs ,classes, filepaths, n = 100):
 ```
 
 
-#### `load_and_prep_image`
+#### load_and_prep_image
 
 ```python
 def load_and_prep_image(filename, img_shape, scale=False):
@@ -429,7 +429,7 @@ def load_and_prep_image(filename, img_shape, scale=False):
 ```
 
 
-#### `plot_predicted`
+#### plot_predicted
 
 ```python
 def plot_predicted(imagepaths, y_trues, y_preds, pred_probs ,image_size):
@@ -459,7 +459,7 @@ def plot_predicted(imagepaths, y_trues, y_preds, pred_probs ,image_size):
         plt.tight_layout()
 ```
 
-#### `predict_and_plot`
+#### predict_and_plot
 
 ```python
 # Example
@@ -507,4 +507,57 @@ def plot_predicted(imagepaths, y_trues, y_preds, pred_probs ,image_size):
                     axes[i].set_title(f"True: {true_class}, \n Pred: {pred_class}, \n Prob: {pred_prob.max():.2f}", fontsize=15, color='r')
             # Add a tight layout to the figure
             plt.tight_layout()
+```
+#### --- [Kaggle] Predict image in a folder ---
+
+```python
+import os
+import csv
+import tensorflow as tf
+
+# Load the saved model
+model = tf.keras.models.load_model('path/to/saved/model')
+
+# Define the image size and batch size
+img_size = (224, 224)
+batch_size = 32
+
+# Create a list of all the image file names in the "test" folder
+image_paths = [os.path.join('test', f) for f in os.listdir('test') if f.endswith('.jpg')]
+
+# Create a list to store the results
+results = []
+
+# Iterate through each batch of images
+for i in range(0, len(image_paths), batch_size):
+    # Load the batch of images
+    batch_paths = image_paths[i:i+batch_size]
+    batch_images = []
+    batch_ids = []
+    for path in batch_paths:
+        # Load the image and resize it
+        img = tf.keras.preprocessing.image.load_img(path, target_size=img_size)
+        # Convert the image to a numpy array
+        img_array = tf.keras.preprocessing.image.img_to_array(img)
+        # Scale the pixel values to between 0 and 1
+        img_array /= 255.0
+        batch_images.append(img_array)
+        # Extract the ID from the file name and add it to the batch_ids list
+        id = os.path.splitext(os.path.basename(path))[0]
+        batch_ids.append(id)
+    # Convert the list of images to a numpy array
+    batch_images = tf.stack(batch_images)
+    # Make a prediction on the batch of images
+    predictions = model.predict(batch_images)
+    # Convert the prediction to a list of class names
+    class_names = [model.output_names[np.argmax(pred)] for pred in predictions]
+    # Append the results to the results list
+    results += zip(batch_ids, class_names)
+
+# Save the results to a CSV file
+with open('results.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['Id', 'Predicted Class'])
+    writer.writerows(results)
+
 ```
