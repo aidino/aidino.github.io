@@ -1,7 +1,7 @@
 ---
 layout: libdoc/page
 title: 4 - Evaluation
-permalink: /import-libs
+permalink: /evaluation
 category: Notes
 description: "Useful code for evaluation"
 order: 4
