@@ -4,7 +4,7 @@ title: Awesome Data Science Cheatsheet
 permalink: /data-science-cheatsheet
 category: Cheatsheets
 description: " Source: https://www.kaggle.com/code/joydeb28/awesome-data-science-cheatsheet/notebook "
-order: 5
+order: 101
 ---
 {:toc}
 - *Code:* 
