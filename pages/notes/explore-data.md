@@ -4,7 +4,6 @@ title: 1 - Explore data
 permalink: /explore-data
 category: Notes
 description: "Reusable code for exploring data"
-order: 1
 ---
 {:toc}
 - *Code:* 

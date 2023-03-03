@@ -4,7 +4,6 @@ title: 4 - Evaluation
 permalink: /import-libs
 category: Notes
 description: "Useful code for evaluation"
-order: 4
 ---
 {:toc}
 - *Code:* 

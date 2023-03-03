@@ -4,7 +4,6 @@ title: 0 - Import libraries
 permalink: /import-libs
 category: Notes
 description: "Useful libraries"
-order: 0
 ---
 {:toc}
 - *Code:* 

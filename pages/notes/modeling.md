@@ -4,7 +4,6 @@ title: 3 - Modeling
 permalink: /modeling
 category: Notes
 description: "Reusable code for modeling"
-order: 3
 ---
 {:toc}
 - *Code:* 
