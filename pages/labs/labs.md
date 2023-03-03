@@ -7,6 +7,7 @@ title: Example Labs
 permalink: /labs
 category: Labs
 description: "Machine Learning experiments and labs."
-order: 3
+unlisted: true
+# order: 3
 ---
 {:toc}

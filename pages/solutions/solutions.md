@@ -7,6 +7,7 @@ title: Example Solutions
 permalink: /solutions
 category: Solutions
 description: "Just for fun."
-order: 2
+# order: 2
+unlisted: true
 ---
 {:toc}

@@ -4,6 +4,7 @@ title: 2 - Prepare dataset
 permalink: /prepare-dataset
 category: Notes
 description: "Reusable code for preparing dataset"
+order: 2
 ---
 {:toc}
 - *Code:* 
