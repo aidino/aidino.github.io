@@ -1,6 +1,6 @@
 ---
 layout: libdoc/page
-title: 2 - Modeling
+title: 3 - Modeling
 permalink: /modeling
 category: Notes
 description: "Reusable code for modeling"
