@@ -116,7 +116,6 @@ model = optimize(model)
 ```
 
 
-
 ### Setup callbacks
 
 ```python
@@ -154,7 +153,7 @@ def train_model(model, callbacks_list):
     Return: 
         Mô hình với trọng số checkpoint tốt nhất.
     '''
-    model.fit(
+    history = model.fit(
         X_tr,
         y_tr,
         epochs = 20, 
@@ -165,9 +164,48 @@ def train_model(model, callbacks_list):
     
     model = load_model(checkpoint_name)
 
-    return model
+    return model, history
 
-model = train_model(model, callbacks_list)
+model, history = train_model(model, callbacks_list)
+```
+
+### Plot loss and accuracy
+```python
+def plot_loss_curves(results):
+        """ Vẽ đồ thị loss và accuracy của model
+
+        Args:
+            results (dict): dictionary chứa loss và accuracy của model. Ví dụ:
+                {"loss": [...],
+                "accuracy": [...],
+                "val_loss": [...],
+                "val_accuracy": [...]}
+        """
+        loss = results["loss"]
+        test_loss = results["val_loss"]
+
+        accuracy = results["accuracy"]
+        test_accuracy = results["val_accuracy"]
+
+        epochs = range(len(results["loss"]))
+
+        plt.figure(figsize=(15, 7))
+
+        # Plot loss
+        plt.subplot(1, 2, 1)
+        plt.plot(epochs, loss, label="train_loss")
+        plt.plot(epochs, test_loss, label="test_loss")
+        plt.title("Loss")
+        plt.xlabel("Epochs")
+        plt.legend()
+
+        # Plot accuracy
+        plt.subplot(1, 2, 2)
+        plt.plot(epochs, accuracy, label="train_accuracy")
+        plt.plot(epochs, test_accuracy, label="test_accuracy")
+        plt.title("Accuracy")
+        plt.xlabel("Epochs")
+        plt.legend()
 ```
 
 ### [Optional] Display trainable layer 
