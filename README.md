@@ -1,6 +1,6 @@
 # AI Dino
 ## Pytorch Lightning
-- :book: [Basic skills](https://aidino.github.io/pytorch-lightning/lv0-basic-skills/)
+- [Basic skills](https://aidino.github.io/pytorch-lightning/lv0-basic-skills/)
   - :book: [Level 1: Training a model](https://aidino.github.io/pytorch-lightning/lv0-basic-skills/#level-1-training-a-model)
   - :book: [Level 2: Add a validation and test set](https://aidino.github.io/pytorch-lightning/lv0-basic-skills/#level-2-add-a-validation-and-test-set)
   - :book: [Level 3: Use pretrained models](https://aidino.github.io/pytorch-lightning/lv0-basic-skills/#level-3-use-pretrained-models)
