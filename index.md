@@ -1,4 +1,5 @@
 ---
+title: AI Dino
 ---
 
 ## Pytorch Lightning
