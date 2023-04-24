@@ -7,10 +7,8 @@ description: "Basic Skills"
 order: 2
 ---
 {:toc}
-- *Code:* 
+- *source: https://lightning.ai/* 
 <br>
-
-source: https://lightning.ai/
 
 
 ## Level 1: Training a model
