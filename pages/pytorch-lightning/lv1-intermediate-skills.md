@@ -1,9 +1,9 @@
 ---
 layout: libdoc/page
-title: Basic Skills
+title: Intermediate Skills
 permalink: /pytorch-lightning/lv1-intermediate-skills/
 category: Pytorch lightning
-description: "Intermadiate Skills"
+description: "Intermediate Skills"
 order: 3
 ---
 {:toc}
