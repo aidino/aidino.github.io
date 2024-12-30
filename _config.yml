@@ -19,17 +19,34 @@
 # in the templates via {{ site.myvariable }}.
 
 title: aidino
+author: Ngo Hong Thai
 email: ngohongthai.uet@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Chỉ là để note...
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://aidino.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
-github_username:  aidino
+# baseurl: "" # the subpath of your site, e.g. /blog
+# url: "https://aidino.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
+# github_username:  aidino
 
 # Build settings
 theme: minima
+
+show_excerpts: true
+
+minima:
+  skin: dark
+  date_format: "%d-%m-%Y"
+
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+
+header_pages:
+  - notes.markdown
+  - about.markdown
+
+kramdown:
+  syntax_highlighter_opts:
+    default_lang: plaintext
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -50,3 +67,16 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+# social links
+# twitter_username: jekyllrb
+github_username:  aidino
+# rss: rss
+# dribbble_username: jekyll
+# facebook_username: hongthai91
+# flickr_username: jekyll
+# instagram_username: jekyll
+linkedin_username: ngohongthai
+# pinterest_username: jekyll
+# youtube_username: jekyll
+# googleplus_username: +jekyll
