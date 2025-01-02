@@ -152,6 +152,138 @@ Mặc dù `FrenchDeck` kế thừa ngầm định từ lớp `object`, nhưng h�
 
 ### How Special Methods Are Used
 
+* **Phương thức đặc biệt (special methods)**, còn được gọi là **phương thức ma thuật (magic methods)** hoặc **phương thức dunder**, là những phương thức có tên được định nghĩa trước trong Python, bắt đầu và kết thúc bằng hai dấu gạch dưới (ví dụ: `__init__`, `__len__`, `__str__`).
+* Chúng ta thường tương tác với các phương thức đặc biệt một cách gián tiếp thông qua các hàm tích hợp sẵn hoặc các toán tử. Ví dụ, khi bạn sử dụng toán tử `+` để cộng hai số, Python sẽ gọi phương thức `__add__` của lớp số tương ứng.
+* Việc sử dụng phương thức đặc biệt cho phép chúng ta định nghĩa cách các đối tượng của lớp do người dùng định nghĩa tương tác với các hàm và toán tử tích hợp sẵn, giúp mã trở nên rõ ràng và dễ đọc hơn.
+* Một số ví dụ về cách sử dụng phương thức đặc biệt bao gồm:
+    * Định nghĩa cách một đối tượng được biểu diễn dưới dạng chuỗi bằng cách triển khai phương thức `__str__`.
+    * Xác định hành vi của một đối tượng khi được sử dụng với toán tử so sánh bằng cách triển khai các phương thức như `__lt__` (nhỏ hơn), `__gt__` (lớn hơn), `__eq__` (bằng).
+    * Tạo các lớp giống như collection bằng cách triển khai các phương thức như `__len__`, `__getitem__`, `__setitem__`.
+* Trình thông dịch Python tối ưu hóa việc gọi các phương thức đặc biệt đối với các kiểu dữ liệu tích hợp sẵn, giúp tăng hiệu suất.
+
+Tóm lại, phương thức đặc biệt là một phần quan trọng của Python, cho phép chúng ta tạo ra các lớp linh hoạt và mạnh mẽ, tương tác liền mạch với ngôn ngữ.
+
+#### Emulating Numeric Types
+
+Một số phương thức đặc biệt cho phép các đối tượng người dùng phản hồi với các toán tử như `+`. Chúng ta sẽ tìm hiểu chi tiết hơn về điều này trong Chương 16, nhưng ở đây mục tiêu của chúng ta là minh họa thêm về việc sử dụng các phương thức đặc biệt thông qua một ví dụ đơn giản khác.
+
+Chúng ta sẽ triển khai một lớp để biểu diễn các vectơ hai chiều - tức là các vectơ Euclide giống như các vectơ được sử dụng trong toán học và vật lý.
+
+Chúng ta sẽ bắt đầu thiết kế API cho lớp đó bằng cách viết một phiên giao diện điều khiển mô phỏng mà chúng ta có thể sử dụng sau này như một doctest. Đoạn mã sau kiểm tra phép cộng vectơ được mô tả trong Hình 1-1:
+
+```python
+>>> v1 = Vector(2, 4)
+>>> v2 = Vector(2, 1)
+>>> v1 + v2
+Vector(4, 5)
+```
+
+Lưu ý cách toán tử `+` tạo ra một `Vector` mới, được hiển thị ở định dạng thân thiện trên giao diện điều khiển.
+
+Hàm `abs` tích hợp sẵn trả về giá trị tuyệt đối của số nguyên và số thực, và độ lớn của số phức, vì vậy để nhất quán, API của chúng ta cũng sử dụng `abs` để tính độ lớn của một vectơ:
+
+```python
+>>> v = Vector(3, 4)
+>>> abs(v)
+5.0
+```
+
+Chúng ta cũng có thể triển khai toán tử `*` để thực hiện phép nhân vô hướng (tức là nhân một vectơ với một số để tạo ra một vectơ mới có cùng hướng và độ lớn được nhân lên):
+
+```python
+>>> v * 3
+Vector(9, 12)
+>>> abs(v * 3)
+15.0
+```
+
+**Giải thích:**
+
+Đoạn văn này đang nói về việc sử dụng các phương thức đặc biệt trong Python để cho phép các đối tượng do người dùng định nghĩa (trong trường hợp này là lớp `Vector`) hoạt động giống như các kiểu số tích hợp sẵn (như `int`, `float`). 
+
+Cụ thể, đoạn văn mô tả cách triển khai các phương thức đặc biệt để:
+
+* Cho phép sử dụng toán tử `+` để cộng hai vectơ.
+* Cho phép sử dụng hàm `abs()` để tính độ lớn của một vectơ.
+* Cho phép sử dụng toán tử `*` để nhân một vectơ với một số (phép nhân vô hướng).
+
+Việc sử dụng các phương thức đặc biệt này giúp cho việc làm việc với các đối tượng do người dùng định nghĩa trở nên trực quan và dễ dàng hơn, giống như khi làm việc với các kiểu dữ liệu tích hợp sẵn.
+
+```python
+import math 
+
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y 
+    
+    def __repr__(self):
+        return f'Vector({self.x!r}, {self.y!r})' # !r để  biến self.x và self.y từ số thành string
+    
+    def __abs__(self):
+        return math.hypot(self.x, self.y)
+    
+    def __bool__(self):
+        return bool(abs(self))
+    
+    def __add__(self, other):
+        x = self.x + other.x
+        y = self.y + other.x 
+        return Vector(x, y)
+    
+    def __mul__(self, scalar):
+        return Vector(self.x * scalar, self.y * scalar)
+
+```
+
+#### String Representation
+
+**Phương thức đặc biệt `__repr__`** được gọi bởi hàm `repr()` tích hợp sẵn để lấy biểu diễn chuỗi của một đối tượng để kiểm tra. Nếu không có `__repr__` tùy chỉnh, console của Python sẽ hiển thị một instance của `Vector` là `<Vector object at 0x10e100070>`.
+
+Console tương tác và trình gỡ lỗi gọi `repr()` trên kết quả của các biểu thức được đánh giá, cũng như trình giữ chỗ `%r` trong định dạng cổ điển với toán tử `%`, và trường chuyển đổi `!r` trong cú pháp chuỗi định dạng mới được sử dụng trong f-string và phương thức `str.format`.
+
+Lưu ý rằng f-string trong `__repr__` của chúng ta sử dụng `!r` để lấy biểu diễn chuẩn của các thuộc tính sẽ được hiển thị. Đây là một cách thực hành tốt, vì nó cho thấy sự khác biệt quan trọng giữa `Vector(1, 2)` và `Vector('1', '2')` - cái sau sẽ không hoạt động trong ngữ cảnh của ví dụ này, vì các đối số của hàm tạo phải là số, không phải chuỗi.
+
+Chuỗi được trả về bởi `__repr__` phải rõ ràng và nếu có thể, khớp với mã nguồn cần thiết để tạo lại đối tượng được biểu diễn. Đó là lý do tại sao biểu diễn `Vector` của chúng ta trông giống như gọi hàm tạo của lớp (ví dụ: `Vector(3, 4)`).
+
+Ngược lại, **`__str__`** được gọi bởi hàm `str()` tích hợp sẵn và được hàm `print` sử dụng ngầm định. Nó nên trả về một chuỗi phù hợp để hiển thị cho người dùng cuối.
+
+
+#### Boolean Value of a Custom Type
+
+Mặc dù Python có kiểu dữ liệu `bool`, nó chấp nhận bất kỳ đối tượng nào trong ngữ cảnh Boolean, chẳng hạn như biểu thức điều khiển câu lệnh `if` hoặc `while`, hoặc toán hạng của `and`, `or` và `not`. Để xác định xem một giá trị `x` là "truthy" (đúng) hay "falsy" (sai), Python áp dụng hàm `bool(x)`, trả về `True` hoặc `False`.
+
+Theo mặc định, các instance của các lớp do người dùng định nghĩa được coi là "truthy", trừ khi phương thức `__bool__` hoặc `__len__` được triển khai. Về cơ bản, `bool(x)` gọi `x.__bool__()` và sử dụng kết quả. Nếu `__bool__` không được triển khai, Python cố gắng gọi `x.__len__()`, và nếu nó trả về 0, `bool` trả về `False`. Nếu không, `bool` trả về `True`.
+
+Ví dụ, triển khai `__bool__` đơn giản là trả về `False` nếu độ lớn của một vector bằng 0, `True` trong trường hợp khác. Ta chuyển đổi độ lớn thành Boolean bằng cách sử dụng `bool(abs(self))` vì `__bool__` được mong đợi trả về một Boolean. Ngoài phương thức `__bool__`, hiếm khi cần gọi `bool()` một cách rõ ràng, vì bất kỳ đối tượng nào cũng có thể được sử dụng trong ngữ cảnh Boolean.
+
+Lưu ý cách phương thức đặc biệt `__bool__` cho phép các đối tượng của bạn tuân theo các quy tắc kiểm tra giá trị Boolean được định nghĩa trong chương "Built-in Types" của tài liệu The Python Standard Library.
+
+#### Collection API
+
+![]({{site.url}}/images/collection-api.png)
+
+Collection API  ghi lại các interfaces của các kiểu tập hợp thiết yếu trong ngôn ngữ. Tất cả các lớp trong sơ đồ là các ABC - lớp cơ sở trừu tượng. Các ABC và module `collections.abc` được đề cập trong Chương 13. Mục tiêu của phần ngắn gọn này là cung cấp cái nhìn tổng quan về các giao diện tập hợp quan trọng nhất của Python, cho thấy cách chúng được xây dựng từ các phương thức đặc biệt.
+
+Mỗi ABC hàng đầu có một phương thức đặc biệt duy nhất. ABC `Collection` (mới trong Python 3.6) thống nhất ba giao diện thiết yếu mà mọi tập hợp nên triển khai:
+
+* **Iterable:** để hỗ trợ vòng lặp `for`, giải nén và các dạng lặp khác.
+* **Sized:** để hỗ trợ hàm dựng sẵn `len`.
+* **Container:** để hỗ trợ toán tử `in`.
+
+Python không yêu cầu các lớp cụ thể phải thực sự kế thừa từ bất kỳ ABC nào trong số này. Bất kỳ lớp nào triển khai `__len__` đều thỏa mãn giao diện `Sized`.
+
+Ba đặc tả rất quan trọng của `Collection` là:
+
+* **Sequence:** chính thức hóa giao diện của các kiểu dựng sẵn như `list` và `str`.
+* **Mapping:** được triển khai bởi `dict`, `collections.defaultdict`, v.v.
+* **Set:** giao diện của các kiểu dựng sẵn `set` và `frozenset`.
+
+Chỉ có `Sequence` là `Reversible` (khả nghịch), vì các chuỗi hỗ trợ thứ tự tùy ý của nội dung của chúng, trong khi các ánh xạ và tập hợp thì không.
+
+Tất cả các phương thức đặc biệt trong ABC `Set` đều triển khai các toán tử trung tố. Ví dụ: `a & b` tính toán giao điểm của các tập hợp `a` và `b` và được triển khai trong phương thức đặc biệt `__and__`.
+
+### Overview of Special Methods
 
 ## Chapter 2. An array of sequences
 
