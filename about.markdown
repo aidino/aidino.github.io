@@ -4,15 +4,8 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Page này dùng chỉ để note lại những công pháp mà mình học được trong quá trình tu luyện. Nếu hữu duyên có đạo hữu nào đọc được thì cũng hoan hỉ, có lòng thì góp ý giúp nhau tu tu luyện để đạt cảnh giới cao hơn.
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+Trân trọng.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
-
-
-[jekyll-organization]: https://github.com/jekyll
+Ngô Hồng Thái
