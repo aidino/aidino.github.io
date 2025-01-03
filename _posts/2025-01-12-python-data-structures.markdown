@@ -456,7 +456,210 @@ Listcomp xây dựng danh sách từ các chuỗi hoặc bất kỳ loại có t
 
 #### Listcomps Versus map and filter
 
+Listcomps (list comprehensions) trong Python có thể thực hiện tất cả những gì mà hàm `map` và `filter` làm được, mà không cần phải sử dụng `lambda` - vốn bị hạn chế về mặt chức năng trong Python. Ví dụ như trong Example 2-3:
 
+**Example 2-3:** Cùng một list được tạo bởi listcomp và kết hợp map/filter
+
+```python
+>>> symbols = '$¢£¥€¤'
+>>> beyond_ascii = [ord(s) for s in symbols if ord(s) > 127]
+>>> beyond_ascii
+[162, 163, 165, 8364, 164]
+>>> beyond_ascii = list(filter(lambda c: c > 127, map(ord, symbols)))
+>>> beyond_ascii
+[162, 163, 165, 8364, 164]
+```
+
+Trước đây tôi từng nghĩ rằng `map` và `filter` nhanh hơn so với listcomps tương đương, nhưng Alex Martelli đã chỉ ra rằng điều đó không đúng - ít nhất là không phải trong các ví dụ trước. Script `02-array-seq/listcomp_speed.py` trong Fluent Python code repository là một bài kiểm tra tốc độ đơn giản so sánh listcomp với `filter`/`map`.
+
+Tôi sẽ nói thêm về `map` và `filter` trong Chapter 7. Bây giờ chúng ta chuyển sang việc sử dụng listcomps để tính toán tích Descartes (Cartesian products): một list chứa các tuple được xây dựng từ tất cả các item từ hai hoặc nhiều list.
+
+#### Tích Descartes (Cartesian Products)
+
+Listcomps (list comprehensions) có thể xây dựng các list từ tích Descartes của hai hoặc nhiều iterables. Các item tạo nên tích Descartes là các tuple được tạo từ các item của mỗi iterable đầu vào. List kết quả có độ dài bằng tích của độ dài các iterable đầu vào.
+
+Ví dụ, giả sử bạn cần tạo ra một list các áo phông có sẵn trong hai màu và ba kích cỡ. Example 2-4 cho thấy cách tạo ra list đó bằng cách sử dụng listcomp. Kết quả có sáu item.
+
+**Example 2-4:** Tích Descartes (Cartesian product) sử dụng list comprehension
+
+```python
+>>> colors = ['black', 'white']
+>>> sizes = ['S', 'M', 'L']
+>>> tshirts = [(color, size) for color in colors for size in sizes]
+>>> tshirts
+[('black', 'S'), ('black', 'M'), ('black', 'L'), ('white', 'S'),
+('white', 'M'), ('white', 'L')]
+
+>>> for color in colors:
+...     for size in sizes:
+...         print((color, size))
+...
+('black', 'S')
+('black', 'M')
+('black', 'L')
+('white', 'S')
+('white', 'M')
+('white', 'L')
+
+>>> tshirts = [(color, size) for size in sizes 
+...             for color in colors]
+>>> tshirts
+[('black', 'S'), ('white', 'S'), ('black', 'M'), ('white', 'M'),
+('black', 'L'), ('white', 'L')]
+```
+
+Listcomps chỉ có một chức năng duy nhất: chúng xây dựng các list. Để tạo dữ liệu cho các kiểu sequence khác, genexp (generator expression) là cách nên làm. Phần tiếp theo là một cái nhìn ngắn gọn về genexps trong bối cảnh xây dựng các sequence không phải là list.
+
+#### Generator Expressions
+
+Để khởi tạo các tuple, array và các kiểu sequence khác, bạn cũng có thể bắt đầu từ một listcomp, nhưng genexp (generator expression) tiết kiệm bộ nhớ hơn vì nó sinh ra các item một cách lần lượt bằng cách sử dụng iterator protocol thay vì xây dựng toàn bộ list chỉ để đưa vào một constructor khác.
+
+Genexps sử dụng cú pháp tương tự như listcomps, nhưng được đặt trong dấu ngoặc đơn thay vì dấu ngoặc vuông.
+
+**Example 2-5:** Khởi tạo tuple và array từ generator expression
+
+```python
+>>> symbols = '$¢£¥€¤'
+>>> tuple(ord(symbol) for symbol in symbols)
+(36, 162, 163, 165, 8364, 164)
+>>> import array
+>>> array.array('I', (ord(symbol) for symbol in symbols))
+array('I', [36, 162, 163, 165, 8364, 164])
+```
+
+**Example 2-6:** sử dụng genexp với tích Descartes (Cartesian product) để in ra danh sách các áo phông có hai màu và ba kích cỡ. Trái ngược với Example 2-4, ở đây list sáu item của áo phông không bao giờ được xây dựng trong bộ nhớ: generator expression cung cấp cho vòng lặp `for`, tạo ra từng item một. Nếu hai list được sử dụng trong tích Descartes có một nghìn item mỗi list, thì việc sử dụng generator expression sẽ tiết kiệm chi phí xây dựng một list với một triệu item chỉ để cung cấp cho vòng lặp `for`.
+
+**Example 2-6:** Tích Descartes (Cartesian product) trong generator expression
+
+```python
+>>> colors = ['black', 'white']
+>>> sizes = ['S', 'M', 'L']
+>>> for tshirt in (f'{c} {s}' for c in colors for s in sizes):
+...     print(tshirt)
+...
+black S
+black M
+black L
+white S
+white M
+white L
+```
+
+### Tuples Are Not Just Immutable Lists
+
+Một số tài liệu hướng dẫn về Python giới thiệu tuples như là "immutable lists" (danh sách không thể thay đổi), nhưng điều đó chưa đánh giá hết được vai trò của chúng. Tuples thực hiện hai nhiệm vụ: chúng có thể được sử dụng như những immutable lists và cũng như những records (bản ghi) không có tên trường. Cách sử dụng này đôi khi bị bỏ qua, vì vậy chúng ta sẽ bắt đầu với nó.
+
+####  Tuples như bản ghi (Records)
+
+Tuples lưu giữ các bản ghi: mỗi phần tử trong tuple chứa dữ liệu cho một trường, và vị trí của phần tử đó mang ý nghĩa của nó.
+
+Nếu bạn coi tuple chỉ như một list bất biến (immutable), số lượng và thứ tự của các phần tử có thể quan trọng hoặc không, tùy thuộc vào ngữ cảnh. Nhưng khi sử dụng tuple như một tập hợp các trường, số lượng phần tử thường cố định và thứ tự của chúng luôn quan trọng.
+
+Ví dụ 2-7 cho thấy các tuple được sử dụng làm bản ghi. Lưu ý rằng trong mỗi biểu thức, việc sắp xếp tuple sẽ phá hủy thông tin vì ý nghĩa của mỗi trường được xác định bởi vị trí của nó trong tuple.
+
+**Ví dụ 2-7. Tuples được sử dụng làm bản ghi**
+
+```python
+>>> lax_coordinates = (33.9425, -118.408056)
+>>> city, year, pop, chg, area = ('Tokyo', 2003, 32_450, 0.66, 8014)
+>>> traveler_ids = [('USA', '31195855'), ('BRA', 'CE342567'),
+...
+('ESP', 'XDA205856')]
+>>> for passport in sorted(traveler_ids):
+...
+    print('%s/%s' % passport)
+...
+BRA/CE342567
+ESP/XDA205856
+USA/31195855
+>>> for country, _ in traveler_ids:
+...
+    print(country)
+...
+USA
+BRA
+ESP
+```
+
+> Nhìn chung, sử dụng `_` làm biến giả chỉ là một quy ước. Nó chỉ là một tên biến lạ nhưng hợp lệ. Tuy nhiên, trong câu lệnh `match/case`, `_` là một ký tự đại diện khớp với bất kỳ giá trị nào nhưng không bị ràng buộc với một giá trị. Xem "Pattern Matching with Sequences" trên trang 38. Và trong bảng điều khiển Python, kết quả của lệnh trước đó được gán cho `_`—trừ khi kết quả là `None`.
+
+Chúng ta thường nghĩ về bản ghi như các cấu trúc dữ liệu với các trường được đặt tên. Chương 5 trình bày hai cách tạo tuple với các trường được đặt tên.
+
+Nhưng thông thường, không cần phải tạo một class chỉ để đặt tên cho các trường, đặc biệt nếu bạn tận dụng unpacking và tránh sử dụng chỉ mục để truy cập các trường. Trong Ví dụ 2-7, chúng ta đã gán `('Tokyo', 2003, 32_450, 0.66, 8014)` cho `city`, `year`, `pop`, `chg`, `area` trong một câu lệnh duy nhất. Sau đó, toán tử `%` đã gán mỗi phần tử trong tuple `passport` vào vị trí tương ứng trong chuỗi định dạng trong đối số `print`. Đó là hai ví dụ về **tuple unpacking**.
+
+> Thuật ngữ **tuple unpacking** được sử dụng rộng rãi bởi các Pythonista, nhưng **iterable unpacking** đang dần phổ biến, như trong tiêu đề của PEP 3132 — Extended Iterable Unpacking.
+"Unpacking Sequences and Iterables" trên trang 35 trình bày nhiều hơn về việc unpacking không chỉ tuple mà còn cả sequences và iterables nói chung.
+
+#### Tuples như List bất biến (Immutable Lists)
+
+Trình thông dịch Python và thư viện chuẩn sử dụng rộng rãi tuple như list bất biến, và bạn cũng nên làm như vậy. Điều này mang lại hai lợi ích chính:
+
+**Clarity (Rõ ràng)**
+
+Khi bạn thấy một tuple trong code, bạn biết rằng độ dài của nó sẽ không bao giờ thay đổi.
+
+**Performance (Hiệu suất)**
+
+Một tuple sử dụng ít bộ nhớ hơn một list có cùng độ dài và nó cho phép Python thực hiện một số tối ưu hóa.
+
+Tuy nhiên, lưu ý rằng tính bất biến của tuple chỉ áp dụng cho các tham chiếu (references) chứa trong đó. Các tham chiếu trong một tuple không thể bị xóa hoặc thay thế. Nhưng nếu một trong những tham chiếu đó trỏ đến một đối tượng có thể thay đổi (mutable object), và đối tượng đó bị thay đổi, thì giá trị của tuple cũng thay đổi. Đoạn mã sau minh họa điểm này bằng cách tạo hai tuple—`a` và `b`—ban đầu bằng nhau. Hình 2-4 biểu diễn bố cục ban đầu của tuple `b` trong bộ nhớ.
+
+![]({{site.url}}/images/tuple-as-immutable-list.png)
+
+Khi phần tử cuối cùng trong `b` bị thay đổi, `b` và `a` trở nên khác nhau:
+
+```python
+>>> a = (10, 'alpha', [1, 2])
+>>> b = (10, 'alpha', [1, 2])
+>>> a == b
+True
+>>> b[-1].append(99)
+>>> a == b
+False
+>>> b
+(10, 'alpha', [1, 2, 99])
+```
+
+Tuple với các phần tử có thể thay đổi có thể là nguồn gốc của lỗi. Như chúng ta sẽ thấy trong "What Is Hashable" trên trang 84, một đối tượng chỉ có thể băm (hashable) nếu giá trị của nó không bao giờ thay đổi. Một tuple không thể băm không thể được chèn làm khóa `dict` hoặc phần tử `set`.
+
+Nếu bạn muốn xác định rõ ràng liệu một tuple (hoặc bất kỳ đối tượng nào) có giá trị cố định hay không, bạn có thể sử dụng hàm `hash` tích hợp sẵn để tạo một hàm `fixed` như sau:
+
+```python
+>>> def fixed(o):
+...     try:
+...         hash(o)
+...     except TypeError:
+...         return False
+...     return True
+...
+>>> tf = (10, 'alpha', (1, 2))
+>>> tm = (10, 'alpha', [1, 2])
+>>> fixed(tf)
+True
+
+>>> fixed(tm)
+False
+```
+
+Chúng ta sẽ khám phá vấn đề này sâu hơn trong "The Relative Immutability of Tuples" trên trang 207.
+
+Mặc dù có lưu ý này, tuple vẫn được sử dụng rộng rãi như list bất biến. Chúng cung cấp một số lợi thế về hiệu suất được giải thích bởi nhà phát triển lõi Python Raymond Hettinger trong một câu trả lời trên StackOverflow cho câu hỏi: "Are tuples more efficient than lists in Python?". Tóm lại, Hettinger đã viết:
+
+* Để đánh giá một tuple literal, trình biên dịch Python tạo ra bytecode cho một hằng số tuple trong một thao tác; nhưng đối với một list literal, bytecode được tạo ra sẽ đẩy từng phần tử như một hằng số riêng biệt vào ngăn xếp dữ liệu (data stack) và sau đó xây dựng list.
+* Với một tuple `t`, `tuple(t)` chỉ đơn giản là trả về một tham chiếu đến cùng một `t`. Không cần phải sao chép. Ngược lại, với một list `l`, hàm tạo `list(l)` phải tạo một bản sao mới của `l`.
+* Do độ dài cố định, một instance tuple được cấp phát chính xác không gian bộ nhớ mà nó cần. Mặt khác, các instance của list được cấp phát với dung lượng dự phòng để khấu hao chi phí cho các lần thêm phần tử (append) trong tương lai.
+* Các tham chiếu đến các phần tử trong một tuple được lưu trữ trong một mảng trong cấu trúc tuple, trong khi một list chứa một con trỏ đến một mảng các tham chiếu được lưu trữ ở nơi khác. Việc gián tiếp là cần thiết vì khi một list phát triển vượt quá không gian hiện được cấp phát, Python cần phải cấp phát lại mảng các tham chiếu để tạo thêm dung lượng. Việc gián tiếp thêm này làm cho bộ nhớ đệm CPU kém hiệu quả hơn.
+
+#### So sánh các phương thức của Tuple và List
+
+Khi sử dụng tuple như một biến thể bất biến của list, điều quan trọng là phải biết API của chúng giống nhau như thế nào. Như bạn có thể thấy trong Bảng 2-1, tuple hỗ trợ tất cả các phương thức list mà không liên quan đến việc thêm hoặc xóa phần tử, ngoại trừ một trường hợp—tuple thiếu phương thức `__reversed__`. Tuy nhiên, đó chỉ là để tối ưu hóa; `reversed(my_tuple)` vẫn hoạt động mà không cần nó.
+
+![]({{site.url}}/images/compare-tuple-and-list-1.png)
+![]({{site.url}}/images/compare-tuple-and-list-2.png)
+
+### Unpacking Sequences and Iterables
+
+updating...
 
 ## Chapter 3. Dictionaries and Sets
 
