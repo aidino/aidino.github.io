@@ -18,3 +18,5 @@ permalink: /books/
 - **Part III. Classes and Protocols**
 - **Part IV. Control flow**
 - **Part V. Metaprogramming**
+
+Example code: https://github.com/fluentpython/example-code-2e
