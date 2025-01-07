@@ -42,6 +42,7 @@ plugins:
 
 header_pages:
   - books.markdown
+  - papers.markdown
   - about.markdown
 
 kramdown:
