@@ -13,9 +13,47 @@ Hiểu được sự đa dạng của các chuỗi có sẵn trong Python giúp 
 
 Hầu hết các cuộc thảo luận trong chương này áp dụng cho các chuỗi nói chung, từ danh sách quen thuộc đến các kiểu `str` và `bytes` được thêm vào trong Python 3. Các chủ đề cụ thể về danh sách, tuple, mảng và hàng đợi cũng được đề cập ở đây, nhưng các chi tiết cụ thể của chuỗi Unicode và chuỗi byte xuất hiện trong Chương 4. Ngoài ra, ý tưởng ở đây là đề cập đến các kiểu chuỗi đã sẵn sàng để sử dụng. Việc tạo các kiểu chuỗi của riêng bạn là chủ đề của Chương 12.
 
-[Example notebook](https://aidino.github.io/example_codes/fluent-python-c2-array-of-sequence.ipynb)
+### Table of content
 
-### Overview of Built-In Sequences
+1. [Overview of Built-In Sequences](#OverviewofBuilt-InSequences)
+2. [List Comprehensions and Generator Expressions](#ListComprehensionsandGeneratorExpressions)
+  - 2.1. [List Comprehensions and Readability](#ListComprehensionsandReadability)
+  - 2.2. [Listcomps Versus map and filter](#ListcompsVersusmapandfilter)
+  - 2.3. [Tích Descartes (Cartesian Products)](#TchDescartesCartesianProducts)
+  - 2.4. [Generator Expressions](#GeneratorExpressions)
+3. [Tuples Are Not Just Immutable Lists](#TuplesAreNotJustImmutableLists)
+  - 3.1. [ Tuples như bản ghi (Records)](#TuplesnhbnghiRecords)
+  - 3.2. [Tuples như List bất biến (Immutable Lists)](#TuplesnhListbtbinImmutableLists)
+  - 3.3. [So sánh các phương thức của Tuple và List](#SosnhccphngthccaTuplevList)
+4. [Unpacking Sequences and Iterables](#UnpackingSequencesandIterables)
+  - 4.1. [ Sử dụng * để lấy các mục dư thừa (Using * to Grab Excess Items)](#SdnglyccmcdthaUsingtoGrabExcessItems)
+  - 4.2. [Giải nén với * trong lời gọi hàm và các literal chuỗi (Unpacking with * in Function Calls and Sequence Literals)](#GiinnvitrongligihmvccliteralchuiUnpackingwithinFunctionCallsandSequenceLiterals)
+  - 4.3. [Giải nén lồng nhau (Nested Unpacking)](#GiinnlngnhauNestedUnpacking)
+5. [Pattern Matching with Sequences](#PatternMatchingwithSequences)
+6. [Slicing](#Slicing)
+  - 6.1. [Tại sao Slice và Range loại trừ phần tử cuối cùng?](#TisaoSlicevRangeloitrphntcuicng)
+  - 6.2. [Slice Object](#SliceObject)
+  - 6.3. [Cắt lát đa chiều và Ellipsis](#CtltachiuvEllipsis)
+  - 6.4. [Gán giá trị cho Slice](#GngitrchoSlice)
+7. [Using + and * with Sequences](#UsingandwithSequences)
+  - 7.1. [Building Lists of Lists](#BuildingListsofLists)
+  - 7.2. [Augmented Assignment with Sequences](#AugmentedAssignmentwithSequences)
+  - 7.3. [A += Assignment Puzzler](#AAssignmentPuzzler)
+8. [list.sort Versus the sorted Built-In](#list.sortVersusthesortedBuilt-In)
+9. [When a List Is Not the Answer](#WhenaListIsNottheAnswer)
+  - 9.1. [Array](#Array)
+  - 9.2. [Memory View](#MemoryView)
+  - 9.3. [NumPy](#NumPy)
+  - 9.4. [Deques và các hàng đợi khác](#Dequesvcchngikhc)
+
+[Example notebook](https://aidino.github.io/example_codes/fluent-python-c2-array-of-sequence.ipynb)
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+###  1. <a name='OverviewofBuilt-InSequences'></a>Overview of Built-In Sequences
 
 Thư viện chuẩn của Python cung cấp một tập hợp đa dạng các kiểu dữ liệu dạng chuỗi (sequence types) được triển khai bằng ngôn ngữ C:
 
@@ -67,7 +105,7 @@ Hãy ghi nhớ những đặc điểm chung này: khả biến so với bất bi
 
 Kiểu chuỗi cơ bản nhất là `list`: một chuỗi chứa khả biến. Tôi hy vọng bạn đã rất quen thuộc với `list`, vì vậy chúng ta sẽ đi thẳng vào list comprehension, một cách mạnh mẽ để xây dựng danh sách mà đôi khi không được sử dụng đầy đủ vì cú pháp có thể trông lạ lùng lúc đầu. Nắm vững list comprehension sẽ mở ra cánh cửa cho generator expression, thứ mà - trong số các mục đích sử dụng khác - có thể tạo ra các phần tử để lấp đầy các chuỗi thuộc bất kỳ loại nào. Cả hai là chủ đề của phần tiếp theo.
 
-### List Comprehensions and Generator Expressions
+###  2. <a name='ListComprehensionsandGeneratorExpressions'></a>List Comprehensions and Generator Expressions
 
 Một cách nhanh chóng để xây dựng một chuỗi là sử dụng list comprehension (nếu mục tiêu là một `list`) hoặc generator expression (cho các loại chuỗi khác). Nếu bạn không sử dụng các dạng cú pháp này hàng ngày, tôi cá là bạn đang bỏ lỡ cơ hội để viết mã dễ đọc hơn và thường nhanh hơn cùng một lúc.
 
@@ -76,7 +114,7 @@ Nếu bạn nghi ngờ tuyên bố của tôi rằng các cấu trúc này "dễ
 * **List comprehension**: Một cách viết ngắn gọn để tạo danh sách mới từ một danh sách hiện có, bằng cách áp dụng một biểu thức cho từng phần tử và lọc các phần tử theo điều kiện.
 * **Generator expression**: Tương tự như list comprehension nhưng tạo ra một generator, một đối tượng lười biếng chỉ tạo ra các phần tử khi được yêu cầu. 
 
-#### List Comprehensions and Readability
+####  2.1. <a name='ListComprehensionsandReadability'></a>List Comprehensions and Readability
 
 *Example 2-1. Build a list of Unicode code points from a string*
 
@@ -132,7 +170,7 @@ NameError: name 'c' is not defined
 
 Listcomp xây dựng danh sách từ các chuỗi hoặc bất kỳ loại có thể lặp lại nào khác bằng cách lọc và chuyển đổi các mục. Các hàm dựng sẵn filter và map có thể được kết hợp để làm điều tương tự, nhưng khả năng đọc bị ảnh hưởng, như chúng ta sẽ thấy tiếp theo.
 
-#### Listcomps Versus map and filter
+####  2.2. <a name='ListcompsVersusmapandfilter'></a>Listcomps Versus map and filter
 
 Listcomps (list comprehensions) trong Python có thể thực hiện tất cả những gì mà hàm `map` và `filter` làm được, mà không cần phải sử dụng `lambda` - vốn bị hạn chế về mặt chức năng trong Python. Ví dụ như trong Example 2-3:
 
@@ -152,7 +190,7 @@ Trước đây tôi từng nghĩ rằng `map` và `filter` nhanh hơn so với l
 
 Tôi sẽ nói thêm về `map` và `filter` trong Chapter 7. Bây giờ chúng ta chuyển sang việc sử dụng listcomps để tính toán tích Descartes (Cartesian products): một list chứa các tuple được xây dựng từ tất cả các item từ hai hoặc nhiều list.
 
-#### Tích Descartes (Cartesian Products)
+####  2.3. <a name='TchDescartesCartesianProducts'></a>Tích Descartes (Cartesian Products)
 
 Listcomps (list comprehensions) có thể xây dựng các list từ tích Descartes của hai hoặc nhiều iterables. Các item tạo nên tích Descartes là các tuple được tạo từ các item của mỗi iterable đầu vào. List kết quả có độ dài bằng tích của độ dài các iterable đầu vào.
 
@@ -188,7 +226,7 @@ Ví dụ, giả sử bạn cần tạo ra một list các áo phông có sẵn t
 
 Listcomps chỉ có một chức năng duy nhất: chúng xây dựng các list. Để tạo dữ liệu cho các kiểu sequence khác, genexp (generator expression) là cách nên làm. Phần tiếp theo là một cái nhìn ngắn gọn về genexps trong bối cảnh xây dựng các sequence không phải là list.
 
-#### Generator Expressions
+####  2.4. <a name='GeneratorExpressions'></a>Generator Expressions
 
 Để khởi tạo các tuple, array và các kiểu sequence khác, bạn cũng có thể bắt đầu từ một listcomp, nhưng genexp (generator expression) tiết kiệm bộ nhớ hơn vì nó sinh ra các item một cách lần lượt bằng cách sử dụng iterator protocol thay vì xây dựng toàn bộ list chỉ để đưa vào một constructor khác.
 
@@ -223,11 +261,11 @@ white M
 white L
 ```
 
-### Tuples Are Not Just Immutable Lists
+###  3. <a name='TuplesAreNotJustImmutableLists'></a>Tuples Are Not Just Immutable Lists
 
 Một số tài liệu hướng dẫn về Python giới thiệu tuples như là "immutable lists" (danh sách không thể thay đổi), nhưng điều đó chưa đánh giá hết được vai trò của chúng. Tuples thực hiện hai nhiệm vụ: chúng có thể được sử dụng như những immutable lists và cũng như những records (bản ghi) không có tên trường. Cách sử dụng này đôi khi bị bỏ qua, vì vậy chúng ta sẽ bắt đầu với nó.
 
-####  Tuples như bản ghi (Records)
+####  3.1. <a name='TuplesnhbnghiRecords'></a> Tuples như bản ghi (Records)
 
 Tuples lưu giữ các bản ghi: mỗi phần tử trong tuple chứa dữ liệu cho một trường, và vị trí của phần tử đó mang ý nghĩa của nó.
 
@@ -268,7 +306,7 @@ Nhưng thông thường, không cần phải tạo một class chỉ để đặ
 > Thuật ngữ **tuple unpacking** được sử dụng rộng rãi bởi các Pythonista, nhưng **iterable unpacking** đang dần phổ biến, như trong tiêu đề của PEP 3132 — Extended Iterable Unpacking.
 "Unpacking Sequences and Iterables" trên trang 35 trình bày nhiều hơn về việc unpacking không chỉ tuple mà còn cả sequences và iterables nói chung.
 
-#### Tuples như List bất biến (Immutable Lists)
+####  3.2. <a name='TuplesnhListbtbinImmutableLists'></a>Tuples như List bất biến (Immutable Lists)
 
 Trình thông dịch Python và thư viện chuẩn sử dụng rộng rãi tuple như list bất biến, và bạn cũng nên làm như vậy. Điều này mang lại hai lợi ích chính:
 
@@ -328,14 +366,14 @@ Mặc dù có lưu ý này, tuple vẫn được sử dụng rộng rãi như li
 * Do độ dài cố định, một instance tuple được cấp phát chính xác không gian bộ nhớ mà nó cần. Mặt khác, các instance của list được cấp phát với dung lượng dự phòng để khấu hao chi phí cho các lần thêm phần tử (append) trong tương lai.
 * Các tham chiếu đến các phần tử trong một tuple được lưu trữ trong một mảng trong cấu trúc tuple, trong khi một list chứa một con trỏ đến một mảng các tham chiếu được lưu trữ ở nơi khác. Việc gián tiếp là cần thiết vì khi một list phát triển vượt quá không gian hiện được cấp phát, Python cần phải cấp phát lại mảng các tham chiếu để tạo thêm dung lượng. Việc gián tiếp thêm này làm cho bộ nhớ đệm CPU kém hiệu quả hơn.
 
-#### So sánh các phương thức của Tuple và List
+####  3.3. <a name='SosnhccphngthccaTuplevList'></a>So sánh các phương thức của Tuple và List
 
 Khi sử dụng tuple như một biến thể bất biến của list, điều quan trọng là phải biết API của chúng giống nhau như thế nào. Như bạn có thể thấy trong Bảng 2-1, tuple hỗ trợ tất cả các phương thức list mà không liên quan đến việc thêm hoặc xóa phần tử, ngoại trừ một trường hợp—tuple thiếu phương thức `__reversed__`. Tuy nhiên, đó chỉ là để tối ưu hóa; `reversed(my_tuple)` vẫn hoạt động mà không cần nó.
 
 ![]({{site.url}}/images/compare-tuple-and-list-1.png)
 ![]({{site.url}}/images/compare-tuple-and-list-2.png)
 
-### Unpacking Sequences and Iterables
+###  4. <a name='UnpackingSequencesandIterables'></a>Unpacking Sequences and Iterables
 
 **Giải nén (Unpacking)** là một kỹ thuật quan trọng trong Python giúp tránh việc sử dụng chỉ mục (index) để trích xuất các phần tử từ chuỗi, vốn không cần thiết và dễ gây ra lỗi. Hơn nữa, giải nén hoạt động với bất kỳ đối tượng lặp (iterable) nào làm nguồn dữ liệu - bao gồm cả iterator, những đối tượng không hỗ trợ ký hiệu chỉ mục ([]). Yêu cầu duy nhất là đối tượng lặp phải tạo ra chính xác một mục cho mỗi biến ở đầu nhận, trừ khi bạn sử dụng dấu sao (*) để thu thập các mục dư thừa, như được giải thích trong phần "Sử dụng * để lấy các mục dư thừa" trên trang 36.
 
@@ -380,7 +418,7 @@ Một ví dụ khác về giải nén là **thêm tiền tố * vào một đố
 
 Một cách khác để chỉ sử dụng một số mục khi giải nén là sử dụng cú pháp *, như chúng ta sẽ thấy ngay sau đây.
 
-####  Sử dụng * để lấy các mục dư thừa (Using * to Grab Excess Items)
+####  4.1. <a name='SdnglyccmcdthaUsingtoGrabExcessItems'></a> Sử dụng * để lấy các mục dư thừa (Using * to Grab Excess Items)
 
 Việc định nghĩa các tham số hàm với `*args` để lấy các đối số dư thừa tùy ý là một tính năng cổ điển của Python.
 
@@ -408,7 +446,7 @@ Trong ngữ cảnh của phép gán song song, tiền tố `*` chỉ có thể �
 >>> head, b, c, d
 ([0, 1], 2, 3, 4)
 ```
-#### Giải nén với * trong lời gọi hàm và các literal chuỗi (Unpacking with * in Function Calls and Sequence Literals)
+####  4.2. <a name='GiinnvitrongligihmvccliteralchuiUnpackingwithinFunctionCallsandSequenceLiterals'></a>Giải nén với * trong lời gọi hàm và các literal chuỗi (Unpacking with * in Function Calls and Sequence Literals)
 
 Tính năng này cho phép bạn sử dụng toán tử `*` để giải nén các iterable (như list, tuple, range) khi gọi hàm hoặc tạo các literal chuỗi (list, tuple, set). Điều này mang lại sự linh hoạt và ngắn gọn trong việc xử lý các chuỗi dữ liệu.
 
@@ -460,7 +498,7 @@ Việc sử dụng `*` để giải nén iterable trong lời gọi hàm và lit
 
 Lưu ý rằng PEP 448 cũng giới thiệu cú pháp tương tự cho `**` để giải nén các mapping (như dictionary), chúng ta sẽ tìm hiểu kỹ hơn trong phần "Giải nén ánh xạ".
 
-#### Giải nén lồng nhau (Nested Unpacking)
+####  4.3. <a name='GiinnlngnhauNestedUnpacking'></a>Giải nén lồng nhau (Nested Unpacking)
 
 Mục tiêu của một phép giải nén có thể sử dụng cấu trúc lồng nhau, ví dụ: `(a, b, (c, d))`. Python sẽ xử lý đúng nếu giá trị có cùng cấu trúc lồng nhau. Ví dụ 2-8 cho thấy giải nén lồng nhau trong thực tế.
 
@@ -514,7 +552,7 @@ Cả hai điều này đều có thể được viết bằng tuple, nhưng đ�
 
 Bây giờ chúng ta hãy nghiên cứu **pattern matching**, hỗ trợ các cách mạnh mẽ hơn để giải nén chuỗi.
 
-### Pattern Matching with Sequences
+###  5. <a name='PatternMatchingwithSequences'></a>Pattern Matching with Sequences
 
 Tính năng mới nổi bật nhất trong Python 3.10 là so khớp mẫu với câu lệnh `match/case` được đề xuất trong PEP 634—Structural Pattern Matching: Specification.
 
@@ -653,13 +691,13 @@ Khối lồng nhau với câu lệnh `print` chỉ chạy nếu mẫu khớp và
 
 Ví dụ 2-10 không phải là một cải tiến so với Ví dụ 2-8. Nó chỉ là một ví dụ để so sánh hai cách làm điều tương tự. Ví dụ tiếp theo cho thấy cách so khớp mẫu góp phần tạo ra mã rõ ràng, ngắn gọn và hiệu quả.
 
-### Slicing
+###  6. <a name='Slicing'></a>Slicing
 
 Một tính năng phổ biến của `list`, `tuple`, `str`, và tất cả các kiểu dữ liệu sequence trong Python là hỗ trợ các thao tác **cắt lát (slicing)**, mạnh mẽ hơn hầu hết mọi người nhận ra.
 
 Trong phần này, chúng ta sẽ mô tả cách sử dụng các dạng cắt lát nâng cao này. Việc triển khai chúng trong một `class` do người dùng định nghĩa sẽ được đề cập trong Chương 12, phù hợp với triết lý của chúng tôi về việc bao quát các `class` sẵn sàng sử dụng trong phần này của cuốn sách và tạo các `class` mới trong Phần III.
 
-#### Tại sao Slice và Range loại trừ phần tử cuối cùng?
+####  6.1. <a name='TisaoSlicevRangeloitrphntcuicng'></a>Tại sao Slice và Range loại trừ phần tử cuối cùng?
 
 Quy ước trong Python là loại trừ phần tử cuối cùng trong các **slice** và **range**. Điều này hoạt động tốt với cách đánh chỉ số (index) bắt đầu từ 0 được sử dụng trong Python, C và nhiều ngôn ngữ khác. 
 
@@ -685,7 +723,7 @@ Những lập luận tốt nhất cho quy ước này được viết bởi nhà
 
 Bây giờ, hãy xem xét kỹ hơn cách Python diễn giải cú pháp **slice**.
 
-#### Slice Object
+####  6.2. <a name='SliceObject'></a>Slice Object
 
 Điều này không có gì bí mật, nhưng đáng để nhắc lại: `s[a:b:c]` có thể được sử dụng để chỉ định một bước nhảy `c`, khiến cho slice kết quả bỏ qua các phần tử. Bước nhảy cũng có thể là số âm, trả về các phần tử theo thứ tự ngược lại. Ba ví dụ sau đây sẽ làm rõ điều này:
 
@@ -738,7 +776,7 @@ $34.95 PiTFT Mini Kit 320x240
 
 Chúng ta sẽ quay lại với **slice object** khi thảo luận về việc tạo các bộ sưu tập của riêng bạn trong phần "Vector Take #2: A Sliceable Sequence" trên trang 403. Trong khi đó, từ góc độ người dùng, slicing bao gồm các tính năng bổ sung như slice đa chiều và ký hiệu ellipsis (`...`). Hãy đọc tiếp.
 
-#### Cắt lát đa chiều và Ellipsis
+####  6.3. <a name='CtltachiuvEllipsis'></a>Cắt lát đa chiều và Ellipsis
 
 Toán tử `[]` cũng có thể nhận nhiều chỉ mục hoặc slice được phân tách bằng dấu phẩy. Các phương thức đặc biệt `__getitem__` và `__setitem__` xử lý toán tử `[]` chỉ đơn giản là nhận các chỉ mục trong `a[i, j]` dưới dạng một tuple. Nói cách khác, để đánh giá `a[i, j]`, Python gọi `a.__getitem__((i, j))`.
 
@@ -755,7 +793,7 @@ Tại thời điểm viết bài này, tôi không biết về việc sử dụn
 Slice không chỉ hữu ích để trích xuất thông tin từ các sequence; chúng cũng có thể được sử dụng để thay đổi các sequence có thể thay đổi tại chỗ—nghĩa là, mà không cần xây dựng lại chúng từ đầu.
 
 
-#### Gán giá trị cho Slice
+####  6.4. <a name='GngitrchoSlice'></a>Gán giá trị cho Slice
 
 Các sequence có thể thay đổi (mutable sequences) có thể được ghép, cắt bỏ và sửa đổi tại chỗ bằng cách sử dụng ký hiệu slice ở phía bên trái của câu lệnh gán hoặc làm mục tiêu của câu lệnh `del`. Một vài ví dụ tiếp theo đưa ra ý tưởng về sức mạnh của ký hiệu này:
 
@@ -785,7 +823,7 @@ Khi mục tiêu của phép gán là một slice, phía bên phải phải là m
 
 Mọi lập trình viên đều biết rằng phép nối (concatenation) là một thao tác phổ biến với các sequence. Các hướng dẫn Python cơ bản giải thích việc sử dụng `+` và `*` cho mục đích đó, nhưng có một số chi tiết tinh tế về cách chúng hoạt động, mà chúng ta sẽ đề cập tiếp theo.
 
-### Using + and * with Sequences
+###  7. <a name='UsingandwithSequences'></a>Using + and * with Sequences
 
 Trong Python, các lập trình viên mong đợi rằng chuỗi hỗ trợ phép cộng (+) và phép nhân (*). Thông thường, cả hai toán hạng của phép cộng (+) phải cùng kiểu chuỗi, và không toán hạng nào bị thay đổi, mà một chuỗi mới cùng kiểu được tạo ra như là kết quả của phép nối chuỗi.
 
@@ -806,7 +844,7 @@ Cả hai phép toán + và * luôn tạo ra một đối tượng mới và khô
 
 Phần tiếp theo sẽ đề cập đến các cạm bẫy khi cố gắng sử dụng * để khởi tạo một danh sách các danh sách.
 
-#### Building Lists of Lists
+####  7.1. <a name='BuildingListsofLists'></a>Building Lists of Lists
 
 Đôi khi chúng ta cần khởi tạo một danh sách với một số lượng danh sách lồng nhau nhất định - ví dụ, để phân phối học sinh vào một danh sách các nhóm hoặc để biểu diễn các ô vuông trên bàn cờ. Cách tốt nhất để làm điều đó là sử dụng list comprehension, như trong Ví dụ 2-14.
 
@@ -860,7 +898,7 @@ Mặt khác, list comprehension từ Ví dụ 2-14 tương đương với đoạ
 
 Cho đến nay, chúng ta đã thảo luận về việc sử dụng các toán tử + và * đơn giản với chuỗi, nhưng cũng có các toán tử += và *=, tạo ra kết quả rất khác nhau, tùy thuộc vào tính chất mutable của chuỗi đích. Phần tiếp theo giải thích cách thức hoạt động của nó.
 
-#### Augmented Assignment with Sequences
+####  7.2. <a name='AugmentedAssignmentwithSequences'></a>Augmented Assignment with Sequences
 
 Các toán tử gán tăng cường `+=` và `*=` hoạt động khá khác nhau, tùy thuộc vào toán hạng đầu tiên. Để đơn giản hóa cuộc thảo luận, chúng ta sẽ tập trung vào phép cộng tăng cường (`+=`) trước, nhưng các khái niệm này cũng áp dụng cho `*=` và các toán tử gán tăng cường khác.
 
@@ -897,7 +935,7 @@ Việc nối chuỗi không thể thay đổi lặp đi lặp lại là không h
 
 Chúng ta đã thấy các trường hợp sử dụng phổ biến cho `+=`. Phần tiếp theo cho thấy một trường hợp đặc biệt thú vị làm nổi bật ý nghĩa thực sự của "immutable" trong ngữ cảnh của tuple.
 
-#### A += Assignment Puzzler
+####  7.3. <a name='AAssignmentPuzzler'></a>A += Assignment Puzzler
 
 Hãy thử trả lời mà không cần sử dụng console: kết quả của việc đánh giá hai biểu thức trong Ví dụ 2-16 là gì?
 
@@ -944,7 +982,7 @@ Tuy nhiên, trước khi ngoại lệ được đưa ra, list bên trong tuple �
 
 ![]({{site.url}}/images/tuple-assignment.png)
 
-### list.sort Versus the sorted Built-In
+###  8. <a name='list.sortVersusthesortedBuilt-In'></a>list.sort Versus the sorted Built-In
 
 Phương thức `list.sort` sắp xếp một danh sách **tại chỗ** - tức là không tạo bản sao. Nó trả về `None` để nhắc nhở chúng ta rằng nó thay đổi đối tượng nhận (receiver) và không tạo ra một danh sách mới. Đây là một quy ước API quan trọng của Python: các hàm hoặc phương thức thay đổi một đối tượng tại chỗ nên trả về `None` để làm rõ cho người gọi rằng đối tượng nhận đã bị thay đổi và không có đối tượng mới nào được tạo. Hành vi tương tự có thể thấy, ví dụ, trong hàm `random.shuffle(s)`, hàm này xáo trộn chuỗi `s` có thể thay đổi tại chỗ và trả về `None`.
 
@@ -980,13 +1018,13 @@ Khi chuỗi của bạn được sắp xếp, chúng có thể được tìm ki�
 
 Phần lớn những gì chúng ta đã thấy cho đến nay trong chương này áp dụng cho chuỗi nói chung, không chỉ danh sách hoặc tuple. Các lập trình viên Python đôi khi lạm dụng kiểu danh sách vì nó rất tiện dụng - tôi biết tôi đã làm điều đó. Ví dụ: nếu bạn đang xử lý các danh sách số lớn, bạn nên cân nhắc sử dụng **mảng** thay thế. Phần còn lại của chương dành cho các lựa chọn thay thế cho danh sách và tuple.
 
-### When a List Is Not the Answer
+###  9. <a name='WhenaListIsNottheAnswer'></a>When a List Is Not the Answer
 
 Kiểu dữ liệu `list` rất linh hoạt và dễ sử dụng, nhưng tùy thuộc vào yêu cầu cụ thể, có những lựa chọn tốt hơn. Ví dụ, một `array` tiết kiệm rất nhiều bộ nhớ khi bạn cần xử lý hàng triệu giá trị số thực. Mặt khác, nếu bạn liên tục thêm và xóa các phần tử từ hai đầu đối diện của một `list`, thì nên biết rằng `deque` (hàng đợi hai đầu) là một cấu trúc dữ liệu FIFO14 hiệu quả hơn.
 
 Trong phần còn lại của chương này, chúng ta sẽ thảo luận về các kiểu dữ liệu chuỗi có thể thay đổi (mutable sequence types) có thể thay thế `list` trong nhiều trường hợp, bắt đầu với `array`.
 
-#### Array
+####  9.1. <a name='Array'></a>Array
 
 Nếu một `list` chỉ chứa số, thì `array.array` là một sự thay thế hiệu quả hơn. 
 `Array` hỗ trợ tất cả các thao tác chuỗi có thể thay đổi (bao gồm `.pop`, `.insert` và `.extend`), cũng như các phương thức bổ sung để tải và lưu nhanh, chẳng hạn như `.frombytes` và `.tofile`.
@@ -1033,7 +1071,7 @@ Chúng tôi kết thúc phần này về `array` với Bảng 2-3, so sánh các
 
 Nếu bạn làm việc nhiều với `array` và không biết về `memoryview`, bạn đang bỏ lỡ điều gì đó. Xem chủ đề tiếp theo.
 
-#### Memory View
+####  9.2. <a name='MemoryView'></a>Memory View
 
 Lớp `memoryview` tích hợp sẵn là một kiểu chuỗi bộ nhớ dùng chung cho phép bạn xử lý các lát cắt của `array` mà không cần sao chép byte. Nó được lấy cảm hứng từ thư viện NumPy (mà chúng ta sẽ thảo luận ngay sau đây trong “NumPy” trên trang 64). Travis Oliphant, tác giả chính của NumPy, trả lời câu hỏi, “Khi nào nên sử dụng `memoryview`?” như thế này:
 
@@ -1100,7 +1138,7 @@ array('h', [-2, -1, 1024, 1, 2])
 
 Trong khi đó, nếu bạn đang thực hiện xử lý số nâng cao trong `array`, bạn nên sử dụng các thư viện NumPy. Chúng ta sẽ xem xét ngắn gọn về chúng ngay bây giờ.
 
-#### NumPy
+####  9.3. <a name='NumPy'></a>NumPy
 
 Trong suốt cuốn sách này, tôi nhấn mạnh những gì đã có trong thư viện chuẩn của Python để bạn có thể tận dụng tối đa nó. Nhưng NumPy quá tuyệt vời đến nỗi một lối đi vòng là điều cần thiết.
 
@@ -1184,7 +1222,7 @@ NumPy và SciPy là những thư viện đáng gờm và là nền tảng của 
 
 Sau khi xem xét các chuỗi phẳng — `array` chuẩn và `array` NumPy — bây giờ chúng ta chuyển sang một tập hợp hoàn toàn khác để thay thế cho `list` cũ đơn giản: hàng đợi.
 
-#### Deques và các hàng đợi khác
+####  9.4. <a name='Dequesvcchngikhc'></a>Deques và các hàng đợi khác
 
 Các phương thức `.append` và `.pop` làm cho một `list` có thể sử dụng như một `stack` hoặc `queue` (nếu bạn sử dụng `.append` và `.pop(0)`, bạn sẽ có được hành vi FIFO). Nhưng việc chèn và xóa khỏi đầu của một `list` (phần cuối có chỉ số 0) rất tốn kém vì toàn bộ `list` phải được dịch chuyển trong bộ nhớ.
 

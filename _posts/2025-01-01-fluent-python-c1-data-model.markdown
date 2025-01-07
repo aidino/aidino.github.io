@@ -7,9 +7,21 @@ categories: fluent python
 
 Khám phá thế giới cấu trúc dữ liệu Python! Note này sẽ hướng dẫn bạn về List, Tuple, Dictionary, Set và các khái niệm quan trọng như khả năng thay đổi, tham chiếu đối tượng.  Cùng nhau nâng cao kỹ năng lập trình Python thông qua việc tổ chức và lưu trữ dữ liệu hiệu quả!
 
+### Table of content
+1. [A Pythonic Card Deck](#APythonicCardDeck)
+2. [How Special Methods Are Used](#HowSpecialMethodsAreUsed)
+    * 2.1. [Emulating Numeric Types](#EmulatingNumericTypes)
+    * 2.2. [String Representation](#StringRepresentation)
+    * 2.3. [Boolean Value of a Custom Type](#BooleanValueofaCustomType)
+    * 2.4. [Collection API](#CollectionAPI)
+3. [Overview of Special Methods](#OverviewofSpecialMethods)
+4. [ Why len Is Not a Method](#WhylenIsNotaMethod)
+
+
+
 [Example notebook](https://aidino.github.io/example_codes/fluent-python-c1-data-structures.ipynb)
 
-### A Pythonic Card Deck
+###  1. <a name='APythonicCardDeck'></a>A Pythonic Card Deck
 
 {% highlight python %}
 import collections
@@ -148,7 +160,7 @@ Card(rank='A', suit='spades')
 
 Mặc dù `FrenchDeck` kế thừa ngầm định từ lớp `object`, nhưng hầu hết chức năng của nó không phải được kế thừa mà đến từ việc tận dụng data model và kỹ thuật composition. Bằng cách triển khai các phương thức đặc biệt `__len__` và `__getitem__`, lớp `FrenchDeck` của chúng ta hoạt động giống như một standard Python sequence, cho phép nó hưởng lợi từ các tính năng cốt lõi của ngôn ngữ (ví dụ: iteration và slicing)) và từ standard library, như được hiển thị trong các ví dụ sử dụng `random.choice`, `reversed` và `sorted`. Nhờ kỹ thuật composition, việc triển khai `__len__` và `__getitem__` có thể delegate toàn bộ công việc cho một đối tượng list, `self._cards`.
 
-### How Special Methods Are Used
+###  2. <a name='HowSpecialMethodsAreUsed'></a>How Special Methods Are Used
 
 * **Phương thức đặc biệt (special methods)**, còn được gọi là **phương thức ma thuật (magic methods)** hoặc **phương thức dunder**, là những phương thức có tên được định nghĩa trước trong Python, bắt đầu và kết thúc bằng hai dấu gạch dưới (ví dụ: `__init__`, `__len__`, `__str__`).
 * Chúng ta thường tương tác với các phương thức đặc biệt một cách gián tiếp thông qua các hàm tích hợp sẵn hoặc các toán tử. Ví dụ, khi bạn sử dụng toán tử `+` để cộng hai số, Python sẽ gọi phương thức `__add__` của lớp số tương ứng.
@@ -161,7 +173,7 @@ Mặc dù `FrenchDeck` kế thừa ngầm định từ lớp `object`, nhưng h�
 
 Tóm lại, phương thức đặc biệt là một phần quan trọng của Python, cho phép chúng ta tạo ra các lớp linh hoạt và mạnh mẽ, tương tác liền mạch với ngôn ngữ.
 
-#### Emulating Numeric Types
+####  2.1. <a name='EmulatingNumericTypes'></a>Emulating Numeric Types
 
 Một số phương thức đặc biệt cho phép các đối tượng người dùng phản hồi với các toán tử như `+`. Chúng ta sẽ tìm hiểu chi tiết hơn về điều này trong Chương 16, nhưng ở đây mục tiêu của chúng ta là minh họa thêm về việc sử dụng các phương thức đặc biệt thông qua một ví dụ đơn giản khác.
 
@@ -234,7 +246,7 @@ class Vector:
 
 ```
 
-#### String Representation
+####  2.2. <a name='StringRepresentation'></a>String Representation
 
 **Phương thức đặc biệt `__repr__`** được gọi bởi hàm `repr()` tích hợp sẵn để lấy biểu diễn chuỗi của một đối tượng để kiểm tra. Nếu không có `__repr__` tùy chỉnh, console của Python sẽ hiển thị một instance của `Vector` là `<Vector object at 0x10e100070>`.
 
@@ -247,7 +259,7 @@ Chuỗi được trả về bởi `__repr__` phải rõ ràng và nếu có th�
 Ngược lại, **`__str__`** được gọi bởi hàm `str()` tích hợp sẵn và được hàm `print` sử dụng ngầm định. Nó nên trả về một chuỗi phù hợp để hiển thị cho người dùng cuối.
 
 
-#### Boolean Value of a Custom Type
+####  2.3. <a name='BooleanValueofaCustomType'></a>Boolean Value of a Custom Type
 
 Mặc dù Python có kiểu dữ liệu `bool`, nó chấp nhận bất kỳ đối tượng nào trong ngữ cảnh Boolean, chẳng hạn như biểu thức điều khiển câu lệnh `if` hoặc `while`, hoặc toán hạng của `and`, `or` và `not`. Để xác định xem một giá trị `x` là "truthy" (đúng) hay "falsy" (sai), Python áp dụng hàm `bool(x)`, trả về `True` hoặc `False`.
 
@@ -257,7 +269,7 @@ Ví dụ, triển khai `__bool__` đơn giản là trả về `False` nếu đ�
 
 Lưu ý cách phương thức đặc biệt `__bool__` cho phép các đối tượng của bạn tuân theo các quy tắc kiểm tra giá trị Boolean được định nghĩa trong chương "Built-in Types" của tài liệu The Python Standard Library.
 
-#### Collection API
+####  2.4. <a name='CollectionAPI'></a>Collection API
 
 ![]({{site.url}}/images/collection-api.png)
 
@@ -281,7 +293,7 @@ Chỉ có `Sequence` là `Reversible` (khả nghịch), vì các chuỗi hỗ tr
 
 Tất cả các phương thức đặc biệt trong ABC `Set` đều triển khai các toán tử trung tố. Ví dụ: `a & b` tính toán giao điểm của các tập hợp `a` và `b` và được triển khai trong phương thức đặc biệt `__and__`.
 
-### Overview of Special Methods
+###  3. <a name='OverviewofSpecialMethods'></a>Overview of Special Methods
 
 Chương "**Data model**" trong The **Python Language Reference** liệt kê hơn 80 tên phương thức đặc biệt. Hơn một nửa trong số chúng triển khai các toán tử số học, bit và so sánh. Để có cái nhìn tổng quan về những gì có sẵn, hãy xem các bảng sau.
 
@@ -302,7 +314,7 @@ Các toán tử trung tố và số học được hỗ trợ bởi các phươn
 ![]({{site.url}}/images/special_method_name_2.png)
 ![]({{site.url}}/images/special_method_name_3.png)
 
-###  Why len Is Not a Method
+###  4. <a name='WhylenIsNotaMethod'></a> Why len Is Not a Method
 
 **Tại sao `len` không phải là một phương thức?**
 
