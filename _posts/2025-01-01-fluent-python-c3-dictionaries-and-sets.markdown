@@ -9,9 +9,42 @@ Chúng ta sử dụng **dictionaries** trong tất cả các chương trình Pyt
 
 Do vai trò quan trọng của chúng, các **dicts** trong Python được tối ưu hóa cao — và tiếp tục được cải thiện. **Hash tables** là động cơ đằng sau hiệu suất cao của **dicts** trong Python. Các kiểu dữ liệu tích hợp sẵn khác dựa trên **hash tables** là **set** và **frozenset**. Chúng cung cấp các **API** và toán tử phong phú hơn so với các **sets** mà bạn có thể đã gặp trong các ngôn ngữ phổ biến khác. Đặc biệt, các **sets** trong Python triển khai tất cả các phép toán cơ bản từ lý thuyết tập hợp, như hợp, giao, kiểm tra tập con, v.v. Với chúng, chúng ta có thể thể hiện các thuật toán theo cách khai báo hơn, tránh nhiều vòng lặp lồng nhau và câu lệnh điều kiện.
 
-### Modern dict Syntax
+### Table of content
 
-#### dict Comprehensions
+1. [Modern dict Syntax](#ModerndictSyntax)
+    * 1.1. [dict Comprehensions](#dictComprehensions)
+    * 1.2. [Unpacking Mappings](#UnpackingMappings)
+    * 1.3. [Merging Mappings with \|](#MergingMappingswith)
+2. [Pattern Matching with Mappings](#PatternMatchingwithMappings)
+3. [Standard API of Mapping Types](#StandardAPIofMappingTypes)
+4. [API chuẩn của các kiểu ánh xạ (Mapping Types)](#APIchuncacckiunhxMappingTypes)
+    * 4.1. [What Is Hashable](#WhatIsHashable)
+    * 4.2. [Overview of Common Mapping Methods](#OverviewofCommonMappingMethods)
+    * 4.3. [Inserting or Updating Mutable Values](#InsertingorUpdatingMutableValues)
+5. [Automatic Handling of Missing Keys](#AutomaticHandlingofMissingKeys)
+    * 5.1. [defaultdict: Another Take on Missing Keys](#defaultdict:AnotherTakeonMissingKeys)
+    * 5.2. [The __missing__ Method](#The__missing__Method)
+    * 5.3. [Sử dụng không nhất quán `__missing__` trong Standard Library](#Sdngkhngnhtqun__missing__trongStandardLibrary)
+6. [Các biến thể của dict](#Ccbinthcadict)
+    * 6.1. [collections.OrderedDict](#collections.OrderedDict)
+    * 6.2. [collections.ChainMap](#collections.ChainMap)
+    * 6.3. [collections.Counter](#collections.Counter)
+    * 6.4. [shelve.Shelf](#shelve.Shelf)
+    * 6.5. [Subclassing UserDict Instead of dict](#SubclassingUserDictInsteadofdict)
+7. [Immutable Mappings](#ImmutableMappings)
+8. [Dictionary Views](#DictionaryViews)
+9. [Practical Consequences of How dict Works](#PracticalConsequencesofHowdictWorks)
+10. [Set Theory](#SetTheory)
+    * 10.1. [Set Literals](#SetLiterals)
+    * 10.2. [Set Comprehensions](#SetComprehensions)
+11. [Practical Consequences of How Sets Work](#PracticalConsequencesofHowSetsWork)
+    * 11.1. [Set Operations](#SetOperations)
+12. [Set Operations on dict Views](#SetOperationsondictViews)
+
+
+###  1. <a name='ModerndictSyntax'></a>Modern dict Syntax
+
+####  1.1. <a name='dictComprehensions'></a>dict Comprehensions
 
 Kể từ Python 2.7, cú pháp của **listcomps** và **genexps** đã được điều chỉnh cho **dict comprehensions** (và cả **set comprehensions**, mà chúng ta sẽ sớm tìm hiểu). Một **dictcomp** (**dict comprehension**) xây dựng một instance **dict** bằng cách lấy các cặp `key:value` từ bất kỳ **iterable** nào.
 
@@ -51,7 +84,7 @@ Sắp xếp `country_dial` theo tên, đảo ngược các cặp một lần n�
 
 Nếu bạn đã quen với **listcomps**, **dictcomps** là một bước tiếp theo tự nhiên. Nếu bạn chưa quen, thì việc mở rộng cú pháp **comprehension** có nghĩa là bây giờ việc thành thạo nó sẽ có lợi hơn bao giờ hết.
 
-#### Unpacking Mappings
+####  1.2. <a name='UnpackingMappings'></a>Unpacking Mappings
 
 PEP 448—Additional Unpacking Generalizations đã tăng cường hỗ trợ cho việc **unpacking mappings** theo hai cách, kể từ Python 3.5.
 
@@ -77,7 +110,7 @@ Trong trường hợp này, các **keys** trùng lặp được phép. Các lầ
 
 Cú pháp này cũng có thể được sử dụng để hợp nhất các **mappings**, nhưng có những cách khác. Vui lòng đọc tiếp.
 
-#### Merging Mappings with |
+####  1.3. <a name='MergingMappingswith'></a>Merging Mappings with |
 
 Python 3.9 hỗ trợ sử dụng `|` và `|=` để hợp nhất các **mappings**. Điều này hợp lý, vì đây cũng là các toán tử hợp của **set**.
 
@@ -102,7 +135,7 @@ Thông thường, kiểu của **mapping** mới sẽ giống với kiểu của
 {'a': 2, 'b': 4, 'c': 6}
 ```
 
-### Pattern Matching with Mappings
+###  2. <a name='PatternMatchingwithMappings'></a>Pattern Matching with Mappings
 
 Câu lệnh `match/case` hỗ trợ các đối tượng là mapping. Các mẫu cho mapping trông giống như khai báo `dict`, nhưng chúng có thể khớp với các instance của bất kỳ lớp con thực tế hoặc ảo nào của `collections.abc.Mapping`.
 
@@ -180,9 +213,9 @@ Ice cream details: {'flavor': 'vanilla', 'cost': 199}
 
 Trong phần "Xử lý tự động các key bị thiếu" trên trang 90, chúng ta sẽ nghiên cứu `defaultdict` và các mapping khác trong đó tra cứu key thông qua `__getitem__` (tức là `d[key]`) thành công vì các mục bị thiếu được tạo ra một cách nhanh chóng. Trong ngữ cảnh so khớp mẫu, một kết quả khớp chỉ thành công nếu đối tượng đã có các key bắt buộc ở đầu câu lệnh `match`.
 
-### Standard API of Mapping Types
+###  3. <a name='StandardAPIofMappingTypes'></a>Standard API of Mapping Types
 
-### API chuẩn của các kiểu ánh xạ (Mapping Types)
+###  4. <a name='APIchuncacckiunhxMappingTypes'></a>API chuẩn của các kiểu ánh xạ (Mapping Types)
 
 Module `collections.abc` cung cấp các lớp trừu tượng (ABCs) `Mapping` và `MutableMapping` mô tả các giao diện của `dict` và các kiểu tương tự. Xem Hình 3-1.
 
@@ -202,7 +235,7 @@ True
 
 Do đó, tất cả chúng đều có chung hạn chế là các key phải là hashable (các value không cần phải hashable, chỉ các key). Nếu bạn cần ôn lại, phần tiếp theo sẽ giải thích.
 
-#### What Is Hashable
+####  4.1. <a name='WhatIsHashable'></a>What Is Hashable
 
 * **Hashable là gì?**: Là các đối tượng có mã băm không đổi và có thể so sánh với nhau. Mã băm giống như "dấu vân tay" của đối tượng, dùng để tra cứu nhanh.
 * **Tại sao cần hashable?**:  Để làm khóa (key) trong `dict`, `set` vì các kiểu dữ liệu này dùng mã băm để tổ chức và truy cập dữ liệu hiệu quả.
@@ -229,7 +262,7 @@ my_dict = {1: "một", "hai": 2, (1, 2): "cặp"}
 my_dict = {[1, 2]: "danh sách"} 
 ```
 
-#### Overview of Common Mapping Methods
+####  4.2. <a name='OverviewofCommonMappingMethods'></a>Overview of Common Mapping Methods
 
 API cơ bản cho các kiểu ánh xạ (mapping) khá phong phú. Bảng 3-1 hiển thị các phương thức được triển khai bởi `dict` và hai biến thể phổ biến: `defaultdict` và `OrderedDict`, cả hai đều được định nghĩa trong module `collections`.
 
@@ -240,7 +273,7 @@ Một phương thức ánh xạ tinh tế là `setdefault()`. Nó tránh việc 
 ![]({{site.url}}/images/mapping-type-dict-1.png)
 ![]({{site.url}}/images/mapping-type-dict-2.png)
 
-#### Inserting or Updating Mutable Values
+####  4.3. <a name='InsertingorUpdatingMutableValues'></a>Inserting or Updating Mutable Values
 
 Phù hợp với triết lý "fail-fast" của Python, truy cập `dict` với `d[k]` sẽ tạo ra lỗi khi `k` không phải là key hiện có. Các Pythonista đều biết rằng `d.get(k, default)` là một lựa chọn thay thế cho `d[k]` bất cứ khi nào giá trị mặc định thuận tiện hơn việc xử lý `KeyError`. Tuy nhiên, khi bạn lấy một giá trị mutable và muốn cập nhật nó, có một cách tốt hơn.
 
@@ -441,11 +474,11 @@ Tóm lại, `setdefault()` là một công cụ mạnh mẽ trong Python diction
 
 ---
 
-### Automatic Handling of Missing Keys
+###  5. <a name='AutomaticHandlingofMissingKeys'></a>Automatic Handling of Missing Keys
 
 Đôi khi, sẽ rất tiện lợi khi có các mappings trả về một giá trị "bịa ra" khi tìm kiếm một `key` bị thiếu (missing key). Có hai cách tiếp cận chính cho việc này: một là sử dụng `defaultdict` thay vì `dict` thông thường. Cách còn lại là tạo subclass của `dict` hoặc bất kỳ `mapping type` nào khác và thêm phương thức `__missing__`. 
 
-#### defaultdict: Another Take on Missing Keys
+####  5.1. <a name='defaultdict:AnotherTakeonMissingKeys'></a>defaultdict: Another Take on Missing Keys
 
 Một instance `collections.defaultdict` tạo ra các item với một giá trị mặc định theo yêu cầu bất cứ khi nào một `missing key` được tìm kiếm bằng cú pháp `d[k]`. Ví dụ 3-6 sử dụng `defaultdict` để cung cấp một giải pháp gọn gàng khác cho bài toán lập chỉ mục từ trong Ví dụ 3-5.
 
@@ -482,7 +515,7 @@ for word in sorted(index, key=str.upper):
 
 Nếu không cung cấp `default_factory`, `KeyError` thông thường sẽ được raise cho các `missing keys`.
 
-#### The __missing__ Method
+####  5.2. <a name='The__missing__Method'></a>The __missing__ Method
 
 Nằm bên dưới cách các mappings xử lý `missing keys` là phương thức được đặt tên rất phù hợp `__missing__`. Phương thức này không được định nghĩa trong base class `dict`, nhưng `dict` nhận biết nó: nếu bạn tạo subclass của `dict` và cung cấp phương thức `__missing__`, `dict.__getitem__` tiêu chuẩn sẽ gọi nó bất cứ khi nào không tìm thấy `key`, thay vì raise `KeyError`.
 
@@ -546,7 +579,7 @@ Tra cứu như `k in my_dict.keys()` hiệu quả trong Python 3 ngay cả đố
 
 Tôi có một lý do cụ thể để sử dụng `self.keys()` trong phương thức `__contains__` trong Ví dụ 3-8. Việc kiểm tra `key` chưa sửa đổi — `key in self.keys()` — là cần thiết để đảm bảo tính chính xác vì `StrKeyDict0` không bắt buộc tất cả các `key` trong dictionary phải thuộc kiểu `str`. Mục tiêu duy nhất của chúng ta với ví dụ đơn giản này là làm cho việc tìm kiếm "thân thiện" hơn và không ép buộc kiểu.
 
-#### Sử dụng không nhất quán `__missing__` trong Standard Library
+####  5.3. <a name='Sdngkhngnhtqun__missing__trongStandardLibrary'></a>Sử dụng không nhất quán `__missing__` trong Standard Library
 
 Hãy xem xét các trường hợp sau và cách các tra cứu `missing key` bị ảnh hưởng:
 
@@ -567,11 +600,11 @@ Bốn trường hợp vừa mô tả giả định các triển khai tối thi�
 
 Cho đến nay, chúng ta đã đề cập đến các `mapping type` `dict` và `defaultdict`, nhưng standard library đi kèm với các triển khai mapping khác, mà chúng ta sẽ thảo luận tiếp theo.
 
-### Các biến thể của dict
+###  6. <a name='Ccbinthcadict'></a>Các biến thể của dict
 
 Phần này tổng quan về các kiểu ánh xạ (mapping types) có trong thư viện chuẩn, ngoài defaultdict, đã được đề cập trong “defaultdict: Another Take on Missing Keys” ở trang 90.
 
-#### collections.OrderedDict
+####  6.1. <a name='collections.OrderedDict'></a>collections.OrderedDict
 
 Vì `dict` tích hợp sẵn cũng đã giữ thứ tự các key kể từ Python 3.6, lý do phổ biến nhất để sử dụng `OrderedDict` là viết code tương thích ngược với các phiên bản Python cũ hơn. Tài liệu của Python liệt kê một số điểm khác biệt còn lại giữa `dict` và `OrderedDict`, tôi xin trích dẫn ở đây—chỉ sắp xếp lại thứ tự các mục cho phù hợp với việc sử dụng hàng ngày:
 
@@ -583,7 +616,7 @@ Vì `dict` tích hợp sẵn cũng đã giữ thứ tự các key kể từ Pyth
 * Về mặt thuật toán, `OrderedDict` có thể xử lý các thao tác sắp xếp lại thường xuyên tốt hơn `dict`. Điều này làm cho nó phù hợp để theo dõi các truy cập gần đây (ví dụ: trong bộ nhớ cache LRU).
 
 
-#### collections.ChainMap
+####  6.2. <a name='collections.ChainMap'></a>collections.ChainMap
 
 `ChainMap` trong module `collections` của Python là một loại cấu trúc dữ liệu đặc biệt cho phép bạn kết hợp nhiều dictionary (hoặc các đối tượng mapping khác) thành một dictionary duy nhất. Điểm đặc biệt của `ChainMap` là nó không tạo ra một bản sao mới của các dictionary, mà chỉ đơn giản là liên kết chúng lại với nhau. Điều này có nghĩa là bất kỳ thay đổi nào bạn thực hiện trên `ChainMap` sẽ ảnh hưởng đến dictionary gốc tương ứng.
 
@@ -633,7 +666,7 @@ print(chain['c'])  # Output: 3 (tìm thấy trong dict2)
 Tóm lại, `ChainMap` là một công cụ mạnh mẽ trong Python cho phép bạn làm việc với nhiều dictionary một cách linh hoạt và hiệu quả. Hy vọng những giải thích và ví dụ trên đã giúp bạn hiểu rõ hơn về cách sử dụng `ChainMap`.
 
 
-#### collections.Counter
+####  6.3. <a name='collections.Counter'></a>collections.Counter
 
 Một ánh xạ (mapping) lưu giữ số lượng (count) dưới dạng số nguyên cho mỗi key. Cập nhật một key hiện có sẽ cộng vào số lượng của nó. Điều này có thể được sử dụng để đếm các instance của các đối tượng hashable hoặc như một multiset (được thảo luận sau trong phần này). `Counter` triển khai các toán tử `+` và `-` để kết hợp các số lượng, và các phương thức hữu ích khác như `most_common([n])`, trả về một danh sách các tuple được sắp xếp với n mục phổ biến nhất và số lượng của chúng; xem tài liệu. Dưới đây là `Counter` được sử dụng để đếm các chữ cái trong từ:
 
@@ -728,7 +761,7 @@ Như bạn thấy, `collections.Counter` là một công cụ linh hoạt và h�
 
 
 
-#### shelve.Shelf
+####  6.4. <a name='shelve.Shelf'></a>shelve.Shelf
 
 `shelve.Shelf` là một module trong Python cho phép bạn lưu trữ dữ liệu dưới dạng key-value, giống như dictionary, nhưng dữ liệu được lưu trữ **bền vững** trên ổ đĩa. Nói cách khác, `shelve.Shelf` cung cấp một cách đơn giản để lưu trữ các đối tượng Python vào file và truy xuất chúng sau này.
 
@@ -783,7 +816,7 @@ Tóm lại, `shelve.Shelf` là một lựa chọn đơn giản và hiệu quả 
 
 
 
-#### Subclassing UserDict Instead of dict
+####  6.5. <a name='SubclassingUserDictInsteadofdict'></a>Subclassing UserDict Instead of dict
 
 Trong Python, `UserDict` là một lớp trong module `collections` cung cấp một giao diện giống như dictionary. Tuy nhiên, thay vì trực tiếp kế thừa từ `dict`, bạn nên subclass `UserDict`. Dưới đây là một số lý do:
 
@@ -820,7 +853,7 @@ print(my_dict)  # Output: {'apple': 1}
 
 Tóm lại, subclassing `UserDict` thay vì `dict` mang lại nhiều lợi ích về tính dễ sử dụng, tùy chỉnh, an toàn và linh hoạt. Nó là một cách tiếp cận được khuyến nghị khi bạn cần tạo ra các dictionary với hành vi tùy chỉnh trong Python.
 
-### Immutable Mappings
+###  7. <a name='ImmutableMappings'></a>Immutable Mappings
 
 Trong Python, hầu hết các kiểu ánh xạ (mapping types) như `dict` đều là **mutable** (khả biến), nghĩa là bạn có thể thay đổi nội dung của chúng sau khi tạo. Tuy nhiên, đôi khi bạn cần đảm bảo rằng một ánh xạ không bị thay đổi, ví dụ như khi làm việc với dữ liệu nhạy cảm hoặc khi cần đảm bảo tính nhất quán của dữ liệu. Đó là lúc **immutable mappings** (ánh xạ bất biến) trở nên hữu ích.
 
@@ -886,7 +919,7 @@ except TypeError as e:
 
 Như vậy, `MappingProxyType` giúp bạn tạo ra các `immutable mappings` để bảo vệ dữ liệu và đảm bảo tính nhất quán trong ứng dụng của mình.
 
-### Dictionary Views
+###  8. <a name='DictionaryViews'></a>Dictionary Views
 
 Dictionary Views là một tính năng mạnh mẽ trong Python, cho phép bạn truy cập vào các keys, values, và items của một dictionary một cách hiệu quả mà không cần tạo ra bản sao của dữ liệu. 
 
@@ -958,7 +991,7 @@ print(all_keys)  # Output: {'a', 'c', 'b'}
 
 Dictionary Views là một tính năng hữu ích trong Python, giúp bạn làm việc với dictionary hiệu quả hơn. Bằng cách hiểu rõ về đặc điểm và ứng dụng của Dictionary Views, bạn có thể viết code Python rõ ràng, ngắn gọn và tối ưu hơn.
 
-### Practical Consequences of How dict Works
+###  9. <a name='PracticalConsequencesofHowdictWorks'></a>Practical Consequences of How dict Works
 
 Hiểu rõ cách thức hoạt động của `dict` trong Python giúp bạn viết code hiệu quả hơn và tránh được những lỗi tiềm ẩn. Dưới đây là giải thích chi tiết kèm ví dụ cho từng hệ quả thực tế:
 
@@ -1026,7 +1059,7 @@ for obj in objects:
 
 Hiểu rõ những hệ quả thực tế này giúp bạn sử dụng `dict` hiệu quả hơn, viết code Python tối ưu hơn về tốc độ và bộ nhớ.
 
-### Set Theory
+###  10. <a name='SetTheory'></a>Set Theory
 
 Set trong Python là một kiểu dữ liệu cho phép lưu trữ một tập hợp các phần tử **duy nhất** và **không có thứ tự**. Nó tương tự như khái niệm tập hợp trong toán học, và cung cấp nhiều phép toán hữu ích để làm việc với dữ liệu.
 
@@ -1110,7 +1143,7 @@ if 2 in my_set:
 ```python
 frozen_set = frozenset([1, 2, 3])
 ```
-#### Set Literals
+####  10.1. <a name='SetLiterals'></a>Set Literals
 
 Set literals là cách biểu diễn tập hợp (set) một cách trực tiếp trong code Python, sử dụng dấu ngoặc nhọn `{}`. Chúng cung cấp một cách ngắn gọn và dễ đọc để tạo ra các set.
 
@@ -1181,7 +1214,7 @@ if 2 in my_set:
 
 Set literals là một cách tiện lợi và hiệu quả để tạo ra các set trong Python. Sử dụng set literals giúp code của bạn ngắn gọn, dễ đọc và có hiệu năng tốt hơn.
 
-#### Set Comprehensions
+####  10.2. <a name='SetComprehensions'></a>Set Comprehensions
 
 Set comprehensions (setcomps) đã được thêm vào từ Python 2.7, cùng với dictcomps mà chúng ta đã thấy trong “dict Comprehensions” ở trang 79. Ví dụ 3-15 cho thấy cách thức.
 
@@ -1199,7 +1232,7 @@ Set comprehensions (setcomps) đã được thêm vào từ Python 2.7, cùng v�
 
 Thứ tự của đầu ra thay đổi cho mỗi process Python, vì salted hash được đề cập trong “What Is Hashable” ở trang 84.
 
-### Practical Consequences of How Sets Work
+###  11. <a name='PracticalConsequencesofHowSetsWork'></a>Practical Consequences of How Sets Work
 
 Các kiểu `set` và `frozenset` đều được triển khai bằng bảng băm (hash table). Điều này có những tác động sau:
 
@@ -1213,7 +1246,7 @@ Xem “Internals of sets and dicts” tại fluentpython.com để biết chi ti
 
 Bây giờ chúng ta hãy xem xét các loại hoạt động phong phú được cung cấp bởi set.
 
-#### Set Operations
+####  11.1. <a name='SetOperations'></a>Set Operations
 
 ![]({{site.url}}/images/set_uml.png)
 ![]({{site.url}}/images/set_ops_1.png)
@@ -1221,7 +1254,7 @@ Bây giờ chúng ta hãy xem xét các loại hoạt động phong phú đượ
 ![]({{site.url}}/images/set_ops_3.png)
 ![]({{site.url}}/images/set_ops_4.png)
 
-### Set Operations on dict Views
+###  12. <a name='SetOperationsondictViews'></a>Set Operations on dict Views
 
 ![]({{site.url}}/images/set_ops_5.png)
 ![]({{site.url}}/images/set_ops_6.png)
