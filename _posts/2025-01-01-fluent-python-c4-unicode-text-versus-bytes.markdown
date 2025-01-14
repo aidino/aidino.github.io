@@ -9,7 +9,34 @@ Python 3 đã giới thiệu một sự phân biệt rõ ràng giữa chuỗi v�
 
 Tùy thuộc vào loại công việc bạn làm với Python, bạn có thể nghĩ rằng việc hiểu Unicode là không quan trọng. Điều đó khó xảy ra, nhưng dù sao thì cũng không thể thoát khỏi sự phân chia `str` so với `byte`. Thêm vào đó, bạn sẽ thấy rằng các kiểu chuỗi nhị phân chuyên biệt cung cấp các tính năng mà kiểu `str` "đa năng" của Python 2 không có.
 
-### Character Issues
+### Table of content
+1. [Character Issues](#CharacterIssues)
+2. [Byte Essentials](#ByteEssentials)
+3. [Basic Encoders/Decoders](#BasicEncodersDecoders)
+4. [Understanding Encode/Decode Problems](#UnderstandingEncodeDecodeProblems)
+    * 4.1. [Coping with UnicodeEncodeError](#CopingwithUnicodeEncodeError)
+    * 4.2. [Coping with UnicodeDecodeError](#CopingwithUnicodeDecodeError)
+    * 4.3. [SyntaxError When Loading Modules with Unexpected Encoding](#SyntaxErrorWhenLoadingModuleswithUnexpectedEncoding)
+    * 4.4. [How to Discover the Encoding of a Byte Sequence](#HowtoDiscovertheEncodingofaByteSequence)
+    * 4.5. [BOM: A Useful Gremlin](#BOM:AUsefulGremlin)
+5. [Handling Text Files](#HandlingTextFiles)
+    * 5.1. [Beware of Encoding Defaults](#BewareofEncodingDefaults)
+6. [Normalizing Unicode for Reliable Comparisons](#NormalizingUnicodeforReliableComparisons)
+    * 6.1. [Case Folding](#CaseFolding)
+    * 6.2. [Utility Functions for Normalized Text Matching](#UtilityFunctionsforNormalizedTextMatching)
+    * 6.3. [Extreme “Normalization”: Taking Out Diacritics - Chuẩn hóa "cực đoan": Loại bỏ dấu phụ](#ExtremeNormalization:TakingOutDiacritics-Chunhaccoan:Loibduph)
+7. [Sorting Unicode Text](#SortingUnicodeText)
+    * 7.1. [Sorting with the Unicode Collation Algorithm](#SortingwiththeUnicodeCollationAlgorithm)
+8. [The Unicode Database](#TheUnicodeDatabase)
+    * 8.1. [Finding Characters by Name](#FindingCharactersbyName)
+9. [Tìm kiếm ký tự theo tên](#Tmkimkttheotn)
+    * 9.1. [Numeric Meaning of Characters](#NumericMeaningofCharacters)
+10. [Dual-Mode str and bytes APIs](#Dual-ModestrandbytesAPIs)
+    * 10.1. [str Versus bytes in Regular Expressions](#strVersusbytesinRegularExpressions)
+    * 10.2. [str Versus bytes in os Functions](#strVersusbytesinosFunctions)
+
+
+###  1. <a name='CharacterIssues'></a>Character Issues
 
 Khái niệm "chuỗi" (`string`) khá đơn giản: một chuỗi là một dãy các ký tự (`characters`). Vấn đề nằm ở định nghĩa của "ký tự".
 
@@ -49,7 +76,7 @@ Giải mã `bytes` thành `str` bằng cách sử dụng mã hóa UTF-8.
 
 Mặc dù `str` trong Python 3 gần giống với kiểu `unicode` trong Python 2 với một tên mới, nhưng `bytes` trong Python 3 không chỉ đơn giản là `str` cũ được đổi tên và cũng có kiểu `bytearray` liên quan chặt chẽ. Vì vậy, điều đáng giá là xem xét các kiểu chuỗi nhị phân trước khi chuyển sang các vấn đề mã hóa/giải mã.
 
-### Byte Essentials
+###  2. <a name='ByteEssentials'></a>Byte Essentials
 
 Trong Python, khi làm việc với dữ liệu thô như hình ảnh, file âm thanh, hoặc dữ liệu mạng, bạn sẽ gặp kiểu dữ liệu **bytes**. Hãy tưởng tượng bytes như một chuỗi các hạt nhỏ, mỗi hạt mang một giá trị từ 0 đến 255.  
 
@@ -90,7 +117,7 @@ print(cafe[0])  # Output: 99
 print(cafe[:1])  # Output: b'c' 
 ```
 
-### Basic Encoders/Decoders
+###  3. <a name='BasicEncodersDecoders'></a>Basic Encoders/Decoders
 
 Python cung cấp sẵn hơn 100 codec (bộ mã hóa/giải mã) để chuyển đổi qua lại giữa văn bản và byte. Mỗi codec có một tên, ví dụ như `'utf_8'`, và thường có các tên gọi khác như `'utf8'`, `'utf-8'` và `'U8'`, bạn có thể sử dụng làm đối số `encoding` trong các hàm như `open()`, `str.encode()`, `bytes.decode()`, v.v.
 
@@ -120,13 +147,13 @@ Các encoding được hiển thị trong Hình 4-1 được chọn làm mẫu �
 
 Với tổng quan về các encoding phổ biến này, chúng ta chuyển sang xử lý các vấn đề trong các hoạt động mã hóa và giải mã.
 
-### Understanding Encode/Decode Problems
+###  4. <a name='UnderstandingEncodeDecodeProblems'></a>Understanding Encode/Decode Problems
 
 Mặc dù có một exception chung là `UnicodeError`, nhưng lỗi được Python báo cáo thường cụ thể hơn: `UnicodeEncodeError` (khi chuyển đổi `str` sang chuỗi nhị phân) hoặc `UnicodeDecodeError` (khi đọc chuỗi nhị phân thành `str`).
 
 Việc tải các module Python cũng có thể gây ra `SyntaxError` khi encoding nguồn không chính xác.
 
-#### Coping with UnicodeEncodeError
+####  4.1. <a name='CopingwithUnicodeEncodeError'></a>Coping with UnicodeEncodeError
 
 Hầu hết các codec không phải UTF chỉ xử lý một tập hợp con nhỏ các ký tự Unicode. Khi chuyển đổi văn bản thành byte, nếu một ký tự không được định nghĩa trong encoding đích, `UnicodeEncodeError` sẽ được đưa ra, trừ khi xử lý đặc biệt được cung cấp bằng cách truyền đối số `errors` cho phương thức hoặc hàm encoding. Cách hoạt động của các trình xử lý lỗi được hiển thị trong Ví dụ 4-5.
 
@@ -165,7 +192,7 @@ b'S&#227;o Paulo'
 ASCII là một tập hợp con chung cho tất cả các encoding mà tôi biết, do đó, việc mã hóa sẽ luôn hoạt động nếu văn bản được tạo riêng từ các ký tự ASCII. Python 3.7 đã thêm một phương thức boolean mới `str.isascii()` để kiểm tra xem văn bản Unicode của bạn có phải là 100% ASCII thuần túy hay không. Nếu đúng như vậy, bạn sẽ có thể mã hóa nó thành byte trong bất kỳ encoding nào mà không cần đưa ra `UnicodeEncodeError`.
 
 
-#### Coping with UnicodeDecodeError
+####  4.2. <a name='CopingwithUnicodeDecodeError'></a>Coping with UnicodeDecodeError
 
 Không phải mọi byte đều chứa một ký tự ASCII hợp lệ và không phải mọi chuỗi byte đều là UTF-8 hoặc UTF-16 hợp lệ; do đó, khi bạn giả định một trong những encoding này trong khi chuyển đổi chuỗi nhị phân thành văn bản, bạn sẽ gặp `UnicodeDecodeError` nếu tìm thấy byte không mong muốn.
 
@@ -199,7 +226,7 @@ UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe9 in position 5: invalid 
 - Sử dụng xử lý lỗi `'replace'`, `\xe9` được thay thế bằng “�” (code point U+FFFD), KÝ TỰ THAY THẾ Unicode chính thức nhằm đại diện cho các ký tự không xác định.
 
 
-#### SyntaxError When Loading Modules with Unexpected Encoding
+####  4.3. <a name='SyntaxErrorWhenLoadingModuleswithUnexpectedEncoding'></a>SyntaxError When Loading Modules with Unexpected Encoding
 
 UTF-8 là encoding nguồn mặc định cho Python 3, giống như ASCII là mặc định cho Python 2. Nếu bạn tải một module `.py` chứa dữ liệu không phải UTF-8 và không có khai báo encoding, bạn sẽ nhận được thông báo như sau:
 
@@ -222,7 +249,7 @@ print('Olá, Mundo!')
 
 > Bây giờ mã nguồn Python 3 không còn bị giới hạn ở ASCII và mặc định là encoding UTF-8 tuyệt vời, "cách khắc phục" tốt nhất cho mã nguồn trong các encoding cũ như `'cp1252'` là chuyển đổi chúng sang UTF-8, và không bận tâm đến các comment mã hóa. Nếu trình soạn thảo của bạn không hỗ trợ UTF-8, đã đến lúc chuyển đổi.
 
-#### How to Discover the Encoding of a Byte Sequence
+####  4.4. <a name='HowtoDiscovertheEncodingofaByteSequence'></a>How to Discover the Encoding of a Byte Sequence
 
 Làm thế nào để bạn tìm ra encoding của một chuỗi byte? Câu trả lời ngắn gọn: bạn không thể. Bạn phải được cho biết.
 
@@ -240,7 +267,7 @@ $ chardetect 04-text-byte.asciidoc
 Mặc dù các chuỗi nhị phân của văn bản được mã hóa thường không mang theo gợi ý rõ ràng về encoding của chúng, nhưng các định dạng UTF có thể thêm một **byte order mark** vào nội dung văn bản. Điều đó được giải thích tiếp theo.
 
 
-#### BOM: A Useful Gremlin
+####  4.5. <a name='BOM:AUsefulGremlin'></a>BOM: A Useful Gremlin
 
 Trong Ví dụ 4-4, bạn có thể đã nhận thấy một vài byte phụ ở đầu chuỗi được mã hóa UTF-16. Đây là chúng một lần nữa:
 
@@ -283,7 +310,7 @@ Toàn bộ vấn đề về **endianness** này chỉ ảnh hưởng đến các
 
 Tuy nhiên, một số ứng dụng Windows (đáng chú ý là Notepad) vẫn thêm **BOM** vào các tệp UTF-8 — và Excel phụ thuộc vào **BOM** để phát hiện tệp UTF-8, nếu không nó sẽ giả định nội dung được mã hóa bằng **Windows code page**. Mã hóa UTF-8 này với **BOM** được gọi là UTF-8-SIG trong sổ đăng ký **codec** của Python. Ký tự U+FEFF được mã hóa trong UTF-8-SIG là chuỗi ba byte b'\xef\xbb\xbf'. Vì vậy, nếu một tệp bắt đầu bằng ba byte đó, thì có khả năng đó là tệp UTF-8 có **BOM**.
 
-### Handling Text Files
+###  5. <a name='HandlingTextFiles'></a>Handling Text Files
 
 Cách tốt nhất để xử lý Input/Output văn bản là sử dụng kỹ thuật "Unicode sandwich" (Hình 4-2). Điều này có nghĩa là các byte nên được **decode** thành **str** càng sớm càng tốt khi nhập (ví dụ: khi mở một tệp để đọc). "Nhân" của sandwich là logic nghiệp vụ của chương trình, nơi xử lý văn bản được thực hiện độc quyền trên các đối tượng **str**. Bạn không bao giờ nên **encode** hoặc **decode** ở giữa quá trình xử lý khác. Khi xuất, các **str** được **encode** thành byte càng muộn càng tốt. Hầu hết các web framework đều hoạt động như vậy, và chúng ta hiếm khi chạm vào byte khi sử dụng chúng. Ví dụ, trong Django, các view của bạn nên xuất ra Unicode **str**; Django sẽ tự động **encode** phản hồi thành byte, sử dụng UTF-8 theo mặc định.
 
@@ -353,7 +380,7 @@ b'caf\xc3\xa9'
 
 Vấn đề trong Ví dụ 4-9 liên quan đến việc dựa vào cài đặt mặc định khi mở tệp văn bản. Có một số nguồn cho các mặc định như vậy, như phần tiếp theo cho thấy.
 
-#### Beware of Encoding Defaults
+####  5.1. <a name='BewareofEncodingDefaults'></a>Beware of Encoding Defaults
 
 **Vấn đề chính:**
 
@@ -366,7 +393,7 @@ Vấn đề trong Ví dụ 4-9 liên quan đến việc dựa vào cài đặt m
 * Luôn chỉ rõ **encoding** khi làm việc với file văn bản (ví dụ: `encoding='utf-8'`).
 * Kỹ thuật "Unicode sandwich": chuyển đổi byte sang Unicode (`str`) ngay khi đọc file và ngược lại khi ghi file.
 
-### Normalizing Unicode for Reliable Comparisons
+###  6. <a name='NormalizingUnicodeforReliableComparisons'></a>Normalizing Unicode for Reliable Comparisons
 
 **Vấn đề:**
 
@@ -420,7 +447,7 @@ Vấn đề trong Ví dụ 4-9 liên quan đến việc dựa vào cài đặt m
 - Nên cẩn thận khi sử dụng NFKC/NFKD vì chúng có thể làm thay đổi ý nghĩa của văn bản.
 
 
-#### Case Folding
+####  6.1. <a name='CaseFolding'></a>Case Folding
 
 **Case folding** về cơ bản là chuyển đổi tất cả văn bản thành chữ thường, với một số biến đổi bổ sung. Nó được hỗ trợ bởi phương thức `str.casefold()`.
 
@@ -450,7 +477,7 @@ Như thường lệ với bất cứ điều gì liên quan đến Unicode, **ca
 Trong vài phần tiếp theo, chúng ta sẽ sử dụng kiến thức chuẩn hóa của mình để phát triển các hàm tiện ích.
 
 
-#### Utility Functions for Normalized Text Matching
+####  6.2. <a name='UtilityFunctionsforNormalizedTextMatching'></a>Utility Functions for Normalized Text Matching
 
 Như chúng ta đã thấy, NFC và NFD an toàn để sử dụng và cho phép so sánh hợp lý giữa các chuỗi Unicode. NFC là dạng chuẩn hóa tốt nhất cho hầu hết các ứng dụng. `str.casefold()` là cách để thực hiện so sánh không phân biệt chữ hoa chữ thường.
 
@@ -501,7 +528,7 @@ def fold_equal(str1, str2):
 
 Ngoài chuẩn hóa Unicode và case folding — cả hai đều là một phần của tiêu chuẩn Unicode — đôi khi việc áp dụng các phép biến đổi sâu hơn là hợp lý, chẳng hạn như thay đổi 'café' thành 'cafe'. Chúng ta sẽ xem xét khi nào và như thế nào trong phần tiếp theo.
 
-#### Extreme “Normalization”: Taking Out Diacritics - Chuẩn hóa "cực đoan": Loại bỏ dấu phụ
+####  6.3. <a name='ExtremeNormalization:TakingOutDiacritics-Chunhaccoan:Loibduph'></a>Extreme “Normalization”: Taking Out Diacritics - Chuẩn hóa "cực đoan": Loại bỏ dấu phụ
 
 Bí quyết của Google Search liên quan đến nhiều thủ thuật, nhưng một trong số đó rõ ràng là bỏ qua dấu phụ (ví dụ: dấu trọng âm, cedilla, v.v.), ít nhất là trong một số ngữ cảnh. Loại bỏ dấu phụ không phải là một hình thức chuẩn hóa phù hợp vì nó thường làm thay đổi nghĩa của từ và có thể tạo ra kết quả dương tính giả khi tìm kiếm. Nhưng nó giúp đối phó với một số sự thật của cuộc sống: đôi khi mọi người lười biếng hoặc thiếu hiểu biết về cách sử dụng dấu phụ chính xác và các quy tắc chính tả thay đổi theo thời gian, nghĩa là dấu trọng âm đến rồi đi trong các ngôn ngữ sống.
 
@@ -623,7 +650,7 @@ Tóm lại, các hàm trong simplify.py vượt xa chuẩn hóa tiêu chuẩn v�
 
 Bây giờ hãy sắp xếp việc sắp xếp Unicode.
 
-### Sorting Unicode Text
+###  7. <a name='SortingUnicodeText'></a>Sorting Unicode Text
 
 Python sắp xếp các chuỗi (sequence) thuộc bất kỳ kiểu nào bằng cách so sánh các mục trong mỗi chuỗi từng cái một. Đối với chuỗi ký tự, điều này có nghĩa là so sánh các điểm mã (code point). Thật không may, điều này tạo ra kết quả không thể chấp nhận được đối với bất kỳ ai sử dụng ký tự không phải ASCII.
 
@@ -680,7 +707,7 @@ Vì vậy, giải pháp thư viện tiêu chuẩn để sắp xếp quốc tế 
 
 May mắn thay, có một giải pháp đơn giản hơn: thư viện pyuca, có sẵn trên PyPI.
 
-#### Sorting with the Unicode Collation Algorithm
+####  7.1. <a name='SortingwiththeUnicodeCollationAlgorithm'></a>Sorting with the Unicode Collation Algorithm
 
 James Tauber, người đóng góp nhiều cho Django, hẳn đã cảm nhận được nỗi đau và tạo ra pyuca, một triển khai thuần Python của Thuật toán đối chiếu Unicode (UCA). Ví dụ 4-20 cho thấy cách sử dụng nó dễ dàng như thế nào.
 
@@ -701,13 +728,13 @@ pyuca không tính đến locale. Nếu bạn cần tùy chỉnh việc sắp x�
 
 Nhân tiện, bảng đối chiếu đó là một trong nhiều tệp dữ liệu bao gồm cơ sở dữ liệu Unicode, chủ đề tiếp theo của chúng ta.
 
-### The Unicode Database
+###  8. <a name='TheUnicodeDatabase'></a>The Unicode Database
 
 Tiêu chuẩn Unicode cung cấp toàn bộ cơ sở dữ liệu — dưới dạng một số tệp văn bản có cấu trúc — không chỉ bao gồm bảng ánh xạ các điểm mã (code point) tới tên ký tự mà còn có siêu dữ liệu (metadata) về các ký tự riêng lẻ và cách chúng liên quan với nhau. Ví dụ: cơ sở dữ liệu Unicode ghi lại xem một ký tự có thể in được hay không, là một chữ cái, là một chữ số thập phân hay là một số ký hiệu số khác. Đó là cách các phương thức `str.isalpha`, `isprintable`, `isdecimal` và `isnumeric` hoạt động. `str.casefold` cũng sử dụng thông tin từ bảng Unicode.
 
-#### Finding Characters by Name
+####  8.1. <a name='FindingCharactersbyName'></a>Finding Characters by Name
 
-### Tìm kiếm ký tự theo tên
+###  9. <a name='Tmkimkttheotn'></a>Tìm kiếm ký tự theo tên
 
 Mô-đun `unicodedata` có các hàm để truy xuất siêu dữ liệu ký tự, bao gồm `unicodedata.name()`, trả về tên chính thức của ký tự theo tiêu chuẩn. Hình 4-5 minh họa chức năng đó.
 
@@ -754,7 +781,7 @@ if __name__ == '__main__':
 
 Mô-đun `unicodedata` có các hàm thú vị khác. Tiếp theo, chúng ta sẽ thấy một số hàm liên quan đến việc lấy thông tin từ các ký tự có ý nghĩa số.
 
-#### Numeric Meaning of Characters
+####  9.1. <a name='NumericMeaningofCharacters'></a>Numeric Meaning of Characters
 
 Mô-đun `unicodedata` bao gồm các hàm để kiểm tra xem một ký tự Unicode có biểu thị một số hay không và nếu có, giá trị số của nó đối với con người — trái ngược với số điểm mã (code point) của nó. Ví dụ 4-22 cho thấy cách sử dụng `unicodedata.name()` và `unicodedata.numeric()`, cùng với các phương thức `.isdecimal()` và `.isnumeric()` của `str`.
 
@@ -786,9 +813,9 @@ Trong suốt chương này, chúng ta đã sử dụng một số hàm `unicoded
 
 Tiếp theo, chúng ta sẽ xem xét nhanh các API chế độ kép cung cấp các hàm chấp nhận đối số `str` hoặc `bytes` với cách xử lý đặc biệt tùy thuộc vào loại.
 
-### Dual-Mode str and bytes APIs
+###  10. <a name='Dual-ModestrandbytesAPIs'></a>Dual-Mode str and bytes APIs
 
-#### str Versus bytes in Regular Expressions
+####  10.1. <a name='strVersusbytesinRegularExpressions'></a>str Versus bytes in Regular Expressions
 
 Nếu bạn xây dựng một biểu thức chính quy với `bytes`, các mẫu như `\d` và `\w` chỉ khớp với các ký tự ASCII; ngược lại, nếu các mẫu này được đưa ra dưới dạng `str`, chúng sẽ khớp với các chữ số hoặc chữ cái Unicode ngoài ASCII. Ví dụ 4-23 và Hình 4-8 so sánh cách các chữ cái, chữ số ASCII, ký tự trên và chữ số Tamil được khớp bởi các mẫu `str` và `bytes`.
 
@@ -820,7 +847,7 @@ print(' bytes:', re_words_bytes.findall(text_bytes))  # Mẫu bytes rb'\w+' ch�
 Một mô-đun chế độ kép quan trọng khác là `os`.
 
 
-#### str Versus bytes in os Functions
+####  10.2. <a name='strVersusbytesinosFunctions'></a>str Versus bytes in os Functions
 
 Nhân Linux không hiểu biết nhiều về Unicode, vì vậy trong thế giới thực, bạn có thể tìm thấy tên tệp được tạo thành từ các chuỗi byte không hợp lệ trong bất kỳ lược đồ mã hóa hợp lý nào và không thể được giải mã thành `str`. Các máy chủ tệp có máy khách sử dụng nhiều hệ điều hành khác nhau đặc biệt dễ gặp phải sự cố này.
 
