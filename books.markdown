@@ -16,6 +16,7 @@ permalink: /books/
     - [Chapter 6: Object References, Mutability, and Recycling](_posts/2025-01-01-fluent-python-c6-object-reference-mutability-recycling.markdown)
 - **Part II. Functions as Objects**
     - [Chapter 7. Functions as First-Class Objects](_posts/2025-01-14-fluent-python-c7-function-as-frist-class-object.markdown)
+    - [Chapter 8. Type Hints in Functions](_posts/2025-01-14-fluent-python-c8-type-hints-in-functions.markdown)
 - **Part III. Classes and Protocols**
 - **Part IV. Control flow**
 - **Part V. Metaprogramming**
