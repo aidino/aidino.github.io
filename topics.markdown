@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Books
-permalink: /books/
+title: Topics
+permalink: /topics/
 ---
 
 
@@ -22,3 +22,10 @@ permalink: /books/
 - **Part V. Metaprogramming**
 
 Example code: https://github.com/fluentpython/example-code-2e
+
+---
+## Building Transformer models with attention
+- **Part I: Foundations of Attention**
+- **Part II: From Recurrent Neural Networks to Transformer**
+- **Part III: Building a Transformer from Scratch**
+- **Part IV: Applications**

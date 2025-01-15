@@ -41,7 +41,7 @@ plugins:
   - jekyll-seo-tag
 
 header_pages:
-  - books.markdown
+  - topics.markdown
   - papers.markdown
   - about.markdown
 
