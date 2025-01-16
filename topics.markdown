@@ -25,7 +25,7 @@ Example code: https://github.com/fluentpython/example-code-2e
 
 ---
 ## Building Transformer models with attention
-- **Part I: Foundations of Attention**
-- **Part II: From Recurrent Neural Networks to Transformer**
-- **Part III: Building a Transformer from Scratch**
-- **Part IV: Applications**
+- [Part I: Foundations of Attention](_posts/2025-01-16-btma-c1-foundation-of-attention.markdown)
+- [Part II: From Recurrent Neural Networks to Transformer](_posts/2025-01-16-btma-c2-from-rnn-to-transformer.markdown)
+- [Part III: Building a Transformer from Scratch](_posts/2025-01-16-btma-c3-build-transformer-from-scratch.markdown)
+- [Part IV: Applications](_posts/2025-01-16-btma-c4-application.markdown)
