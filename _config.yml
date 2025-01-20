@@ -45,7 +45,10 @@ header_pages:
   - papers.markdown
   - about.markdown
 
+markdown: kramdown
+
 kramdown:
+  math_engine: mathjax # or 'katex'
   syntax_highlighter_opts:
     default_lang: plaintext
 

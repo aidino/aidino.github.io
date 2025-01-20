@@ -24,6 +24,35 @@ permalink: /topics/
 Example code: https://github.com/fluentpython/example-code-2e
 
 ---
+## Machine Learning Scientist in Python
+
+- [Suppervised Learning with scikit-learn](_posts/2025-01-20-ml-in-python-c1.markdown)
+- **Project** - Predictive Modeling for Agriculture
+- Unsupervised Learning in Python
+- **Project** - Clustering Antarctic Penguin Species
+- Linear Classifiers in Python
+- Machine Learning with Tree-Vased Models in Python
+- **Project** - Predicting Movie Rental Durations
+- Extreme Gradient boosting with XGBoost
+- Cluster Analysis in Python
+- Dimensionality Reduction in Python
+- Preprocessing for Machine Learning in Python
+- Machine Learning for Time Series Data in Python
+- Feature Engineering for Machine Learning in Python
+- Model Validation in Python
+- Hyperparameter turning in Python
+- **Project** - Machine Learning Fundamentals in Python
+- Introduction to Natural Language Processing in Python
+- Natural Language Processing with spaCy
+- Feature Engineering for NLP in Python
+- Introduction Deep learning with PyTorch
+- Intermediate Deep learning with PyTorch
+- Image processing in Python
+- Introduction to PySpark
+- Machine Learning with PySpark
+- Winning a Kaggle Competition in Python
+
+---
 ## Building Transformer models with attention
 - [Part I: Foundations of Attention](_posts/2025-01-16-btma-c1-foundation-of-attention.markdown)
 - [Part II: From Recurrent Neural Networks to Transformer](_posts/2025-01-16-btma-c2-from-rnn-to-transformer.markdown)
