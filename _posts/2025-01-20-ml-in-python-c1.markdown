@@ -5,7 +5,29 @@ date: 2025-01-20 00:00:00 +0700
 categories: machine learning in python
 ---
 
-### Classification
+### Table of contents
+
+1. [Classification](#Classification)
+2. [Regression](#Regression)
+	* 2.1. [Regularized regression](#Regularizedregression)
+3. [Fine-Tuning Your Model](#Fine-TuningYourModel)
+	* 3.1. [Đánh giá mô hình Machine Learning (Evaluating Machine Learning Model)](#nhgimhnhMachineLearningEvaluatingMachineLearningModel)
+	* 3.2. [Phân tích hiệu quả mô hình phân loại (Analyzing Classification Model Performance)](#PhntchhiuqumhnhphnloiAnalyzingClassificationModelPerformance)
+	* 3.3. [Tối ưu hóa mô hình (Optimizing Models)](#TiuhamhnhOptimizingModels)
+	* 3.4. [ Logistic Regression: Mô hình phân loại "đa năng"](#LogisticRegression:Mhnhphnloianng)
+4. [Preprocessing and Pipelines](#PreprocessingandPipelines)
+	* 4.1. [Xử lý dữ liệu thiếu (Impute missing values)](#XldliuthiuImputemissingvalues)
+	* 4.2. [Chuyển đổi dữ liệu phân loại (Convert categorical data)](#ChuynidliuphnloiConvertcategoricaldata)
+	* 4.3. [Chuẩn hóa dữ liệu (Scale data)](#ChunhadliuScaledata)
+	* 4.4. [Đánh giá nhiều mô hình (Evaluate multiple models)](#nhginhiumhnhEvaluatemultiplemodels)
+	* 4.5. [Xây dựng pipeline (Build pipelines)](#XydngpipelineBuildpipelines)
+	* 4.6. [Example: Preprocessing data](#Example:Preprocessingdata)
+	* 4.7. [Example: Handling missing data](#Example:Handlingmissingdata)
+	* 4.8. [Example: Centering and Scaling](#Example:CenteringandScaling)
+	* 4.9. [Example: Evaluating multiple models](#Example:Evaluatingmultiplemodels)
+
+
+###  1. <a name='Classification'></a>Classification
 
 Hãy tưởng tượng bạn là một người nông dân trồng táo và cam. Bạn muốn tạo ra một hệ thống tự động giúp phân loại quả khi thu hoạch. Đây chính là một **classification problem** (bài toán phân loại), và chúng ta có thể giải quyết nó bằng **supervised learning** (học có giám sát).
 
@@ -111,7 +133,7 @@ plt.show()
 ```
 
 ---
-### Regression
+###  2. <a name='Regression'></a>Regression
 
 Bạn là chủ một doanh nghiệp và muốn biết liệu việc chi tiêu cho quảng cáo (**advertising expenditure**) có thực sự hiệu quả trong việc tăng doanh số (**sales values**) hay không. Đây là lúc **hồi quy (regression)** trong học máy phát huy tác dụng. Cụ thể, chúng ta sẽ sử dụng **hồi quy tuyến tính (linear regression)** để xây dựng mô hình dự đoán doanh số dựa trên chi phí quảng cáo.
 
@@ -263,7 +285,7 @@ print(np.std(cv_results))
 print(np.quantile(cv_results, [0.025, 0.975]))
 ```
 
-#### Regularized regression
+####  2.1. <a name='Regularizedregression'></a>Regularized regression
 
 **1. Giới thiệu**
 
@@ -387,11 +409,11 @@ plt.xticks(rotation=45)
 plt.show()
 ```
 
-### Fine-Tuning Your Model
+###  3. <a name='Fine-TuningYourModel'></a>Fine-Tuning Your Model
 
 Để hiểu rõ hiệu quả của một mô hình Machine Learning, chúng ta cần **đánh giá (evaluate)** nó. Giống như việc chấm điểm bài kiểm tra, chúng ta cần các **thước đo (metrics)** để xem mô hình hoạt động tốt ra sao.
 
-#### Đánh giá mô hình Machine Learning (Evaluating Machine Learning Model)
+####  3.1. <a name='nhgimhnhMachineLearningEvaluatingMachineLearningModel'></a>Đánh giá mô hình Machine Learning (Evaluating Machine Learning Model)
 
 Tưởng tượng bạn huấn luyện một mô hình để phân loại ảnh mèo và chó. Làm sao biết mô hình "học" tốt đến đâu? 
 
@@ -409,7 +431,7 @@ Tuy nhiên, độ chính xác đôi khi chưa đủ. Nếu có rất ít ảnh m
 
 Ma trận này cho thấy số lượng dự đoán đúng và sai của từng loại. Từ đó, ta tính được các metrics trên. **Scikit-learn** là một thư viện Python cung cấp các hàm tính toán các metrics này một cách dễ dàng.
 
-#### Phân tích hiệu quả mô hình phân loại (Analyzing Classification Model Performance)
+####  3.2. <a name='PhntchhiuqumhnhphnloiAnalyzingClassificationModelPerformance'></a>Phân tích hiệu quả mô hình phân loại (Analyzing Classification Model Performance)
 
 Ngoài các metrics, ta có thể dùng **đường cong ROC (Receiver Operating Characteristic curve)** và **AUC (Area Under the Curve)** để phân tích mô hình.
 
@@ -417,7 +439,7 @@ Ngoài các metrics, ta có thể dùng **đường cong ROC (Receiver Operating
 
 Đường cong ROC biểu diễn mối quan hệ giữa **tỷ lệ dương tính thật (True Positive Rate)** và **tỷ lệ dương tính giả (False Positive Rate)**. AUC là diện tích dưới đường cong ROC, càng gần 1 thì mô hình càng tốt.
 
-#### Tối ưu hóa mô hình (Optimizing Models)
+####  3.3. <a name='TiuhamhnhOptimizingModels'></a>Tối ưu hóa mô hình (Optimizing Models)
 
 Giống như việc điều chỉnh các nút vặn trên radio để bắt sóng tốt nhất, ta cần **tối ưu hóa (optimize)** mô hình bằng cách điều chỉnh các **siêu tham số (hyperparameters)**. 
 
@@ -446,7 +468,7 @@ print(classification_report(y_test, y_pred))
 
 ```
 
-####  Logistic Regression: Mô hình phân loại "đa năng"
+####  3.4. <a name='LogisticRegression:Mhnhphnloianng'></a> Logistic Regression: Mô hình phân loại "đa năng"
 
 Logistic Regression (Hồi quy Logistic) là một thuật toán mạnh mẽ trong học máy, được sử dụng rộng rãi cho các bài toán **phân loại (classification)**. Mặc dù có tên gọi là "hồi quy", nhưng thực chất nó lại được dùng để dự đoán **xác suất** một đối tượng thuộc về một lớp nào đó.
 
@@ -576,11 +598,11 @@ print("Tuned Logistic Regression Parameters: {}".format(logreg_cv.best_params_))
 print("Tuned Logistic Regression Best Accuracy Score: {}".format(logreg_cv.best_score_))
 ```
 
-### Preprocessing and Pipelines
+###  4. <a name='PreprocessingandPipelines'></a>Preprocessing and Pipelines
 
 Trước khi huấn luyện mô hình Machine Learning, chúng ta cần **tiền xử lý dữ liệu (preprocess data)**. Hãy tưởng tượng dữ liệu như những nguyên liệu thô, cần được sơ chế và chuẩn bị trước khi "nấu" thành món ăn (mô hình).
 
-#### Xử lý dữ liệu thiếu (Impute missing values)
+####  4.1. <a name='XldliuthiuImputemissingvalues'></a>Xử lý dữ liệu thiếu (Impute missing values)
 
 Dữ liệu thực tế thường có **giá trị thiếu (missing values)**, giống như những chỗ trống trong bảng dữ liệu. Ta cần "lấp đầy" những chỗ trống này để mô hình hoạt động hiệu quả.
 
@@ -591,7 +613,7 @@ Một số phương pháp phổ biến:
 
 Ví dụ: Nếu cột "tuổi" có giá trị thiếu, ta có thể thay thế bằng tuổi trung bình của những người có đặc điểm tương đồng.
 
-#### Chuyển đổi dữ liệu phân loại (Convert categorical data)
+####  4.2. <a name='ChuynidliuphnloiConvertcategoricaldata'></a>Chuyển đổi dữ liệu phân loại (Convert categorical data)
 
 **Dữ liệu phân loại (categorical data)** là dữ liệu dạng nhãn, ví dụ: màu sắc (đỏ, xanh, vàng), giới tính (nam, nữ). Mô hình Machine Learning thường yêu cầu dữ liệu dạng số, nên ta cần chuyển đổi dữ liệu phân loại.
 
@@ -602,7 +624,7 @@ Một số phương pháp phổ biến:
 
 Ví dụ: Biến "màu sắc" có thể được chuyển đổi thành ba cột mới: "đỏ", "xanh", "vàng".
 
-#### Chuẩn hóa dữ liệu (Scale data)
+####  4.3. <a name='ChunhadliuScaledata'></a>Chuẩn hóa dữ liệu (Scale data)
 
 Các biến trong dữ liệu có thể có **thang đo (scale)** khác nhau, ví dụ: tuổi (0-100) và thu nhập (hàng triệu đồng). **Chuẩn hóa dữ liệu (data scaling)** giúp đưa các biến về cùng một thang đo, tránh trường hợp biến có giá trị lớn hơn chi phối mô hình.
 
@@ -611,13 +633,13 @@ Một số phương pháp phổ biến:
 * **Standardization**: Biến đổi dữ liệu sao cho có trung bình bằng 0 và độ lệch chuẩn bằng 1.
 * **Normalization**: Biến đổi dữ liệu về khoảng giá trị từ 0 đến 1.
 
-#### Đánh giá nhiều mô hình (Evaluate multiple models)
+####  4.4. <a name='nhginhiumhnhEvaluatemultiplemodels'></a>Đánh giá nhiều mô hình (Evaluate multiple models)
 
 Để chọn ra mô hình tốt nhất, ta cần so sánh hiệu quả của nhiều mô hình **học có giám sát (supervised learning)** khác nhau, ví dụ: **Logistic Regression, Decision Tree, Support Vector Machine**.
 
 Ta có thể sử dụng các **thước đo (metrics)** như **độ chính xác (accuracy), precision, recall, F1-score** để đánh giá và so sánh các mô hình.
 
-#### Xây dựng pipeline (Build pipelines)
+####  4.5. <a name='XydngpipelineBuildpipelines'></a>Xây dựng pipeline (Build pipelines)
 
 **Pipeline** giúp kết hợp các bước tiền xử lý dữ liệu và huấn luyện mô hình thành một quy trình duy nhất. Điều này giúp đơn giản hóa code và tránh lỗi.
 
@@ -627,7 +649,7 @@ Ví dụ: Một pipeline có thể bao gồm các bước: impute missing values
 
 **Tóm lại**, tiền xử lý dữ liệu và đánh giá mô hình là những bước quan trọng trong quy trình Machine Learning. Bằng cách áp dụng các kỹ thuật này, ta có thể xây dựng mô hình hiệu quả và đáng tin cậy hơn.
 
-#### Example: Preprocessing data
+####  4.6. <a name='Example:Preprocessingdata'></a>Example: Preprocessing data
 
 - Creating dummy variables
 
@@ -658,7 +680,7 @@ print("Average RMSE: {}".format(np.mean(rmse)))
 print("Standard Deviation of the target array: {}".format(np.std(y)))
 ```
 
-#### Example: Handling missing data
+####  4.7. <a name='Example:Handlingmissingdata'></a>Example: Handling missing data
 
 - Dropping missing data
 
@@ -707,7 +729,7 @@ print(confusion_matrix(y_test, y_pred))
 
 ```
 
-#### Example: Centering and Scaling
+####  4.8. <a name='Example:CenteringandScaling'></a>Example: Centering and Scaling
 
 - Centering and scaling for regression
 
@@ -749,7 +771,7 @@ print(cv.best_score_, "\n", cv.best_params_)
 
 ```
 
-#### Example: Evaluating multiple models
+####  4.9. <a name='Example:Evaluatingmultiplemodels'></a>Example: Evaluating multiple models
 
 - Visualizing regression model performance
 
