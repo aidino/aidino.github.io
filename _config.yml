@@ -31,6 +31,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 theme: minima
 
 show_excerpts: true
+mathjax: true
 
 minima:
   skin: dark
@@ -39,6 +40,7 @@ minima:
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-latex
 
 header_pages:
   - topics.markdown

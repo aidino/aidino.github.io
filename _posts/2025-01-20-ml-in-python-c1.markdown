@@ -265,51 +265,570 @@ print(np.quantile(cv_results, [0.025, 0.975]))
 
 #### Regularized regression
 
-Để hiểu rõ hơn về cách thức hoạt động của Ridge và Lasso regression, chúng ta hãy cùng xem xét công thức toán học của chúng với LaTeX markdown.
+**1. Giới thiệu**
 
-**1. Hồi quy tuyến tính (Linear Regression):**
+Trong học máy, mục tiêu của chúng ta thường là tìm mô hình dự đoán tốt nhất cho dữ liệu. Tuy nhiên, đôi khi mô hình quá phức tạp, dẫn đến hiện tượng overfitting (quá khớp). Overfitting xảy ra khi mô hình học quá tốt trên tập huấn luyện, đến mức nó ghi nhớ cả nhiễu và không khái quát hóa tốt cho dữ liệu mới.
 
-Mục tiêu của hồi quy tuyến tính là tìm ra các hệ số  **w = (w<sub>1</sub>, w<sub>2</sub>, ..., w<sub>n</sub>)** sao cho mô hình dự đoán $\hat{y}$ gần với giá trị thực tế $y$ nhất có thể. Hàm mất mát thường được sử dụng là **Mean Squared Error (MSE):**
+Để giải quyết overfitting, chúng ta có thể sử dụng các kỹ thuật regularization (chính quy hóa). Ridge và Lasso regularization là hai kỹ thuật phổ biến giúp ngăn chặn overfitting bằng cách thêm một penalty term vào hàm mất mát.
 
-$$
-MSE = \frac{1}{m} \sum_{i=1}^{m} (y_i - \hat{y}_i)^2 
-$$
+**2. Ridge Regularization**
 
-Trong đó:
+Ridge regularization thêm penalty term là tổng bình phương của các hệ số vào hàm mất mát. Điều này buộc mô hình giảm giá trị của các hệ số, làm cho mô hình đơn giản hơn và ít bị overfitting hơn.
 
-- $m$ là số lượng điểm dữ liệu
-- $y_i$ là giá trị thực tế của điểm dữ liệu thứ $i$
-- $\hat{y}_i$ là giá trị dự đoán của điểm dữ liệu thứ $i$, được tính bằng: $\hat{y}_i = w_0 + w_1 x_{i1} + w_2 x_{i2} + ... + w_n x_{in}$
+**Công thức:**
 
-**2. Ridge Regression:**
-
-Ridge regression thêm vào hàm MSE một hình phạt L2, tỷ lệ với bình phương của các hệ số:
-
-```math
-Ridge Loss = MSE + \lambda \sum_{j=1}^{n} w_j^2
-```
+Hàm mất mát với Ridge regularization:  Loss function + λ * Σ(β<sub>j</sub><sup>2</sup>)
 
 Trong đó:
 
-- $\lambda$ là **tham số chính quy hóa (regularization parameter)**, điều chỉnh mức độ "co lại" của các hệ số. $\lambda$ càng lớn, hình phạt càng mạnh, các hệ số càng bị co lại về gần 0.
+*  Loss function: Hàm mất mát ban đầu (ví dụ: Mean Squared Error)
+*  λ: Tham số điều chỉnh mức độ regularization. λ càng lớn, penalty càng mạnh.
+*  β<sub>j</sub>: Hệ số của biến thứ j
 
-**3. Lasso Regression:**
+**Ưu điểm:**
 
-Lasso regression thêm vào hàm MSE một hình phạt L1, tỷ lệ với giá trị tuyệt đối của các hệ số:
+* Giảm overfitting hiệu quả.
+* Hoạt động tốt khi có nhiều biến tương quan với nhau.
+
+**Nhược điểm:**
+
+* Không loại bỏ hoàn toàn các biến không quan trọng, chỉ làm giảm giá trị của chúng.
+
+**3. Lasso Regularization**
+
+Lasso regularization thêm penalty term là tổng giá trị tuyệt đối của các hệ số vào hàm mất mát. Điều này buộc một số hệ số về bằng 0, hiệu quả loại bỏ các biến không quan trọng khỏi mô hình.
+
+**Công thức:**
+
+Hàm mất mát với Lasso regularization: Loss function + λ * Σ(\|β<sub>j</sub>\|)
+
+Trong đó:
+
+*  Loss function: Hàm mất mát ban đầu
+*  λ: Tham số điều chỉnh mức độ regularization
+*  β<sub>j</sub>: Hệ số của biến thứ j
+
+**Ưu điểm:**
+
+* Giảm overfitting hiệu quả.
+* Thực hiện feature selection (lựa chọn đặc trưng) bằng cách loại bỏ các biến không quan trọng.
+
+**Nhược điểm:**
+
+* Có thể hoạt động kém khi có nhiều biến tương quan với nhau.
+* Có thể loại bỏ một số biến quan trọng nếu λ quá lớn.
+
+**4. So sánh Ridge và Lasso**
+
+| Đặc điểm | Ridge | Lasso |
+|---|---|---|
+| Penalty term | Tổng bình phương hệ số | Tổng giá trị tuyệt đối hệ số |
+| Tác động lên hệ số | Giảm giá trị hệ số | Buộc một số hệ số về 0 |
+| Feature selection | Không | Có |
+| Ưu điểm | Xử lý tốt biến tương quan | Loại bỏ biến không quan trọng |
+| Nhược điểm | Không loại bỏ hoàn toàn biến | Có thể loại bỏ biến quan trọng |
+
+
+**5. Trường hợp sử dụng**
+
+* **Ridge:** Thích hợp khi có nhiều biến dự đoán và chúng có thể tương quan với nhau.
+* **Lasso:** Thích hợp khi cần lựa chọn các biến quan trọng nhất trong mô hình, đặc biệt khi có nhiều biến không cần thiết.
+
+**6. Ví dụ minh họa**
+
+Giả sử chúng ta đang xây dựng mô hình dự đoán giá nhà dựa trên các biến như diện tích, số phòng ngủ, khoảng cách đến trung tâm thành phố, ...
+
+* Nếu chúng ta sử dụng **Ridge regularization**, mô hình sẽ giảm giá trị của các hệ số tương ứng với các biến ít quan trọng (ví dụ: màu sơn tường). 
+* Nếu chúng ta sử dụng **Lasso regularization**, mô hình có thể loại bỏ hoàn toàn các biến không quan trọng (ví dụ: số lượng cây trong vườn).
+
+**7. Kết luận**
+
+Cả Ridge và Lasso regularization đều là những kỹ thuật hữu ích để ngăn chặn overfitting trong học máy. Việc lựa chọn phương pháp nào phụ thuộc vào đặc điểm của dữ liệu và mục tiêu của mô hình.
+
+**Example: Ridge**
+
+```python
+# Import Ridge
+from sklearn.linear_model import Ridge
+alphas = [0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0]
+ridge_scores = []
+for alpha in alphas:
+  
+  # Create a Ridge regression model
+  ridge = Ridge(alpha=alpha)
+  
+  # Fit the data
+  ridge.fit(X_train, y_train)
+  
+  # Obtain R-squared
+  score = ridge.score(X_test, y_test)
+  ridge_scores.append(score)
+print(ridge_scores)
 
 ```
-Lasso Loss = MSE + \lambda \sum_{j=1}^{n} |w_j|
+
+**Example: Lasso regression for feature importance**
+
+```python
+# Import Lasso
+from sklearn.linear_model import Lasso
+
+# Instantiate a lasso regression model
+lasso = Lasso(alpha=0.3)
+
+# Fit the model to the data
+lasso.fit(X, y)
+
+# Compute and print the coefficients
+lasso_coef = lasso.coef_
+print(lasso_coef)
+plt.bar(sales_columns, lasso_coef)
+plt.xticks(rotation=45)
+plt.show()
 ```
 
-**4. Ảnh hưởng của hình phạt:**
+### Fine-Tuning Your Model
 
-- **Ridge regression:** Hình phạt L2 khiến các hệ số bị "co lại" về gần 0, nhưng không hoàn toàn bằng 0. Điều này giúp giảm ảnh hưởng của các biến ít quan trọng, đồng thời giữ lại tất cả các biến trong mô hình.
-- **Lasso regression:** Hình phạt L1 có thể khiến một số hệ số bị "triệt tiêu" về 0, từ đó loại bỏ hoàn toàn những biến không quan trọng. Điều này giúp đơn giản hóa mô hình và tăng khả năng diễn giải.
+Để hiểu rõ hiệu quả của một mô hình Machine Learning, chúng ta cần **đánh giá (evaluate)** nó. Giống như việc chấm điểm bài kiểm tra, chúng ta cần các **thước đo (metrics)** để xem mô hình hoạt động tốt ra sao.
 
-**5. Lựa chọn tham số $\lambda$:**
+#### Đánh giá mô hình Machine Learning (Evaluating Machine Learning Model)
 
-Tham số $\lambda$ đóng vai trò quan trọng trong việc điều chỉnh mức độ chính quy hóa. Giá trị của $\lambda$ thường được xác định bằng kỹ thuật **cross-validation**, nhằm tìm ra giá trị tối ưu giúp mô hình đạt hiệu quả tốt nhất trên dữ liệu mới.
+Tưởng tượng bạn huấn luyện một mô hình để phân loại ảnh mèo và chó. Làm sao biết mô hình "học" tốt đến đâu? 
 
-**Tóm lại:**
+Chúng ta dùng các **thước đo (metrics)** như **độ chính xác (accuracy)**: tỷ lệ ảnh được phân loại đúng. 
 
-Công thức toán học của Ridge và Lasso regression cho thấy rõ sự khác biệt trong cách thức chúng thêm hình phạt vào hàm mất mát. Ridge sử dụng hình phạt L2, co lại các hệ số về gần 0, trong khi Lasso sử dụng hình phạt L1, triệt tiêu một số hệ số về 0. Việc hiểu rõ cơ chế hoạt động này giúp bạn lựa chọn phương pháp phù hợp cho từng bài toán cụ thể.
+Tuy nhiên, độ chính xác đôi khi chưa đủ. Nếu có rất ít ảnh mèo, mô hình luôn đoán "chó" vẫn có thể đạt độ chính xác cao nhưng lại phân loại sai hết ảnh mèo. Vì vậy, ta cần thêm các thước đo khác như:
+
+* **Precision**: Trong số ảnh được dự đoán là mèo, có bao nhiêu ảnh thực sự là mèo?
+* **Recall**: Trong số ảnh thực sự là mèo, mô hình dự đoán đúng bao nhiêu ảnh?
+* **F1-score**: Kết hợp precision và recall để đánh giá tổng thể.
+
+Để dễ hình dung, ta dùng **ma trận nhầm lẫn (confusion matrix)**:
+
+![](https://glassboxmedicine.com/wp-content/uploads/2019/02/confusion-matrix.png?w=816)
+
+Ma trận này cho thấy số lượng dự đoán đúng và sai của từng loại. Từ đó, ta tính được các metrics trên. **Scikit-learn** là một thư viện Python cung cấp các hàm tính toán các metrics này một cách dễ dàng.
+
+#### Phân tích hiệu quả mô hình phân loại (Analyzing Classification Model Performance)
+
+Ngoài các metrics, ta có thể dùng **đường cong ROC (Receiver Operating Characteristic curve)** và **AUC (Area Under the Curve)** để phân tích mô hình.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Roc_curve.svg/220px-Roc_curve.svg.png)
+
+Đường cong ROC biểu diễn mối quan hệ giữa **tỷ lệ dương tính thật (True Positive Rate)** và **tỷ lệ dương tính giả (False Positive Rate)**. AUC là diện tích dưới đường cong ROC, càng gần 1 thì mô hình càng tốt.
+
+#### Tối ưu hóa mô hình (Optimizing Models)
+
+Giống như việc điều chỉnh các nút vặn trên radio để bắt sóng tốt nhất, ta cần **tối ưu hóa (optimize)** mô hình bằng cách điều chỉnh các **siêu tham số (hyperparameters)**. 
+
+Ví dụ, với mô hình cây quyết định, siêu tham số có thể là độ sâu tối đa của cây. Ta có thể thử nghiệm nhiều giá trị khác nhau để tìm ra giá trị tốt nhất.
+
+**Scikit-learn** cung cấp các công cụ như **GridSearchCV** và **RandomizedSearchCV** để tự động tìm kiếm siêu tham số tối ưu.
+
+Tóm lại, việc đánh giá, phân tích và tối ưu hóa mô hình là các bước quan trọng để đảm bảo mô hình hoạt động hiệu quả và đáng tin cậy.
+
+**Example: confusion_matrix, classification_report**
+```python
+# Import confusion matrix
+from sklearn.metrics import confusion_matrix, classification_report
+
+knn = KNeighborsClassifier(n_neighbors=6)
+
+# Fit the model to the training data
+knn.fit(X_train, y_train)
+
+# Predict the labels of the test data: y_pred
+y_pred = knn.predict(X_test)
+
+# Generate the confusion matrix and classification report
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+```
+
+####  Logistic Regression: Mô hình phân loại "đa năng"
+
+Logistic Regression (Hồi quy Logistic) là một thuật toán mạnh mẽ trong học máy, được sử dụng rộng rãi cho các bài toán **phân loại (classification)**. Mặc dù có tên gọi là "hồi quy", nhưng thực chất nó lại được dùng để dự đoán **xác suất** một đối tượng thuộc về một lớp nào đó.
+
+**Hoạt động của Logistic Regression**
+
+Hãy tưởng tượng bạn muốn dự đoán liệu một email có phải là spam hay không. Logistic Regression sẽ phân tích các đặc trưng của email (ví dụ: nội dung, người gửi,...) và đưa ra một xác suất từ 0 đến 1. Nếu xác suất cao hơn một ngưỡng nào đó (ví dụ: 0.5), email sẽ được phân loại là spam.
+
+Để làm được điều này, Logistic Regression sử dụng **hàm sigmoid**. Hàm sigmoid có dạng hình chữ "S", nhận đầu vào là một giá trị bất kỳ và  biến đổi nó thành một giá trị nằm trong khoảng từ 0 đến 1. 
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/220px-Logistic-curve.svg.png)
+
+Giá trị đầu ra của hàm sigmoid được hiểu là xác suất. Ví dụ, nếu hàm sigmoid trả về giá trị 0.8, có nghĩa là mô hình dự đoán email có 80% khả năng là spam.
+
+**Ưu điểm của Logistic Regression**
+
+* **Đơn giản và dễ hiểu**: Logistic Regression là một mô hình tương đối đơn giản, dễ dàng triển khai và diễn giải.
+* **Hiệu quả**: Logistic Regression hoạt động tốt trên nhiều bài toán phân loại, đặc biệt là các bài toán phân loại nhị phân (hai lớp).
+* **Diễn giải được**: Ta có thể hiểu được tầm quan trọng của từng đặc trưng bằng cách xem xét hệ số của chúng trong mô hình.
+
+**Ứng dụng của Logistic Regression**
+
+Logistic Regression được ứng dụng trong nhiều lĩnh vực, bao gồm:
+
+* **Nhận dạng hình ảnh**: Phân loại ảnh (ví dụ: mèo/chó, xe hơi/xe máy).
+* **Xử lý ngôn ngữ tự nhiên**: Phân loại văn bản (ví dụ: spam/không spam, tích cực/tiêu cực).
+* **Y tế**: Dự đoán bệnh (ví dụ: ung thư/không ung thư).
+* **Tài chính**: Đánh giá rủi ro tín dụng.
+* **Marketing**: Dự đoán khả năng khách hàng mua hàng.
+
+**Ví dụ minh họa**
+
+Giả sử bạn muốn xây dựng mô hình dự đoán liệu một khách hàng có nhấp vào quảng cáo hay không. Bạn có thể sử dụng Logistic Regression với các đặc trưng như tuổi, giới tính, sở thích của khách hàng. Mô hình sẽ phân tích các đặc trưng này và đưa ra xác suất khách hàng nhấp vào quảng cáo.
+
+**Tóm lại**, Logistic Regression là một mô hình phân loại linh hoạt và hiệu quả, được ứng dụng rộng rãi trong nhiều lĩnh vực. Nó là một công cụ mạnh mẽ cho bất kỳ ai muốn khám phá thế giới của học máy.
+
+**Example:**
+
+- Building a logistic regression model
+
+```python
+# Import LogisticRegression
+from sklearn.linear_model import LogisticRegression
+
+# Instantiate the model
+logreg = LogisticRegression()
+
+# Fit the model
+logreg.fit(X_train, y_train)
+
+# Predict probabilities
+y_pred_probs = logreg.predict_proba(X_test)[:, 1]
+
+print(y_pred_probs[:10])
+```
+
+- The ROC curve
+
+```python
+# Import roc_curve
+from sklearn.metrics import roc_curve
+
+# Generate ROC curve values: fpr, tpr, thresholds
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_probs)
+
+plt.plot([0, 1], [0, 1], 'k--')
+
+# Plot tpr against fpr
+plt.plot(fpr, tpr)
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve for Diabetes Prediction')
+plt.show()
+```
+
+- ROC AUC
+
+```python
+# Import roc_auc_score
+from sklearn.metrics import roc_auc_score, confusion_matrix, classification_report
+
+# Calculate roc_auc_score
+print(roc_auc_score(y_test, y_pred_probs))
+
+# Calculate the confusion matrix
+print(confusion_matrix(y_test, y_pred))
+
+# Calculate the classification report
+print(classification_report(y_test, y_pred))
+```
+
+- `GridSearchCV`
+
+```python
+# Import GridSearchCV
+from sklearn.model_selection import GridSearchCV
+
+# Set up the parameter grid
+# create 20 evenly spaced values ranging from 0.00001 to 1.
+param_grid = {"alpha": np.linspace(0.00001, 1, 20)}
+
+# Instantiate lasso_cv
+lasso_cv = GridSearchCV(lasso, param_grid, cv=kf)
+
+# Fit to the training data
+lasso_cv.fit(X_train, y_train)
+print("Tuned lasso paramaters: {}".format(lasso_cv.best_params_))
+print("Tuned lasso score: {}".format(lasso_cv.best_score_))
+```
+
+- `RandomizedSearchCV`
+
+```python
+# Create the parameter space
+params = {"penalty": ["l1", "l2"],
+         "tol": np.linspace(0.0001, 1.0, 50),
+         "C": np.linspace(0.1, 1.0, 50),
+         "class_weight": ["balanced", {0:0.8, 1:0.2}]}
+
+# Instantiate the RandomizedSearchCV object
+logreg_cv = RandomizedSearchCV(logreg, params, cv=kf)
+
+# Fit the data to the model
+logreg_cv.fit(X_train, y_train)
+
+# Print the tuned parameters and score
+print("Tuned Logistic Regression Parameters: {}".format(logreg_cv.best_params_))
+print("Tuned Logistic Regression Best Accuracy Score: {}".format(logreg_cv.best_score_))
+```
+
+### Preprocessing and Pipelines
+
+Trước khi huấn luyện mô hình Machine Learning, chúng ta cần **tiền xử lý dữ liệu (preprocess data)**. Hãy tưởng tượng dữ liệu như những nguyên liệu thô, cần được sơ chế và chuẩn bị trước khi "nấu" thành món ăn (mô hình).
+
+#### Xử lý dữ liệu thiếu (Impute missing values)
+
+Dữ liệu thực tế thường có **giá trị thiếu (missing values)**, giống như những chỗ trống trong bảng dữ liệu. Ta cần "lấp đầy" những chỗ trống này để mô hình hoạt động hiệu quả.
+
+Một số phương pháp phổ biến:
+
+* **Thay thế bằng giá trị trung bình/trung vị (Mean/Median imputation)**: Điền vào chỗ trống bằng giá trị trung bình hoặc trung vị của cột dữ liệu.
+* **Thay thế bằng KNN (K-Nearest Neighbors imputation)**: Dựa vào các điểm dữ liệu gần nhất để dự đoán giá trị thiếu.
+
+Ví dụ: Nếu cột "tuổi" có giá trị thiếu, ta có thể thay thế bằng tuổi trung bình của những người có đặc điểm tương đồng.
+
+#### Chuyển đổi dữ liệu phân loại (Convert categorical data)
+
+**Dữ liệu phân loại (categorical data)** là dữ liệu dạng nhãn, ví dụ: màu sắc (đỏ, xanh, vàng), giới tính (nam, nữ). Mô hình Machine Learning thường yêu cầu dữ liệu dạng số, nên ta cần chuyển đổi dữ liệu phân loại.
+
+Một số phương pháp phổ biến:
+
+* **One-hot encoding**: Tạo các cột mới, mỗi cột đại diện cho một giá trị của biến phân loại. 
+* **Label encoding**: Gán mỗi giá trị của biến phân loại một số nguyên.
+
+Ví dụ: Biến "màu sắc" có thể được chuyển đổi thành ba cột mới: "đỏ", "xanh", "vàng".
+
+#### Chuẩn hóa dữ liệu (Scale data)
+
+Các biến trong dữ liệu có thể có **thang đo (scale)** khác nhau, ví dụ: tuổi (0-100) và thu nhập (hàng triệu đồng). **Chuẩn hóa dữ liệu (data scaling)** giúp đưa các biến về cùng một thang đo, tránh trường hợp biến có giá trị lớn hơn chi phối mô hình.
+
+Một số phương pháp phổ biến:
+
+* **Standardization**: Biến đổi dữ liệu sao cho có trung bình bằng 0 và độ lệch chuẩn bằng 1.
+* **Normalization**: Biến đổi dữ liệu về khoảng giá trị từ 0 đến 1.
+
+#### Đánh giá nhiều mô hình (Evaluate multiple models)
+
+Để chọn ra mô hình tốt nhất, ta cần so sánh hiệu quả của nhiều mô hình **học có giám sát (supervised learning)** khác nhau, ví dụ: **Logistic Regression, Decision Tree, Support Vector Machine**.
+
+Ta có thể sử dụng các **thước đo (metrics)** như **độ chính xác (accuracy), precision, recall, F1-score** để đánh giá và so sánh các mô hình.
+
+#### Xây dựng pipeline (Build pipelines)
+
+**Pipeline** giúp kết hợp các bước tiền xử lý dữ liệu và huấn luyện mô hình thành một quy trình duy nhất. Điều này giúp đơn giản hóa code và tránh lỗi.
+
+Ví dụ: Một pipeline có thể bao gồm các bước: impute missing values -> convert categorical data -> scale data -> train Logistic Regression model.
+
+**Scikit-learn** cung cấp các công cụ mạnh mẽ để xây dựng pipeline.
+
+**Tóm lại**, tiền xử lý dữ liệu và đánh giá mô hình là những bước quan trọng trong quy trình Machine Learning. Bằng cách áp dụng các kỹ thuật này, ta có thể xây dựng mô hình hiệu quả và đáng tin cậy hơn.
+
+#### Example: Preprocessing data
+
+- Creating dummy variables
+
+```python
+# Create music_dummies
+music_dummies = pd.get_dummies(music_df, drop_first=True)
+
+# Print the new DataFrame's shape
+print("Shape of music_dummies: {}".format(music_dummies.shape))
+```
+
+- Regression with categorical features
+
+```python
+# Create X and y
+X = music_dummies.drop("popularity", axis=1).values
+y = music_dummies["popularity"].values
+
+# Instantiate a ridge model
+ridge = Ridge(alpha=0.2)
+
+# Perform cross-validation
+scores = cross_val_score(ridge, X, y, cv=kf, scoring="neg_mean_squared_error")
+
+# Calculate RMSE
+rmse = np.sqrt(scores*-1)
+print("Average RMSE: {}".format(np.mean(rmse)))
+print("Standard Deviation of the target array: {}".format(np.std(y)))
+```
+
+#### Example: Handling missing data
+
+- Dropping missing data
+
+```python
+# Print missing values for each column
+print(music_df.isna().sum().sort_values())
+
+# Remove values where less than 5% are missing
+music_df = music_df.dropna(subset=["genre", "popularity", "loudness", "liveness", "tempo"])
+
+# Convert genre to a binary feature
+music_df["genre"] = np.where(music_df["genre"] == "Rock", 1, 0)
+
+print(music_df.isna().sum().sort_values())
+print("Shape of the `music_df`: {}".format(music_df.shape))
+```
+
+- Pipeline 
+
+```python
+# Import modules
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+
+# Instantiate an imputer
+imputer = SimpleImputer()
+
+# Instantiate a knn model
+knn = KNeighborsClassifier(n_neighbors=3)
+
+# Build steps for the pipeline
+steps = [("imputer", imputer), 
+         ("knn", knn)]
+
+# Create the pipeline
+pipeline = Pipeline(steps)
+
+# Fit the pipeline to the training data
+pipeline.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = pipeline.predict(X_test)
+
+# Print the confusion matrix
+print(confusion_matrix(y_test, y_pred))
+
+```
+
+#### Example: Centering and Scaling
+
+- Centering and scaling for regression
+
+```python
+# Import StandardScaler
+from sklearn.preprocessing import StandardScaler
+
+# Create pipeline steps
+steps = [("scaler", StandardScaler()),
+         ("lasso", Lasso(alpha=0.5))]
+
+# Instantiate the pipeline
+pipeline = Pipeline(steps)
+pipeline.fit(X_train, y_train)
+
+# Calculate and print R-squared
+print(pipeline.score(X_test, y_test)) #0.6193523316282489
+```
+
+- Centering and scaling for classification
+
+```python
+# Build the steps
+steps = [("scaler", StandardScaler()),
+         ("logreg", LogisticRegression())]
+pipeline = Pipeline(steps)
+
+# Create the parameter space
+parameters = {"logreg__C": np.linspace(0.001, 1.0, 20)}
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, 
+                                                    random_state=21)
+
+# Instantiate the grid search object
+cv = GridSearchCV(pipeline, param_grid=parameters)
+
+# Fit to the training data
+cv.fit(X_train, y_train)
+print(cv.best_score_, "\n", cv.best_params_)
+
+```
+
+#### Example: Evaluating multiple models
+
+- Visualizing regression model performance
+
+```python
+models = {"Linear Regression": LinearRegression(), "Ridge": Ridge(alpha=0.1), "Lasso": Lasso(alpha=0.1)}
+results = []
+
+# Loop through the models' values
+for model in models.values():
+  kf = KFold(n_splits=6, random_state=42, shuffle=True)
+  
+  # Perform cross-validation
+  cv_scores = cross_val_score(model, X_train, y_train, cv=kf)
+  
+  # Append the results
+  results.append(cv_scores)
+
+# Create a box plot of the results
+plt.boxplot(results, labels=models.keys())
+plt.show()
+```
+
+- Predicting on the test set
+
+```python
+# Import mean_squared_error
+from sklearn.metrics import mean_squared_error
+
+for name, model in models.items():
+  
+  # Fit the model to the training data
+  model.fit(X_train_scaled, y_train)
+  
+  # Make predictions on the test set
+  y_pred = model.predict(X_test_scaled)
+  
+  # Calculate the test_rmse
+  test_rmse = mean_squared_error(y_test, y_pred, squared=False)
+  print("{} Test Set RMSE: {}".format(name, test_rmse))
+```
+
+- Visualizing classification model performance
+
+```python
+# Create models dictionary
+models = {"Logistic Regression": LogisticRegression(), "KNN": KNeighborsClassifier(), "Decision Tree Classifier": DecisionTreeClassifier()}
+results = []
+
+# Loop through the models' values
+for model in models.values():
+  
+  # Instantiate a KFold object
+  kf = KFold(n_splits=6, random_state=12, shuffle=True)
+  
+  # Perform cross-validation
+  cv_results = cross_val_score(model, X_train_scaled, y_train, cv=kf)
+  results.append(cv_results)
+plt.boxplot(results, labels=models.keys())
+plt.show()
+```
+
+- Pipeline for predicting song popularity
+
+```python
+# Create steps
+steps = [("imp_mean", SimpleImputer()), 
+         ("scaler", StandardScaler()), 
+         ("logreg", LogisticRegression())]
+
+# Set up pipeline
+pipeline = Pipeline(steps)
+params = {"logreg__solver": ["newton-cg", "saga", "lbfgs"],
+         "logreg__C": np.linspace(0.001, 1.0, 10)}
+
+# Create the GridSearchCV object
+tuning = GridSearchCV(pipeline, param_grid=params)
+tuning.fit(X_train, y_train)
+y_pred = tuning.predict(X_test)
+
+# Compute and print performance
+print("Tuned Logistic Regression Parameters: {}, Accuracy: {}".format(tuning.best_params_, tuning.score(X_test, y_test)))
+```
