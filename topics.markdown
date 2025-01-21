@@ -27,7 +27,7 @@ Example code: https://github.com/fluentpython/example-code-2e
 ## Machine Learning Scientist in Python
 
 - [Suppervised Learning with scikit-learn](_posts/2025-01-20-ml-in-python-c1.markdown)
-- [**Project** - Predictive Modeling for Agriculture]({{site.url}}example_codes/soil_measures.ipynb)
+- [**Project** - Predictive Modeling for Agriculture](_posts/2025-01-20-ml-in-python-c2.markdown)
 - Unsupervised Learning in Python
 - **Project** - Clustering Antarctic Penguin Species
 - Linear Classifiers in Python
