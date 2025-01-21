@@ -53,6 +53,13 @@ Example code: https://github.com/fluentpython/example-code-2e
 - Winning a Kaggle Competition in Python
 
 ---
+## Building Transformer models with attention
+- [Part I: Foundations of Attention](_posts/2025-01-16-btma-c1-foundation-of-attention.markdown)
+- [Part II: From Recurrent Neural Networks to Transformer](_posts/2025-01-16-btma-c2-from-rnn-to-transformer.markdown)
+- [Part III: Building a Transformer from Scratch](_posts/2025-01-16-btma-c3-build-transformer-from-scratch.markdown)
+- [Part IV: Applications](_posts/2025-01-16-btma-c4-application.markdown)
+
+---
 ## Developing Large Language Models
 - Introduction to Deep Learning with PyTorch
 - Intermediate Deep Learning with PyTorch
@@ -62,10 +69,3 @@ Example code: https://github.com/fluentpython/example-code-2e
 - Project: Analyzing Car Reviews with LLMs
 - Working with Llama 3
 - LLMOps Concepts
-
----
-## Building Transformer models with attention
-- [Part I: Foundations of Attention](_posts/2025-01-16-btma-c1-foundation-of-attention.markdown)
-- [Part II: From Recurrent Neural Networks to Transformer](_posts/2025-01-16-btma-c2-from-rnn-to-transformer.markdown)
-- [Part III: Building a Transformer from Scratch](_posts/2025-01-16-btma-c3-build-transformer-from-scratch.markdown)
-- [Part IV: Applications](_posts/2025-01-16-btma-c4-application.markdown)

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "[Project]Sowing Success: How Machine Learning Helps Farmers Select the Best Crops"
-date: 2025-01-20 00:00:00 +0700
+date: 2025-01-20 01:00:00 +0700
 categories: machine learning in python
 ---
 
