@@ -928,8 +928,187 @@ model = nn.Sequential(layer0, layer1)
 
 #### A deeper dive into loading data
 
+Khi huấn luyện mô hình học máy, việc nạp dữ liệu hiệu quả là vô cùng quan trọng. PyTorch cung cấp hai công cụ mạnh mẽ để giúp bạn làm điều này: `TensorDataset` và `DataLoader`. Hãy cùng tìm hiểu chi tiết hơn về chúng nhé!
+
+**1. `TensorDataset`**
+
+Tưởng tượng bạn có một tập dữ liệu gồm các hình ảnh về mèo và chó. Mỗi hình ảnh được biểu diễn dưới dạng một ma trận pixel (**tensor**) và có một nhãn tương ứng ("mèo" hoặc "chó"). `TensorDataset` giúp bạn **gói gọn** các tensor hình ảnh và nhãn tương ứng thành từng cặp, giống như việc bạn **ghép nối** mỗi hình ảnh với nhãn của nó vậy.
+
+**Ví dụ:**
+
+```python
+import torch
+from torch.utils.data import TensorDataset
+
+# Giả sử bạn có 2 tensor: 
+# - image_tensors chứa các tensor hình ảnh
+# - labels chứa các nhãn tương ứng (0 cho "mèo", 1 cho "chó")
+
+dataset = TensorDataset(image_tensors, labels)
+
+# Bây giờ bạn có thể truy cập từng cặp dữ liệu (hình ảnh, nhãn) thông qua chỉ số:
+image, label = dataset[0]  # Lấy hình ảnh và nhãn đầu tiên
+```
+
+**2. DataLoader**
+
+`DataLoader` giống như một **"người phục vụ"** thông minh, giúp bạn **nạp dữ liệu theo từng batch** (nhóm) để huấn luyện mô hình. Nó có khả năng **xáo trộn dữ liệu**, chia dữ liệu thành các batch với kích thước bạn mong muốn, và thậm chí **tải dữ liệu song song** để tăng tốc quá trình huấn luyện.
+
+**Ví dụ:**
+
+```python
+from torch.utils.data import DataLoader
+
+# Tạo DataLoader từ dataset đã tạo ở trên
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+# Duyệt qua từng batch dữ liệu:
+for batch_idx, (images, labels) in enumerate(dataloader):
+  # images là một batch gồm 32 hình ảnh
+  # labels là một batch gồm 32 nhãn tương ứng
+  # ... (tiến hành huấn luyện mô hình với batch này)
+```
+
+**Tóm lại:**
+
+- `TensorDataset`: **Gói gọn** dữ liệu thành các cặp (features, labels).
+- `DataLoader`: **Nạp dữ liệu theo batch**, xáo trộn, và tối ưu hóa quá trình huấn luyện.
+
+Sử dụng kết hợp `TensorDataset` và `DataLoader` sẽ giúp bạn quản lý và nạp dữ liệu một cách hiệu quả trong PyTorch, từ đó cải thiện tốc độ và hiệu suất huấn luyện mô hình.
+
 #### Evaluating model performance
+
+Để hiểu cách đánh giá hiệu suất của một mô hình học máy (machine learning model), hãy tưởng tượng bạn đang dạy một chú chó (model) cách bắt bóng (task). 
+
+**1. Training, Validation và Testing**
+
+* **Training:** Bạn cho chú chó xem bạn ném bóng và ra lệnh "bắt" nhiều lần (training data). Chú chó sẽ học cách nhận biết bóng và chạy theo nó.
+* **Validation:** Thỉnh thoảng, bạn ném bóng nhưng không ra lệnh, xem chú chó có tự động chạy đi bắt không (validation data).  Qua đó, bạn biết được chú chó đã học tốt đến đâu và có cần điều chỉnh cách dạy không.
+* **Testing:** Cuối cùng, bạn đưa chú chó đến công viên (test data), nơi có nhiều người và vật khác, để kiểm tra xem chú chó có thực sự bắt bóng tốt trong môi trường mới không.
+
+Tương tự, với mô hình học máy:
+
+* **Tập training (training set):** Dùng để huấn luyện mô hình.
+* **Tập validation (validation set):** Dùng để đánh giá mô hình trong quá trình huấn luyện và điều chỉnh các tham số (parameters) để cải thiện hiệu suất.
+* **Tập testing (test set):** Dùng để đánh giá hiệu suất cuối cùng của mô hình trên dữ liệu mới, chưa từng thấy trước đó.
+
+**2. Model evaluation metrics (Các chỉ số đánh giá mô hình)**
+
+Để đánh giá chú chó bắt bóng tốt ra sao, bạn có thể dựa vào các chỉ số như:
+
+* **Số lần bắt được bóng / tổng số lần ném:**  Tỷ lệ này càng cao, chú chó càng bắt bóng tốt.
+* **Thời gian trung bình để bắt được bóng:** Thời gian càng ngắn, chú chó càng nhanh nhẹn.
+
+Tương tự, với mô hình học máy, có nhiều chỉ số đánh giá khác nhau, tùy thuộc vào bài toán cụ thể. Một số chỉ số phổ biến bao gồm:
+
+* **Accuracy (Độ chính xác):** Tỷ lệ dự đoán đúng trên tổng số dự đoán.
+* **Precision (Độ chính xác):**  Trong số những lần dự đoán là "có", có bao nhiêu lần dự đoán đúng.
+* **Recall (Độ nhạy):** Trong số những trường hợp thực tế là "có", mô hình dự đoán đúng được bao nhiêu lần.
+* **F1-score:** Trung bình điều hòa giữa Precision và Recall.
+
+**3. Calculating training loss (Tính toán độ lỗi huấn luyện)**
+
+Trong quá trình dạy chú chó, bạn có thể la mắng khi nó bắt hụt bóng hoặc thưởng cho nó khi bắt được.  "La mắng" và "thưởng" tương ứng với việc điều chỉnh mô hình dựa trên **độ lỗi (loss)**. Độ lỗi cho biết mô hình đang dự đoán sai lệch so với kết quả thực tế bao nhiêu.
+
+**Calculating training loss:**  Tính toán độ lỗi trung bình của mô hình trên tập training data.
+
+**4. Calculating validation loss (Tính toán độ lỗi kiểm định)**
+
+Thỉnh thoảng, bạn cần kiểm tra xem chú chó có đang học đúng cách không bằng cách ném bóng mà không ra lệnh. Nếu chú chó không chạy đi bắt, bạn biết rằng cần phải điều chỉnh cách dạy.
+
+**Calculating validation loss:** Tính toán độ lỗi trung bình của mô hình trên tập validation data. Giúp bạn theo dõi quá trình học của mô hình và phát hiện các vấn đề như overfitting (học thuộc lòng dữ liệu).
+
+**5. Calculating accuracy with torchmetrics (Tính toán độ chính xác với torchmetrics)**
+
+`torchmetrics` là một thư viện trong PyTorch cung cấp các hàm để tính toán các chỉ số đánh giá mô hình, bao gồm accuracy.  
+
+Ví dụ, để tính accuracy, bạn có thể sử dụng hàm `torchmetrics.Accuracy()`.
+
+```python
+import torchmetrics
+
+# Khởi tạo metric
+accuracy = torchmetrics.Accuracy()
+
+# Tính toán accuracy cho mỗi batch dữ liệu
+for batch in data_loader:
+  preds = model(batch)
+  accuracy.update(preds, targets) 
+
+# Tính toán và in ra accuracy cuối cùng
+print(accuracy.compute())
+```
+
+Tóm lại, việc đánh giá hiệu suất mô hình là một bước quan trọng để đảm bảo mô hình hoạt động tốt và đáng tin cậy trên dữ liệu thực tế.
 
 #### Fighting overfitting
 
+Hãy tưởng tượng bạn đang dạy một chú chó (model) nhận biết mèo (task). Bạn chỉ cho chú chó xem ảnh của những con mèo lông ngắn màu trắng (training data). 
+
+**1. Reasons for Overfitting (Nguyên nhân gây ra Overfitting)**
+
+Chú chó học rất tốt, nhận ra tất cả những con mèo lông ngắn màu trắng bạn đưa ra. Tuy nhiên, khi bạn đưa ra ảnh một con mèo lông dài màu đen, chú chó lại không nhận ra đó là mèo. Đây chính là **overfitting**: mô hình học "quá khớp" với dữ liệu huấn luyện, dẫn đến không thể tổng quát hóa cho dữ liệu mới.
+
+Nguyên nhân gây ra overfitting:
+
+* **Quá ít dữ liệu huấn luyện:**  Chú chó chỉ được xem một số lượng hạn chế các con mèo.
+* **Mô hình quá phức tạp:** Chú chó cố gắng ghi nhớ từng chi tiết nhỏ của những con mèo lông ngắn màu trắng thay vì học những đặc điểm chung của loài mèo.
+* **Noise trong dữ liệu:**  Trong số ảnh bạn đưa ra, có thể có những ảnh không rõ ràng hoặc bị nhiễu, khiến chú chó học sai.
+
+**2. Fighting Overfitting (Chống lại Overfitting)**
+
+Để chú chó nhận biết được tất cả các loại mèo, bạn cần:
+
+* **Cho chú chó xem nhiều ảnh mèo đa dạng hơn:**  Mèo lông dài, mèo lông ngắn, mèo đen, mèo trắng, mèo tam thể... (Data augmentation)
+* **Không nên quá khắt khe trong việc bắt chú chó phải nhớ chính xác từng chi tiết:**  Chỉ cần chú chó nhận ra những đặc điểm chung của loài mèo là được. (Regularization)
+* **Loại bỏ những ảnh mèo không rõ ràng:** Đảm bảo dữ liệu huấn luyện chất lượng cao.
+
+**3. "Regularization" using a Dropout layer (Chính quy hóa với Dropout layer)**
+
+Tưởng tượng bạn bịt mắt chú chó ngẫu nhiên trong quá trình huấn luyện. Điều này buộc chú chó phải học cách nhận biết mèo bằng nhiều giác quan khác nhau, thay vì chỉ dựa vào thị giác.
+
+**Dropout layer** hoạt động tương tự: nó ngẫu nhiên "tắt" một số neuron trong mạng neural trong quá trình huấn luyện, buộc mô hình phải học cách sử dụng các neuron khác nhau và tránh phụ thuộc quá nhiều vào một số neuron cụ thể.
+
+**4. Regularization with Weight decay (Chính quy hóa với Weight decay)**
+
+Bạn có thể phạt chú chó nếu nó quá tập trung vào một đặc điểm nào đó của mèo, ví dụ như chỉ chú ý đến màu lông.
+
+**Weight decay** thêm một "hình phạt" vào các trọng số (weights) của mô hình, ngăn chúng trở nên quá lớn. Điều này giúp mô hình đơn giản hơn và giảm overfitting.
+
+**5. Data augmentation (Tăng cường dữ liệu)**
+
+Bạn có thể "tạo" thêm nhiều ảnh mèo từ những ảnh ban đầu bằng cách xoay, lật, phóng to, thu nhỏ...
+
+**Data augmentation** tạo ra các biến thể của dữ liệu huấn luyện, giúp tăng kích thước và sự đa dạng của dữ liệu, từ đó giảm overfitting.
+
+Tóm lại, overfitting là một vấn đề phổ biến trong Machine Learning. Bằng cách áp dụng các kỹ thuật chống overfitting, chúng ta có thể xây dựng các mô hình tổng quát hóa tốt hơn và hoạt động hiệu quả trên dữ liệu thực tế.
+
+
 #### Improving model performance
+
+
+Hãy tưởng tượng bạn đang huấn luyện một vận động viên (model) chạy marathon (task). Mục tiêu là giúp vận động viên đạt thành tích tốt nhất trong cuộc thi. 
+
+**Các bước để tối đa hóa hiệu suất (Steps to maximize performance)**
+
+Để đạt được điều này, bạn có thể áp dụng 3 bước sau:
+
+**Step 1: Overfit the training set (Làm cho mô hình overfit với tập huấn luyện)**
+
+Trước tiên, bạn cho vận động viên tập luyện rất chăm chỉ trên một đường chạy quen thuộc (training set). Vận động viên sẽ ghi nhớ từng khúc cua, từng đoạn dốc, từng điểm tiếp nước trên đường chạy này. Kết quả là, vận động viên đạt thành tích cực kỳ tốt trên đường chạy quen thuộc này.
+
+Tương tự, với mô hình học máy, bước đầu tiên là cố gắng đạt được hiệu suất cao nhất có thể trên tập training data, kể cả khi điều đó dẫn đến overfitting.  
+
+**Step 2: Reduce overfitting (Giảm overfitting)**
+
+Tuy nhiên, nếu chỉ chạy trên đường chạy quen thuộc, vận động viên sẽ gặp khó khăn khi thi đấu trên đường chạy marathon thực tế với địa hình và điều kiện khác biệt. Vì vậy, bạn cần cho vận động viên tập luyện trên nhiều đường chạy khác nhau, với độ dài, độ dốc, thời tiết... đa dạng.
+
+Tương tự, với mô hình học máy, sau khi đạt được hiệu suất cao trên tập training, bạn cần áp dụng các kỹ thuật chống overfitting (như đã giải thích ở câu hỏi trước) để mô hình có thể tổng quát hóa tốt cho dữ liệu mới.
+
+**Step 3: Fine-tune hyperparameters (Tinh chỉnh siêu tham số)**
+
+Cuối cùng, bạn cần tinh chỉnh các yếu tố như chế độ dinh dưỡng, lịch trình tập luyện, loại giày chạy... để vận động viên đạt được hiệu suất tối ưu.
+
+Tương tự, với mô hình học máy, bạn cần tinh chỉnh các **hyperparameters** (siêu tham số) như learning rate, số lượng layers, số lượng neurons...  Các hyperparameters này không được học từ dữ liệu mà được thiết lập trước khi huấn luyện mô hình. Việc tinh chỉnh hyperparameters giúp "điều chỉnh" mô hình để đạt hiệu suất tốt nhất có thể.
+
+Tóm lại, việc cải thiện hiệu suất mô hình là một quá trình lặp đi lặp lại, bao gồm việc overfit tập training, giảm overfitting và tinh chỉnh hyperparameters. Bằng cách áp dụng đúng các bước này, bạn có thể xây dựng được các mô hình học máy mạnh mẽ và hiệu quả.
