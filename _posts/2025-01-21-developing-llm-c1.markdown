@@ -7,9 +7,43 @@ categories: developing large language models
 
 Learn how to build your first neural network, adjust hyperparameters, and tackle classification and regression problems in PyTorch.
 
-### Introduction to PyTorch, a Deep Learning Library
+### Table of contents
 
-#### 1. Học sâu (Deep Learning) là gì?
+1. [Introduction to PyTorch, a Deep Learning Library](#IntroductiontoPyTorchaDeepLearningLibrary)
+* 1.1. [1. Học sâu (Deep Learning) là gì?](#HcsuDeepLearninglg)
+* 1.2. [2. PyTorch: Nền tảng cho học sâu](#PyTorch:Nntngchohcsu)
+* 1.3. [3. Tensor: Khối xây dựng của mạng nơ-ron](#Tensor:Khixydngcamngn-ron)
+* 1.4. [4. Thuộc tính của Tensor](#ThuctnhcaTensor)
+* 1.5. [5. Bắt đầu với các phép toán Tensor](#BtuviccphptonTensor)
+2. [Creating Our First Neural Network with PyTorch](#CreatingOurFirstNeuralNetworkwithPyTorch)
+* 2.1. [1. Tầng Linear (Linear Layer)](#TngLinearLinearLayer)
+* 2.2. [2. Xếp chồng các tầng với `nn.Sequential()`](#Xpchngcctngvinn.Sequential)
+3. [Discovering activation functions](#Discoveringactivationfunctions)
+* 3.1. [1. Các phép toán tuyến tính xếp chồng (Stacked linear operations)](#CcphptontuyntnhxpchngStackedlinearoperations)
+* 3.2. [2. Tại sao cần hàm kích hoạt?](#Tisaocnhmkchhot)
+* 3.3. [3. Hàm Sigmoid](#HmSigmoid)
+* 3.4. [4. Hàm Softmax](#HmSoftmax)
+* 3.5. [Sự khác nhau về mặt toán học giữa Sigmoid và Softmax](#SkhcnhauvmttonhcgiaSigmoidvSoftmax)
+* 3.6. [Example:](#Example:)
+4. [Training Our First Neural Network with PyTorch](#TrainingOurFirstNeuralNetworkwithPyTorch)
+* 4.1. [Running a forward pass](#Runningaforwardpass)
+* 4.2. [Using loss functions to assess model predictions](#Usinglossfunctionstoassessmodelpredictions)
+* 4.3. [Using derivatives to update model parameters](#Usingderivativestoupdatemodelparameters)
+* 4.4. [Writing our first training loop](#Writingourfirsttrainingloop)
+5. [Neural Network Architecture and Hyperparameters](#NeuralNetworkArchitectureandHyperparameters)
+* 5.1. [Discovering activation functions](#Discoveringactivationfunctions-1)
+* 5.2. [A deeper dive into neural network architecture](#Adeeperdiveintoneuralnetworkarchitecture)
+* 5.3. [Learning rate and momentum](#Learningrateandmomentum)
+* 5.4. [Layers initialization, transfer learning and fine tuning](#Layersinitializationtransferlearningandfinetuning)
+6. [Evaluating and Improving Models](#EvaluatingandImprovingModels)
+* 6.1. [A deeper dive into loading data](#Adeeperdiveintoloadingdata)
+* 6.2. [Evaluating model performance](#Evaluatingmodelperformance)
+* 6.3. [Fighting overfitting](#Fightingoverfitting)
+* 6.4. [Improving model performance](#Improvingmodelperformance)
+
+###  1. <a name='IntroductiontoPyTorchaDeepLearningLibrary'></a>Introduction to PyTorch, a Deep Learning Library
+
+####  1.1. <a name='HcsuDeepLearninglg'></a>1. Học sâu (Deep Learning) là gì?
 
 Tưởng tượng học sâu như một đứa trẻ đang học cách nhận biết con mèo. Ban đầu, bé chỉ có thể phân biệt dựa trên những đặc điểm đơn giản như "có lông", "4 chân". Nhưng khi tiếp xúc nhiều hơn, bé sẽ học được những đặc điểm phức tạp hơn như hình dạng tai, mắt, mũi... 
 
@@ -17,7 +51,7 @@ Học sâu cũng tương tự như vậy. Nó là một nhánh của **trí tu�
 
 **Ví dụ:** Bạn có thể "huấn luyện" một mô hình học sâu để nhận biết các loại trái cây khác nhau. Bằng cách cung cấp cho mô hình hàng ngàn bức ảnh về táo, chuối, cam..., mô hình sẽ tự động học cách phân biệt chúng dựa trên màu sắc, hình dạng, kích thước...
 
-#### 2. PyTorch: Nền tảng cho học sâu
+####  1.2. <a name='PyTorch:Nntngchohcsu'></a>2. PyTorch: Nền tảng cho học sâu
 
 Để xây dựng các mô hình học sâu, chúng ta cần một công cụ. **PyTorch** chính là một trong những công cụ phổ biến nhất hiện nay. Nó giống như một "bộ Lego" cho phép bạn lắp ghép các thành phần khác nhau để tạo ra mô hình học sâu của riêng mình.
 
@@ -27,7 +61,7 @@ PyTorch được phát triển bởi Facebook và có những ưu điểm sau:
 * **Linh hoạt:** PyTorch cho phép bạn thay đổi mô hình một cách dễ dàng trong quá trình huấn luyện.
 * **Mạnh mẽ:** PyTorch hỗ trợ tính toán trên GPU, giúp tăng tốc quá trình huấn luyện mô hình.
 
-#### 3. Tensor: Khối xây dựng của mạng nơ-ron
+####  1.3. <a name='Tensor:Khixydngcamngn-ron'></a>3. Tensor: Khối xây dựng của mạng nơ-ron
 
 Trong PyTorch, dữ liệu được lưu trữ và xử lý dưới dạng **Tensor**. Bạn có thể hiểu Tensor như một mảng nhiều chiều. 
 
@@ -37,7 +71,7 @@ Trong PyTorch, dữ liệu được lưu trữ và xử lý dưới dạng **Ten
 
 **Ví dụ:** Trong bài toán nhận dạng trái cây, mỗi bức ảnh sẽ được biểu diễn dưới dạng một Tensor 3 chiều, với chiều cao, chiều rộng và số kênh màu.
 
-#### 4. Thuộc tính của Tensor
+####  1.4. <a name='ThuctnhcaTensor'></a>4. Thuộc tính của Tensor
 
 Mỗi Tensor đều có những thuộc tính quan trọng:
 
@@ -45,7 +79,7 @@ Mỗi Tensor đều có những thuộc tính quan trọng:
 * **dtype:** Kiểu dữ liệu của Tensor (ví dụ: int, float).
 * **device:** Thiết bị lưu trữ Tensor (CPU hoặc GPU).
 
-#### 5. Bắt đầu với các phép toán Tensor
+####  1.5. <a name='BtuviccphptonTensor'></a>5. Bắt đầu với các phép toán Tensor
 
 PyTorch cung cấp rất nhiều hàm để thực hiện các phép toán trên Tensor, ví dụ như cộng, trừ, nhân, chia, chuyển vị...
 
@@ -90,11 +124,11 @@ corrected_temperatures = temperatures + adjustment
 print("Corrected temperatures:", corrected_temperatures)
 ```
 
-### Creating Our First Neural Network with PyTorch
+###  2. <a name='CreatingOurFirstNeuralNetworkwithPyTorch'></a>Creating Our First Neural Network with PyTorch
 
 Bây giờ chúng ta sẽ cùng nhau xây dựng một **mạng nơ-ron (neural network)** đơn giản bằng PyTorch. Hãy tưởng tượng mạng nơ-ron như một cỗ máy với nhiều tầng lớp, mỗi tầng sẽ xử lý thông tin và truyền cho tầng tiếp theo.
 
-#### 1. Tầng Linear (Linear Layer)
+####  2.1. <a name='TngLinearLinearLayer'></a>1. Tầng Linear (Linear Layer)
 
 **Linear layer** là một trong những tầng cơ bản nhất trong mạng nơ-ron. Nó thực hiện một phép biến đổi tuyến tính trên dữ liệu đầu vào. Hãy tưởng tượng nó như một hàm số đơn giản y = ax + b, với:
 
@@ -107,7 +141,7 @@ Mỗi **linear layer** có một tập hợp các **weight** và **bias** riêng
 
 **Ví dụ:** Ta có một **linear layer** với 2 đầu vào và 3 đầu ra. Khi đó, **weight** sẽ là một ma trận 2x3 và **bias** sẽ là một vector 3 chiều.
 
-#### 2. Xếp chồng các tầng với `nn.Sequential()`
+####  2.2. <a name='Xpchngcctngvinn.Sequential'></a>2. Xếp chồng các tầng với `nn.Sequential()`
 
 Để xây dựng một mạng nơ-ron phức tạp hơn, ta cần xếp chồng nhiều **layer** lên nhau. PyTorch cung cấp hàm `nn.Sequential()` để làm điều này.
 
@@ -152,9 +186,9 @@ output = model(input_tensor)
 print(output)
 ```
 
-### Discovering activation functions
+###  3. <a name='Discoveringactivationfunctions'></a>Discovering activation functions
 
-#### 1. Các phép toán tuyến tính xếp chồng (Stacked linear operations)
+####  3.1. <a name='CcphptontuyntnhxpchngStackedlinearoperations'></a>1. Các phép toán tuyến tính xếp chồng (Stacked linear operations)
 
 Như đã biết, **linear layer** thực hiện phép biến đổi tuyến tính. Vậy nếu ta xếp chồng nhiều **linear layer** lên nhau thì sao? Thực chất, kết quả vẫn chỉ là một phép biến đổi tuyến tính! 
 
@@ -162,13 +196,13 @@ Hãy tưởng tượng bạn có 2 hàm số tuyến tính: `y = 2x + 3` và `z 
 
 Điều này có nghĩa là dù có xếp chồng bao nhiêu **linear layer** đi nữa, mạng nơ-ron của chúng ta cũng chỉ có thể học được các mối quan hệ tuyến tính. Vậy làm sao để mô hình học được những mối quan hệ phức tạp hơn? Câu trả lời chính là **hàm kích hoạt (activation functions)**.
 
-#### 2. Tại sao cần hàm kích hoạt?
+####  3.2. <a name='Tisaocnhmkchhot'></a>2. Tại sao cần hàm kích hoạt?
 
 **Hàm kích hoạt** giúp đưa **phi tuyến tính** vào mạng nơ-ron. Nói cách khác, chúng giúp mô hình học được những mối quan hệ phức tạp, không chỉ đơn thuần là đường thẳng.
 
 **Ví dụ:** Hãy tưởng tượng bạn muốn huấn luyện một mô hình để phân loại ảnh là "mèo" hoặc "không phải mèo". Nếu chỉ dùng **linear layer**, mô hình sẽ gặp khó khăn trong việc phân biệt những trường hợp phức tạp, ví dụ như con mèo đang nằm cuộn tròn hay bị che khuất một phần.
 
-#### 3. Hàm Sigmoid
+####  3.3. <a name='HmSigmoid'></a>3. Hàm Sigmoid
 
 **Sigmoid** là một hàm kích hoạt phổ biến. Nó biến đổi đầu vào thành một giá trị nằm trong khoảng từ 0 đến 1. 
 
@@ -176,7 +210,7 @@ Hãy tưởng tượng bạn có 2 hàm số tuyến tính: `y = 2x + 3` và `z 
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/1200px-Logistic-curve.svg.png)
 
-#### 4. Hàm Softmax
+####  3.4. <a name='HmSoftmax'></a>4. Hàm Softmax
 
 **Softmax** cũng là một hàm kích hoạt thường được dùng trong các bài toán phân loại. Tuy nhiên, nó được sử dụng cho các bài toán phân loại **nhiều lớp**. 
 
@@ -192,7 +226,7 @@ Hãy tưởng tượng bạn có 2 hàm số tuyến tính: `y = 2x + 3` và `z 
 
 Bằng cách kết hợp các **layer** và **hàm kích hoạt** khác nhau, bạn có thể xây dựng những mạng nơ-ron mạnh mẽ để giải quyết nhiều bài toán trong thực tế.
 
-#### Sự khác nhau về mặt toán học giữa Sigmoid và Softmax
+####  3.5. <a name='SkhcnhauvmttonhcgiaSigmoidvSoftmax'></a>Sự khác nhau về mặt toán học giữa Sigmoid và Softmax
 
 Cả Sigmoid và Softmax đều là những hàm kích hoạt quan trọng trong học sâu, nhưng chúng có những điểm khác biệt rõ rệt về mặt toán học và ứng dụng.
 
@@ -233,7 +267,7 @@ Cả Sigmoid và Softmax đều là những hàm kích hoạt quan trọng trong
 
 Sự khác biệt về mặt toán học giữa Sigmoid và Softmax dẫn đến sự khác biệt trong ứng dụng của chúng. Sigmoid phù hợp với phân loại nhị phân, trong khi Softmax phù hợp với phân loại nhiều lớp.
 
-#### Example:
+####  3.6. <a name='Example:'></a>Example:
 
 ```python
 input_tensor = torch.tensor([[0.8]])
@@ -256,9 +290,9 @@ print(probabilities)
 # tensor([[1.2828e-01, 1.1698e-04, 5.7492e-01, 3.4961e-02, 1.5669e-01, 1.0503e-01]])
 
 ```
-### Training Our First Neural Network with PyTorch
+###  4. <a name='TrainingOurFirstNeuralNetworkwithPyTorch'></a>Training Our First Neural Network with PyTorch
 
-#### Running a forward pass
+####  4.1. <a name='Runningaforwardpass'></a>Running a forward pass
 
 **1. Lượt truyền xuôi (Forward Pass) là gì?**
 
@@ -335,7 +369,7 @@ output = model(input_tensor)
 print(output)
 ```
 
-#### Using loss functions to assess model predictions
+####  4.2. <a name='Usinglossfunctionstoassessmodelpredictions'></a>Using loss functions to assess model predictions
 
 **1. Tại sao cần hàm mất mát (Loss Function)?**
 
@@ -415,7 +449,7 @@ loss = criterion(scores.double(), one_hot_label.double())
 print(loss)
 ```
 
-#### Using derivatives to update model parameters
+####  4.3. <a name='Usingderivativestoupdatemodelparameters'></a>Using derivatives to update model parameters
 
 **1. Tối thiểu hóa Loss**
 
@@ -514,7 +548,7 @@ loss.backward()
 optimizer.step()
 ```
 
-#### Writing our first training loop
+####  4.4. <a name='Writingourfirsttrainingloop'></a>Writing our first training loop
 
 **1. Huấn luyện mạng nơ-ron trong PyTorch**
 
@@ -629,9 +663,9 @@ for i in range(num_epochs):
 show_results(model, dataloader)
 ```
 
-### Neural Network Architecture and Hyperparameters
+###  5. <a name='NeuralNetworkArchitectureandHyperparameters'></a>Neural Network Architecture and Hyperparameters
 
-#### Discovering activation functions
+####  5.1. <a name='Discoveringactivationfunctions-1'></a>Discovering activation functions
 
 **1. Hạn chế của hàm Sigmoid và Softmax**
 
@@ -732,7 +766,7 @@ output = leaky_relu_pytorch(x)
 print(output)
 ```
 
-#### A deeper dive into neural network architecture
+####  5.2. <a name='Adeeperdiveintoneuralnetworkarchitecture'></a>A deeper dive into neural network architecture
 
 **1. Các tầng (Layers) được tạo thành từ các nơ-ron (Neurons)**
 
@@ -798,7 +832,7 @@ def calculate_capacity(model):
   return total
 ```
 
-#### Learning rate and momentum
+####  5.3. <a name='Learningrateandmomentum'></a>Learning rate and momentum
 
 **1. Cập nhật trọng số (Weights) với SGD**
 
@@ -842,7 +876,7 @@ Khi không sử dụng **momentum**, SGD chỉ dựa trên **gradient** hiện t
 Lựa chọn **learning rate** và **momentum** phù hợp là rất quan trọng để huấn luyện mạng nơ-ron hiệu quả.
 
 
-#### Layers initialization, transfer learning and fine tuning
+####  5.4. <a name='Layersinitializationtransferlearningandfinetuning'></a>Layers initialization, transfer learning and fine tuning
 
 **1. Khởi tạo Layer (Layer Initialization)**
 
@@ -924,9 +958,9 @@ nn.init.uniform_(layer1.weight)
 model = nn.Sequential(layer0, layer1)
 ```
 
-### Evaluating and Improving Models
+###  6. <a name='EvaluatingandImprovingModels'></a>Evaluating and Improving Models
 
-#### A deeper dive into loading data
+####  6.1. <a name='Adeeperdiveintoloadingdata'></a>A deeper dive into loading data
 
 Khi huấn luyện mô hình học máy, việc nạp dữ liệu hiệu quả là vô cùng quan trọng. PyTorch cung cấp hai công cụ mạnh mẽ để giúp bạn làm điều này: `TensorDataset` và `DataLoader`. Hãy cùng tìm hiểu chi tiết hơn về chúng nhé!
 
@@ -976,7 +1010,53 @@ for batch_idx, (images, labels) in enumerate(dataloader):
 
 Sử dụng kết hợp `TensorDataset` và `DataLoader` sẽ giúp bạn quản lý và nạp dữ liệu một cách hiệu quả trong PyTorch, từ đó cải thiện tốc độ và hiệu suất huấn luyện mô hình.
 
-#### Evaluating model performance
+**Example**
+
+- Using the TensorDataset class
+
+```python
+import numpy as np
+import torch
+from torch.utils.data import TensorDataset
+
+np_features = np.array(np.random.rand(12, 8))
+np_target = np.array(np.random.rand(12, 1))
+
+torch_features = torch.tensor(np_features)
+torch_target = torch.tensor(np_target)
+
+# Create a TensorDataset from two tensors
+dataset = TensorDataset(torch_features, torch_target)
+
+
+# Return the last element of this dataset
+print(dataset[-1])
+```
+
+- From data loading to running a forward pass
+
+```python
+# Load the different columns into two PyTorch tensors
+features = torch.tensor(dataframe[['ph', 'Sulfate', 'Conductivity', 'Organic_carbon']].to_numpy()).float()
+target = torch.tensor(dataframe['Potability'].to_numpy()).float()
+
+# Create a dataset from the two generated tensors
+dataset = TensorDataset(features, target)
+
+# Create a dataloader using the above dataset
+dataloader = DataLoader(dataset, shuffle=True, batch_size=2)
+x, y = next(iter(dataloader))
+
+# Create a model using the nn.Sequential API
+model = nn.Sequential(
+    nn.Linear(4, 8),
+    nn.Linear(8, 1)
+    )
+output = model(features)
+print(output)
+```
+
+####  6.2. <a name='Evaluatingmodelperformance'></a>Evaluating model performance
 
 Để hiểu cách đánh giá hiệu suất của một mô hình học máy (machine learning model), hãy tưởng tượng bạn đang dạy một chú chó (model) cách bắt bóng (task). 
 
@@ -1041,7 +1121,54 @@ print(accuracy.compute())
 
 Tóm lại, việc đánh giá hiệu suất mô hình là một bước quan trọng để đảm bảo mô hình hoạt động tốt và đáng tin cậy trên dữ liệu thực tế.
 
-#### Fighting overfitting
+**Example**
+
+- Writing the evaluation loop
+
+```python
+# Set the model to evaluation mode
+model.eval()
+validation_loss = 0.0
+
+with torch.no_grad():
+  
+  for data in validationloader:
+    
+      outputs = model(data[0])
+      loss = criterion(outputs, data[1])
+      
+      # Sum the current loss to the validation_loss variable
+      validation_loss += loss.item()
+      
+# Calculate the mean loss value
+validation_loss_epoch = validation_loss/len(validationloader)
+print(validation_loss_epoch)
+
+# Set the model back to training mode
+model.train()
+```
+
+- Calculating accuracy using torchmetrics
+
+```python
+# Create accuracy metric using torch metrics
+metric = torchmetrics.Accuracy(task="multiclass", num_classes=3)
+for data in dataloader:
+    features, labels = data
+    outputs = model(features)
+    
+    # Calculate accuracy over the batch
+    acc = metric(outputs, labels.argmax(dim=-1))
+    
+# Calculate accuracy over the whole epoch
+acc = metric.compute()
+
+# Reset the metric for the next epoch 
+metric.reset()
+plot_errors(model, dataloader)
+```
+
+####  6.3. <a name='Fightingoverfitting'></a>Fighting overfitting
 
 Hãy tưởng tượng bạn đang dạy một chú chó (model) nhận biết mèo (task). Bạn chỉ cho chú chó xem ảnh của những con mèo lông ngắn màu trắng (training data). 
 
@@ -1084,7 +1211,7 @@ Bạn có thể "tạo" thêm nhiều ảnh mèo từ những ảnh ban đầu b
 Tóm lại, overfitting là một vấn đề phổ biến trong Machine Learning. Bằng cách áp dụng các kỹ thuật chống overfitting, chúng ta có thể xây dựng các mô hình tổng quát hóa tốt hơn và hoạt động hiệu quả trên dữ liệu thực tế.
 
 
-#### Improving model performance
+####  6.4. <a name='Improvingmodelperformance'></a>Improving model performance
 
 
 Hãy tưởng tượng bạn đang huấn luyện một vận động viên (model) chạy marathon (task). Mục tiêu là giúp vận động viên đạt thành tích tốt nhất trong cuộc thi. 
@@ -1099,6 +1226,15 @@ Trước tiên, bạn cho vận động viên tập luyện rất chăm chỉ tr
 
 Tương tự, với mô hình học máy, bước đầu tiên là cố gắng đạt được hiệu suất cao nhất có thể trên tập training data, kể cả khi điều đó dẫn đến overfitting.  
 
+```python
+features, labels = next(iter(trainloader))
+for i in range(1e3):
+  outputs = model(features)
+  loss = criterion(outputs, labels)
+  loss.backward()
+  optimizer.step()
+```
+
 **Step 2: Reduce overfitting (Giảm overfitting)**
 
 Tuy nhiên, nếu chỉ chạy trên đường chạy quen thuộc, vận động viên sẽ gặp khó khăn khi thi đấu trên đường chạy marathon thực tế với địa hình và điều kiện khác biệt. Vì vậy, bạn cần cho vận động viên tập luyện trên nhiều đường chạy khác nhau, với độ dài, độ dốc, thời tiết... đa dạng.
@@ -1112,3 +1248,30 @@ Cuối cùng, bạn cần tinh chỉnh các yếu tố như chế độ dinh dư
 Tương tự, với mô hình học máy, bạn cần tinh chỉnh các **hyperparameters** (siêu tham số) như learning rate, số lượng layers, số lượng neurons...  Các hyperparameters này không được học từ dữ liệu mà được thiết lập trước khi huấn luyện mô hình. Việc tinh chỉnh hyperparameters giúp "điều chỉnh" mô hình để đạt hiệu suất tốt nhất có thể.
 
 Tóm lại, việc cải thiện hiệu suất mô hình là một quá trình lặp đi lặp lại, bao gồm việc overfit tập training, giảm overfitting và tinh chỉnh hyperparameters. Bằng cách áp dụng đúng các bước này, bạn có thể xây dựng được các mô hình học máy mạnh mẽ và hiệu quả.
+
+
+**Example**
+
+- Experimenting with dropout
+
+```python
+model = nn.Sequential(nn.Linear(8, 4),
+nn.ReLU(),
+nn.Dropout(p=0.5))
+```
+
+- Implementing random search
+
+```python
+values = []
+for idx in range(10):
+    # Randomly sample a learning rate factor between 2 and 4
+    factor = np.random.uniform(2, 4)
+    lr = 10 ** -factor
+    
+    # Randomly select a momentum between 0.85 and 0.99
+    momentum = np.random.uniform(0.85, 0.99)
+    
+    values.append((lr, momentum))
+```
+
