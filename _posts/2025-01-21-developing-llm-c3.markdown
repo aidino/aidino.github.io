@@ -366,6 +366,8 @@ print(next(iter(dataloader))[0, :10])
 ---
 ### Text Classification with PyTorch
 
+[Slide]({{site.baseurl}}/files/DeepLearningforTextwithPyTorch-C2.pdf)
+
 #### Overview of Text Classification
 
 - Embedding in PyTorch
