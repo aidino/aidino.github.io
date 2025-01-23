@@ -10,6 +10,7 @@ categories: developing large language models
 - [Slide - Training Robust Neural Networks]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C1.pdf)
 - [Slide - Images & Convolutional Neural Networks]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C2.pdf)
 - [Slide - Sequences & Recurrent Neural Networks]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C3.pdf)
+- [Slide - Multi-Input & Multi-Output Architectures]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C4.pdf)
 
 ---
 ### Training Robust Neural Networks
@@ -679,5 +680,317 @@ print(precision_per_class)
 ---
 ### Sequences & Recurrent Neural Networks
 
+![]({{site.url}}/images/electric-comsumption-prediction.png)
+
+- **Generate sequences**
+
+```python
+import numpy as np
+
+def create_sequences(df, seq_length):
+    xs, ys = [], []
+    # Iterate over data indices
+    for i in range(len(df)-seq_length):
+      	# Define inputs
+        x = df.iloc[i:(i+seq_length), 1]
+        # Define target
+        y = df.iloc[i+seq_length, 1]
+        xs.append(x)
+        ys.append(y)
+    return np.array(xs), np.array(ys)
+```
+
+- **Sequential Dataset**
+
+```python
+import torch
+from torch.utils.data import TensorDataset
+
+# Use create_sequences to create inputs and targets
+X_train, y_train = create_sequences(train_data, 24*4)
+print(X_train.shape, y_train.shape)
+
+# Create TensorDataset
+dataset_train = TensorDataset(
+    torch.from_numpy(X_train).float(),
+    torch.from_numpy(y_train).float(),
+)
+print(len(dataset_train))
+```
+
+- **Building a forecasting RNN**
+
+```python
+import torch
+import torch.nn as nn
+
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Define RNN layer
+        self.rnn = nn.RNN(
+            input_size=1,
+            hidden_size=32,
+            num_layers=2,
+            batch_first=True,
+        )
+        self.fc = nn.Linear(32, 1)
+
+    def forward(self, x):
+        # Initialize first hidden state with zeros
+        h0 = torch.zeros(2, x.size(0), 32)
+        # Pass x and h0 through recurrent layer
+        out, _ = self.rnn(x, h0)  
+        # Pass recurrent layer's last output through linear layer
+        out = self.fc(out[:, -1, :])
+        return out
+```
+
+- **LSTM network**
+
+```python
+class Net(nn.Module):
+    def __init__(self, input_size):
+        super().__init__()
+        # Define lstm layer
+        self.lstm = nn.LSTM(
+            input_size=1,
+            hidden_size=32,
+            num_layers=2,
+            batch_first=True,
+        )
+        self.fc = nn.Linear(32, 1)
+
+    def forward(self, x):
+        h0 = torch.zeros(2, x.size(0), 32)
+        # Initialize long-term memory
+        c0 = torch.zeros(2, x.size(0), 32)
+        # Pass all inputs to lstm layer
+        out, _ = self.lstm(x, (h0, c0))
+        out = self.fc(out[:, -1, :])
+        return out
+```
+
+- **GRU network**
+
+```python
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Define RNN layer
+        self.gru = nn.GRU(
+            input_size=1,
+            hidden_size=32,
+            num_layers=2,
+            batch_first=True,
+        )
+        self.fc = nn.Linear(32, 1)
+
+    def forward(self, x):
+        h0 = torch.zeros(2, x.size(0), 32)
+        out, _ = self.gru(x, h0)  
+        out = self.fc(out[:, -1, :])
+        return out
+```
+
+**RNN training loop**
+
+```python
+net = Net()
+# Set up MSE loss
+criterion = nn.MSELoss()
+optimizer = optim.Adam(
+  net.parameters(), lr=0.0001
+)
+
+for epoch in range(3):
+    for seqs, labels in dataloader_train:
+        # Reshape model inputs
+        seqs = seqs.view(32, 96, 1)
+        # Get model outputs
+        outputs = net(seqs)
+        # Compute loss
+        loss = criterion(outputs, labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    print(f"Epoch {epoch+1}, Loss: {loss.item()}")
+```
+
+- **Evaluating forecasting models**
+
+```python
+# Define MSE metric
+mse = torchmetrics.MeanSquaredError()
+
+net.eval()
+with torch.no_grad():
+    for seqs, labels in dataloader_test:
+        seqs = seqs.view(32, 96, 1)
+        # Pass seqs to net and squeeze the result
+        outputs = net(seqs).squeeze()
+        mse(outputs, labels)
+
+# Compute final metric value
+test_mse = mse.compute()
+print(f"Test MSE: {test_mse}")
+```
+
 ---
 ### Multi-Input & Multi-Output Architectures
+
+#### Multi-input models
+
+- **Two-input dataset**
+
+```python
+from PIL import Image
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
+
+class OmniglotDataset(Dataset):
+    def __init__(self, transform, samples):
+		# Assign transform and samples to class attributes
+        self.transform = transform
+        self.samples = samples
+                    
+    def __len__(self):
+		# Return number of samples
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+      	# Unpack the sample at index idx
+        img_path, alphabet, label = self.samples[idx]
+        img = Image.open(img_path).convert('L')
+        # Transform the image 
+        img_transformed = self.transform(img)
+        return img_transformed, alphabet, label
+```
+
+- **Two-input model**
+
+```python
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Define sub-networks as sequential models
+        self.image_layer = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
+            nn.ELU(),
+            nn.Flatten(),
+            nn.Linear(16*32*32, 128)
+        )
+        self.alphabet_layer = nn.Sequential(
+            nn.Linear(30, 8),
+            nn.ELU(), 
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(128 + 8, 964), 
+        )
+        
+    def forward(self, x_image, x_alphabet):
+		# Pass the x_image and x_alphabet through appropriate layers
+        x_image = self.image_layer(x_image)
+        x_alphabet = self.alphabet_layer(x_alphabet)
+        # Concatenate x_image and x_alphabet
+        x = torch.cat((x_image, x_alphabet), dim=1)
+        return self.classifier(x)
+```
+
+#### Multi-output models
+
+- **Two-output Dataset and DataLoader**
+
+```python
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+
+# Create dataset_train
+dataset_train = OmniglotDataset(
+    transform=transforms.Compose([
+        transforms.ToTensor(),
+      	transforms.Resize((64, 64)),
+    ]),
+    samples=samples,
+)
+
+# Create dataloader_train
+dataloader_train = DataLoader(
+    dataset_train, batch_size=32, shuffle=True,
+)
+```
+
+- **Two-output model architecture**
+
+```python
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.image_layer = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=3, padding=1),
+            nn.MaxPool2d(kernel_size=2),
+            nn.ELU(),
+            nn.Flatten(),
+            nn.Linear(16*32*32, 128)
+        )
+        # Define the two classifier layers
+        self.classifier_alpha = nn.Linear(128, 30)
+        self.classifier_char = nn.Linear(128, 964)
+        
+    def forward(self, x):
+        x_image = self.image_layer(x)
+        # Pass x_image through the classifiers and return both results
+        output_alpha = self.classifier_alpha(x_image)
+        output_char = self.classifier_char(x_image)
+        return output_alpha, output_char
+```
+
+- **Training multi-output models**
+
+```python
+net = Net()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=0.05)
+
+for epoch in range(1):
+    for images, labels_alpha, labels_char in dataloader_train:
+        optimizer.zero_grad()
+        outputs_alpha, outputs_char = net(images)
+        # Compute alphabet classification loss
+        loss_alpha = criterion(outputs_alpha, labels_alpha)
+        # Compute character classification loss
+        loss_char = criterion(outputs_char, labels_char)
+        # Compute total loss
+        loss = loss_alpha + loss_char
+        loss.backward()
+        optimizer.step()
+```
+
+#### Evaluation of multi-output models and loss weighting
+
+- **Multi-output model evaluation**
+
+```python
+import torch
+from torchmetrics import Accuracy
+
+def evaluate_model(model):
+    # Define accuracy metrics
+    acc_alpha = Accuracy(task="multiclass", num_classes=30)
+    acc_char = Accuracy(task="multiclass", num_classes=964)
+
+    model.eval()
+    with torch.no_grad():
+        for images, labels_alpha, labels_char in dataloader_test:
+            # Obtain model outputs
+            outputs_alpha, outputs_char = model(images)
+            _, pred_alpha = torch.max(outputs_alpha, 1)
+            _, pred_char = torch.max(outputs_char, 1)
+			# Update both accuracy metrics
+            acc_alpha(pred_alpha, labels_alpha)
+            acc_char(pred_char, labels_char)
+    
+    print(f"Alphabet: {acc_alpha.compute()}")
+    print(f"Character: {acc_char.compute()}")
+```
