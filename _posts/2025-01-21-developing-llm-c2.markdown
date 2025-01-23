@@ -7,15 +7,33 @@ categories: developing large language models
 
 **Deep learning** là một lĩnh vực đang phát triển nhanh chóng của **trí tuệ nhân tạo (AI)** đã cách mạng hóa lĩnh vực **machine learning**, cho phép đạt được những đột phá trong các lĩnh vực như **computer vision**, **natural language processing** và **speech recognition**. Trong khóa học này, bạn sẽ phát triển các **deep learning models** mạnh mẽ với **PyTorch** cho một loạt các ứng dụng, bao gồm **image models** và **sequence models**. Bạn sẽ làm quen với các kiến trúc mạng cốt lõi, chẳng hạn như **convolutional neural networks (CNNs)** và **recurrent neural networks (RNNs)**, bao gồm **Long Short-Term Memory (LSTM) networks** và **Gated Recurrent Units (GRUs)**.
 
+### Table of contents
+
+1. [Training Robust Neural Networks](#TrainingRobustNeuralNetworks)
+    * 1.1. [PyTorch and object-oriented programming](#PyTorchandobject-orientedprogramming)
+    * 1.2. [Optimizers, training, and evaluation](#Optimizerstrainingandevaluation)
+    * 1.3. [Vanishing and exploding gradients](#Vanishingandexplodinggradients)
+2. [Images & Convolutional Neural Networks](#ImagesConvolutionalNeuralNetworks)
+    * 2.1. [Handling images with PyTorch](#HandlingimageswithPyTorch)
+    * 2.2. [Convolutional Neural Networks](#ConvolutionalNeuralNetworks)
+    * 2.3. [Training image classifiers](#Trainingimageclassifiers)
+    * 2.4. [Evaluating image classifiers](#Evaluatingimageclassifiers)
+3. [Sequences & Recurrent Neural Networks](#SequencesRecurrentNeuralNetworks)
+4. [Multi-Input & Multi-Output Architectures](#Multi-InputMulti-OutputArchitectures)
+    * 4.1. [Multi-input models](#Multi-inputmodels)
+    * 4.2. [Multi-output models](#Multi-outputmodels)
+    * 4.3. [Evaluation of multi-output models and loss weighting](#Evaluationofmulti-outputmodelsandlossweighting)
+
+
 - [Slide - Training Robust Neural Networks]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C1.pdf)
 - [Slide - Images & Convolutional Neural Networks]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C2.pdf)
 - [Slide - Sequences & Recurrent Neural Networks]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C3.pdf)
 - [Slide - Multi-Input & Multi-Output Architectures]({{site.baseurl}}/files/IntermediateDeepLearningwithPyTorch-C4.pdf)
 
 ---
-### Training Robust Neural Networks
+###  1. <a name='TrainingRobustNeuralNetworks'></a>Training Robust Neural Networks
 
-#### PyTorch and object-oriented programming 
+####  1.1. <a name='PyTorchandobject-orientedprogramming'></a>PyTorch and object-oriented programming 
 
 Lập trình hướng đối tượng (OOP) là một cách tổ chức mã chương trình bằng cách tạo ra các "đối tượng". Hãy tưởng tượng mỗi đối tượng như một chiếc hộp chứa đựng cả dữ liệu (thuộc tính) và các hành động (phương thức) mà nó có thể thực hiện.
 
@@ -90,7 +108,7 @@ class Net(nn.Module):
         return x
 ```
 
-#### Optimizers, training, and evaluation
+####  1.2. <a name='Optimizerstrainingandevaluation'></a>Optimizers, training, and evaluation
 
 **Training Loop**
 
@@ -279,7 +297,7 @@ with torch.no_grad():
   print(f'Accuracy: {accuracy:.4f}')
 ```
 
-#### Vanishing and exploding gradients
+####  1.3. <a name='Vanishingandexplodinggradients'></a>Vanishing and exploding gradients
 
 Trong quá trình huấn luyện mạng nơ-ron, đặc biệt là mạng nơ-ron sâu, chúng ta sử dụng thuật toán lan truyền ngược (backpropagation) để tính toán gradient của hàm loss theo các tham số của mô hình. Gradient này cho biết hướng và độ lớn cần điều chỉnh các tham số để giảm thiểu loss.
 
@@ -440,9 +458,9 @@ class Net(nn.Module):
 ```
 
 ---
-### Images & Convolutional Neural Networks
+###  2. <a name='ImagesConvolutionalNeuralNetworks'></a>Images & Convolutional Neural Networks
 
-#### Handling images with PyTorch
+####  2.1. <a name='HandlingimageswithPyTorch'></a>Handling images with PyTorch
 
 - Image dataset
 
@@ -511,7 +529,7 @@ Dòng lệnh `image = image.squeeze().permute(1, 2, 0)` thực hiện hai thao t
 - Ví dụ: Nếu `image` có shape là `(3, 224, 224)`, sau khi `permute(1, 2, 0)` shape sẽ trở thành `(224, 224, 3)`.
 - Thao tác này thường được sử dụng để chuyển đổi thứ tự channels từ dạng PyTorch `(channels, height, width)` sang dạng `(height, width, channels)` mà các thư viện hiển thị ảnh như `matplotlib` yêu cầu.
 
-#### Convolutional Neural Networks
+####  2.2. <a name='ConvolutionalNeuralNetworks'></a>Convolutional Neural Networks
 
 - Building convolutional networks
 
@@ -539,7 +557,7 @@ class Net(nn.Module):
         return x
 ```
 
-#### Training image classifiers
+####  2.3. <a name='Trainingimageclassifiers'></a>Training image classifiers
 
 - Dataset with augmentations
 
@@ -587,7 +605,7 @@ for epoch in range(3):
     print(f"Epoch {epoch+1}, Loss: {epoch_loss:.4f}")
 ```
 
-#### Evaluating image classifiers
+####  2.4. <a name='Evaluatingimageclassifiers'></a>Evaluating image classifiers
 
 ![]({{site.baseurl}}/images/precision-recall.png)
 
@@ -678,7 +696,7 @@ print(precision_per_class)
 ```
 
 ---
-### Sequences & Recurrent Neural Networks
+###  3. <a name='SequencesRecurrentNeuralNetworks'></a>Sequences & Recurrent Neural Networks
 
 ![]({{site.url}}/images/electric-comsumption-prediction.png)
 
@@ -837,9 +855,9 @@ print(f"Test MSE: {test_mse}")
 ```
 
 ---
-### Multi-Input & Multi-Output Architectures
+###  4. <a name='Multi-InputMulti-OutputArchitectures'></a>Multi-Input & Multi-Output Architectures
 
-#### Multi-input models
+####  4.1. <a name='Multi-inputmodels'></a>Multi-input models
 
 - **Two-input dataset**
 
@@ -898,7 +916,7 @@ class Net(nn.Module):
         return self.classifier(x)
 ```
 
-#### Multi-output models
+####  4.2. <a name='Multi-outputmodels'></a>Multi-output models
 
 - **Two-output Dataset and DataLoader**
 
@@ -967,7 +985,7 @@ for epoch in range(1):
         optimizer.step()
 ```
 
-#### Evaluation of multi-output models and loss weighting
+####  4.3. <a name='Evaluationofmulti-outputmodelsandlossweighting'></a>Evaluation of multi-output models and loss weighting
 
 - **Multi-output model evaluation**
 

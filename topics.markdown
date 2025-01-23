@@ -63,7 +63,7 @@ Example code: https://github.com/fluentpython/example-code-2e
 ## Developing Large Language Models
 - [Introduction to Deep Learning with PyTorch](_posts/2025-01-21-developing-llm-c1.markdown)
 - [Intermediate Deep Learning with PyTorch](_posts/2025-01-21-developing-llm-c2.markdown)
-- Deep Learning for Text with PyTorch
+- [Deep Learning for Text with PyTorch](_posts/2025-01-21-developing-llm-c3.markdown)
 - Project: Service Desk Ticket Classification with Deep Learning
 - Introduction to LLMs in Python
 - Project: Analyzing Car Reviews with LLMs
