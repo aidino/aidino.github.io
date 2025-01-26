@@ -7,12 +7,44 @@ categories: developing large language models
 
 Discover the exciting world of Deep Learning for Text with PyTorch and unlock new possibilities in natural language processing and text generation.
 
+### Table of contents
+- [Table of contents](#table-of-contents)
+- [1. Introduction to Deep Learning for Text with PyTorch](#1-introduction-to-deep-learning-for-text-with-pytorch)
+  - [1.1. Introduction to preprocessing for text](#11-introduction-to-preprocessing-for-text)
+  - [1.2. Encoding text data](#12-encoding-text-data)
+  - [1.3. Introduction to building a text processing pipeline](#13-introduction-to-building-a-text-processing-pipeline)
+- [2. Text Classification with PyTorch](#2-text-classification-with-pytorch)
+  - [2.1. Overview of Text Classification](#21-overview-of-text-classification)
+  - [2.2. Convolutional neural networks for text classification](#22-convolutional-neural-networks-for-text-classification)
+  - [2.3. Recurrent neural networks for text classification](#23-recurrent-neural-networks-for-text-classification)
+  - [2.4. Evaluation metrics for text classification](#24-evaluation-metrics-for-text-classification)
+- [3. Text Generation with PyTorch](#3-text-generation-with-pytorch)
+  - [3.1. Introduction to text generation](#31-introduction-to-text-generation)
+  - [3.2. Generative adversarial networks for text generation](#32-generative-adversarial-networks-for-text-generation)
+  - [3.3. Pre-trained models for text generation](#33-pre-trained-models-for-text-generation)
+  - [3.4. Evaluation metrics for text generation](#34-evaluation-metrics-for-text-generation)
+- [4. Advanced Topics in Deep Learning for Text with PyTorch](#4-advanced-topics-in-deep-learning-for-text-with-pytorch)
+  - [4.1. Transfer learning for text classification](#41-transfer-learning-for-text-classification)
+  - [4.2. Transformers for text processing](#42-transformers-for-text-processing)
+  - [4.3. Attention mechanisms for text generation](#43-attention-mechanisms-for-text-generation)
+  - [4.4. Adversarial attacks on text classification models](#44-adversarial-attacks-on-text-classification-models)
+* 3. [Text Generation with PyTorch](#TextGenerationwithPyTorch)
+    * 3.1. [Introduction to text generation](#Introductiontotextgeneration)
+    * 3.2. [Generative adversarial networks for text generation](#Generativeadversarialnetworksfortextgeneration)
+    * 3.3. [Pre-trained models for text generation](#Pre-trainedmodelsfortextgeneration)
+    * 3.4. [Evaluation metrics for text generation](#Evaluationmetricsfortextgeneration)
+* 4. [Advanced Topics in Deep Learning for Text with PyTorch](#AdvancedTopicsinDeepLearningforTextwithPyTorch)
+    * 4.1. [Transfer learning for text classification](#Transferlearningfortextclassification)
+    * 4.2. [Transformers for text processing](#Transformersfortextprocessing)
+    * 4.3. [Attention mechanisms for text generation](#Attentionmechanismsfortextgeneration)
+    * 4.4. [Adversarial attacks on text classification models](#Adversarialattacksontextclassificationmodels)
+
 ---
-### Introduction to Deep Learning for Text with PyTorch
+###  1. <a name='IntroductiontoDeepLearningforTextwithPyTorch'></a>Introduction to Deep Learning for Text with PyTorch
 
 [Slide]({{site.baseurl}}/files/DeepLearningforTextwithPyTorch-C1.pdf)
 
-#### Introduction to preprocessing for text
+####  1.1. <a name='Introductiontopreprocessingfortext'></a>Introduction to preprocessing for text
 
 Tiền xử lý dữ liệu là bước quan trọng trước khi huấn luyện mô hình học máy, đặc biệt là trong xử lý ngôn ngữ tự nhiên (NLP). Mục đích của tiền xử lý là làm sạch và chuẩn hóa dữ liệu, giúp mô hình học hiệu quả hơn. Dưới đây là giải thích và ví dụ minh họa cho các kỹ thuật tiền xử lý phổ biến:
 
@@ -160,7 +192,7 @@ stemmer = PorterStemmer()
 stemmed_tokens = [stemmer.stem(token) for token in filtered_tokens]
 print(stemmed_tokens)
 ```
-#### Encoding text data
+####  1.2. <a name='Encodingtextdata'></a>Encoding text data
 
 Mã hóa văn bản là quá trình chuyển đổi văn bản thành dạng số để máy tính có thể hiểu và xử lý. Dưới đây là giải thích về các kỹ thuật mã hóa phổ biến:
 
@@ -300,7 +332,7 @@ print(vectorizer.get_feature_names_out()[:5])
 print(tfidf_encoded_descriptions.toarray()[0, :5])
 ```
 
-#### Introduction to building a text processing pipeline
+####  1.3. <a name='Introductiontobuildingatextprocessingpipeline'></a>Introduction to building a text processing pipeline
 
 - **Shakespearean language preprocessing pipeline**
 
@@ -364,11 +396,11 @@ print(next(iter(dataloader))[0, :10])
 ```
 
 ---
-### Text Classification with PyTorch
+###  2. <a name='TextClassificationwithPyTorch'></a>Text Classification with PyTorch
 
 [Slide]({{site.baseurl}}/files/DeepLearningforTextwithPyTorch-C2.pdf)
 
-#### Overview of Text Classification
+####  2.1. <a name='OverviewofTextClassification'></a>Overview of Text Classification
 
 - Embedding in PyTorch
 
@@ -387,7 +419,7 @@ embedding = nn.Embedding(num_embeddings=len(words), embedding_dim=10)
 output = embedding(inputs)
 print(output)
 ```
-#### Convolutional neural networks for text classification
+####  2.2. <a name='Convolutionalneuralnetworksfortextclassification'></a>Convolutional neural networks for text classification
 
 - **Build a CNN model for text**
 
@@ -448,7 +480,7 @@ for review in book_reviews:
     print(f"Sentiment: {sentiment}\n")
 ```
 
-#### Recurrent neural networks for text classification
+####  2.3. <a name='Recurrentneuralnetworksfortextclassification'></a>Recurrent neural networks for text classification
 
 - **Building an RNN model for text**
 
@@ -550,7 +582,7 @@ for epoch in range(15):
     print(f'Epoch: {epoch+1}, Loss: {loss.item()}')
 ```
 
-#### Evaluation metrics for text classification
+####  2.4. <a name='Evaluationmetricsfortextclassification'></a>Evaluation metrics for text classification
 
 - **Evaluating RNN classification models**
 
@@ -598,11 +630,11 @@ print("GRU Model - Accuracy: {}, Precision: {}, Recall: {}, F1 Score: {}".format
 ```
 
 ---
-### Text Generation with PyTorch
+###  3. <a name='TextGenerationwithPyTorch'></a>Text Generation with PyTorch
 
 [Slide]({{site.baseurl}}/files/DeepLearningforTextwithPyTorch-C3.pdf)
 
-#### Introduction to text generation
+####  3.1. <a name='Introductiontotextgeneration'></a>Introduction to text generation
 
 - **Creating a RNN model for text generation**
 
@@ -653,7 +685,7 @@ predicted_char_ix = torch.argmax(predicted_output, 1).item()
 print(f"Test Input: 'r', Predicted Output: '{ix_to_char[predicted_char_ix]}'")
 ```
 
-#### Generative adversarial networks for text generation
+####  3.2. <a name='Generativeadversarialnetworksfortextgeneration'></a>Generative adversarial networks for text generation
 
 - **Building a generator and discriminator**
 
@@ -717,7 +749,7 @@ for _ in range(5):
     print(torch.round(generated_data).detach())
 ```
 
-#### Pre-trained models for text generation
+####  3.3. <a name='Pre-trainedmodelsfortextgeneration'></a>Pre-trained models for text generation
 
 - **Text completion with pre-trained GPT-2 models**
 
@@ -759,7 +791,7 @@ generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 print("Generated text:",generated_text)
 ```
 
-#### Evaluation metrics for text generation
+####  3.4. <a name='Evaluationmetricsfortextgeneration'></a>Evaluation metrics for text generation
 
 **BLEU score là gì?**
 
@@ -848,11 +880,11 @@ print("ROUGE Score:", rouge_score)
 ```
 
 ---
-### Advanced Topics in Deep Learning for Text with PyTorch
+###  4. <a name='AdvancedTopicsinDeepLearningforTextwithPyTorch'></a>Advanced Topics in Deep Learning for Text with PyTorch
 
 [Slide]({{site.baseurl}}/files/DeepLearningforTextwithPyTorch-C4.pdf)
 
-#### Transfer learning for text classification
+####  4.1. <a name='Transferlearningfortextclassification'></a>Transfer learning for text classification
 
 - **Transfer learning using BERT**
 
@@ -894,7 +926,7 @@ predicted_label = "positive" if torch.argmax(predictions) > 0 else "negative"
 print(f"Text: {text}\nSentiment: {predicted_label}")
 ```
 
-#### Transformers for text processing
+####  4.2. <a name='Transformersfortextprocessing'></a>Transformers for text processing
 
 - **Creating a transformer model**
 
@@ -950,7 +982,7 @@ sample_sentence = "This product can be better"
 print(f"'{sample_sentence}' is {predict(sample_sentence)}")
 ```
 
-#### Attention mechanisms for text generation
+####  4.3. <a name='Attentionmechanismsfortextgeneration'></a>Attention mechanisms for text generation
 
 - **Creating a RNN model with attention**
 
@@ -1013,7 +1045,7 @@ for input_seq, target in zip(input_data, target_data):
     print(f"RNN with Attention prediction: {attention_prediction}")
 ```
 
-#### Adversarial attacks on text classification models
+####  4.4. <a name='Adversarialattacksontextclassificationmodels'></a>Adversarial attacks on text classification models
 
 Tưởng tượng bạn có một chú chó biết phân loại đồ chơi. Bạn đưa cho nó một quả bóng, nó sủa "bóng!". Bạn đưa cho nó một cái xe, nó sủa "xe!". Chú chó này chính là mô hình phân loại văn bản của chúng ta. 
 
