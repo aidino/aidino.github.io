@@ -29,7 +29,7 @@ Example code: https://github.com/fluentpython/example-code-2e
 - [Suppervised Learning with scikit-learn](_posts/2025-01-20-ml-in-python-c1.markdown)
 - [**Project** - Predictive Modeling for Agriculture](_posts/2025-01-20-ml-in-python-c2.markdown)
 - Unsupervised Learning in Python
-- **Project** - Clustering Antarctic Penguin Species
+- [**Project** - Clustering Antarctic Penguin Species](_posts/2025-01-20-ml-in-python-c4.markdown)
 - Linear Classifiers in Python
 - Machine Learning with Tree-Vased Models in Python
 - **Project** - Predicting Movie Rental Durations
@@ -64,7 +64,7 @@ Example code: https://github.com/fluentpython/example-code-2e
 - [Introduction to Deep Learning with PyTorch](_posts/2025-01-21-developing-llm-c1.markdown)
 - [Intermediate Deep Learning with PyTorch](_posts/2025-01-21-developing-llm-c2.markdown)
 - [Deep Learning for Text with PyTorch](_posts/2025-01-21-developing-llm-c3.markdown)
-- Project: Service Desk Ticket Classification with Deep Learning
+- [Project: Service Desk Ticket Classification with Deep Learning](_posts/2025-01-21-developing-llm-c4.markdown)
 - Introduction to LLMs in Python
 - Project: Analyzing Car Reviews with LLMs
 - Working with Llama 3
