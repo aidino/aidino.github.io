@@ -759,6 +759,8 @@ Có nhiều biến thể của Gradient Boosting, bao gồm:
 *   **Khó diễn giải:** Khó diễn giải hơn so với một số thuật toán khác.
 *   **Tính toán tốn kém:** Đòi hỏi nhiều tính toán hơn so với một số thuật toán khác.
 *   **Nhạy cảm với tuning hyperparameters:** Yêu cầu điều chỉnh các siêu tham số (hyperparameters) cẩn thận.
+*   
+
 
 **Ứng dụng của Gradient Boosting:**
 
@@ -775,6 +777,132 @@ Gradient Boosting được sử dụng rộng rãi trong nhiều lĩnh vực, ba
 *   *Gradient Boosting* là một thuật toán *boosting* mạnh mẽ và hiệu quả.
 *   Bằng cách sử dụng gradient descent để tối ưu hóa mô hình, Gradient Boosting đạt được độ chính xác rất cao.
 *   Đây là một trong những thuật toán được sử dụng phổ biến nhất trong Machine Learning, đặc biệt trong các cuộc thi học máy.
+  
+
+- **Define the GB regressor**
+
+```python
+# Import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Instantiate gb
+gb = GradientBoostingRegressor(max_depth=4, 
+            n_estimators=200,
+            random_state=2)
+```
+
+- **Train the GB regressor**
+
+```python
+# Fit gb to the training set
+gb.fit(X_train, y_train)
+
+# Predict test set labels
+y_pred = gb.predict(X_test)
+```
+
+- **Evaluate the GB regressor**
+
+```python
+# Import mean_squared_error as MSE
+from sklearn.metrics import mean_squared_error as MSE
+
+# Compute MSE
+mse_test = MSE(y_test, y_pred)
+
+# Compute RMSE
+rmse_test = mse_test**(1/2)
+
+# Print RMSE
+print('Test set RMSE of gb: {:.3f}'.format(rmse_test))
+```
+
+#### Stochastic Gradient Boosting (SGB)
+
+*Stochastic Gradient Boosting (SGB)* là một biến thể của *Gradient Boosting* (Tăng cường Gradient) được giới thiệu để cải thiện hiệu suất và khả năng khái quát hóa của mô hình.  Điểm khác biệt chính của SGB so với Gradient Boosting "truyền thống" là việc sử dụng ngẫu nhiên trong quá trình huấn luyện.
+
+**Cách thức hoạt động:**
+
+SGB hoạt động tương tự như Gradient Boosting, nhưng có thêm một bước ngẫu nhiên:
+
+1.  **Khởi tạo:** Khởi tạo một mô hình dự đoán ban đầu (thường là một giá trị trung bình hoặc hằng số).
+
+2.  **Lấy mẫu ngẫu nhiên:** Thay vì sử dụng toàn bộ dữ liệu huấn luyện để tính toán gradient, SGB chỉ sử dụng một tập con ngẫu nhiên của dữ liệu huấn luyện.  Việc này được thực hiện ở mỗi bước huấn luyện của mỗi weak learner. Tỉ lệ mẫu được lấy gọi là *subsample ratio*.
+
+3.  **Tính toán phần dư (residuals):** Tính toán phần dư (residuals) giữa giá trị thực tế và dự đoán của mô hình hiện tại, *chỉ trên tập con ngẫu nhiên*.
+
+4.  **Huấn luyện mô hình yếu trên phần dư:** Huấn luyện một mô hình học máy yếu (ví dụ: cây quyết định với độ sâu nhỏ) trên phần dư, *sử dụng tập con ngẫu nhiên*.
+
+5.  **Cập nhật mô hình:** Cập nhật mô hình hiện tại bằng cách cộng thêm dự đoán của mô hình yếu vừa huấn luyện, nhân với một hệ số học (learning rate) nhỏ.
+
+6.  **Lặp lại:** Lặp lại các bước 2-5 cho đến khi đạt được một số lượng mô hình yếu nhất định hoặc sai số đạt ngưỡng.
+
+7.  **Kết hợp dự đoán:** Kết hợp các dự đoán của tất cả các mô hình yếu để đưa ra dự đoán cuối cùng.
+
+**Điểm khác biệt chính của SGB so với Gradient Boosting "truyền thống":**
+
+*   **Sử dụng ngẫu nhiên:** SGB sử dụng một tập con ngẫu nhiên của dữ liệu huấn luyện ở mỗi bước, trong khi Gradient Boosting "truyền thống" sử dụng toàn bộ dữ liệu.
+
+**Lợi ích của Stochastic Gradient Boosting:**
+
+*   **Giảm overfitting:** Việc sử dụng ngẫu nhiên giúp giảm overfitting, do mỗi weak learner chỉ được huấn luyện trên một phần dữ liệu, tránh học thuộc lòng dữ liệu huấn luyện.
+*   **Tăng tốc độ huấn luyện:** Huấn luyện trên tập con ngẫu nhiên nhanh hơn so với huấn luyện trên toàn bộ dữ liệu.
+*   **Cải thiện khả năng khái quát hóa:** Mô hình SGB thường có khả năng khái quát hóa tốt hơn, do ít bị ảnh hưởng bởi nhiễu trong dữ liệu.
+
+**Các tham số quan trọng trong SGB:**
+
+*   `n_estimators`: Số lượng weak learners (ví dụ: số cây quyết định).
+*   `learning_rate`: Hệ số học, kiểm soát mức độ đóng góp của mỗi weak learner.
+*   `subsample`: Tỉ lệ mẫu được sử dụng ở mỗi bước huấn luyện.  Giá trị này nằm trong khoảng (0, 1].
+*   `max_depth`: Độ sâu tối đa của cây quyết định (nếu weak learner là cây quyết định).
+
+**Tóm lại:**
+
+*   *Stochastic Gradient Boosting* là một biến thể của *Gradient Boosting* sử dụng ngẫu nhiên trong quá trình huấn luyện.
+*   Việc sử dụng ngẫu nhiên giúp giảm overfitting, tăng tốc độ huấn luyện và cải thiện khả năng khái quát hóa của mô hình.
+*   SGB là một thuật toán mạnh mẽ và được sử dụng rộng rãi trong Machine Learning.
+
+- **Regression with SGB**
+
+```python
+# Import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Instantiate sgbr
+sgbr = GradientBoostingRegressor(max_depth=4, 
+            subsample=0.9,
+            max_features=0.75,
+            n_estimators=200,
+            random_state=2)
+```
+
+- **Train the SGB regressor**
+
+```python
+# Fit sgbr to the training set
+sgbr.fit(X_train, y_train)
+
+# Predict test set labels
+y_pred = sgbr.predict(X_test)
+```
+
+- **Evaluate the SGB regressor**
+
+```python 
+# Import mean_squared_error as MSE
+from sklearn.metrics import mean_squared_error as MSE
+
+# Compute test set MSE
+mse_test = MSE(y_test, y_pred)
+
+# Compute test set RMSE
+rmse_test = mse_test**(1/2)
+
+# Print rmse_test
+print('Test set RMSE of sgbr: {:.3f}'.format(rmse_test))
+```
+
+
 
 ---
 ### Model Tuning
