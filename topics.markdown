@@ -30,8 +30,8 @@ Example code: https://github.com/fluentpython/example-code-2e
 - [**Project** - Predictive Modeling for Agriculture](_posts/2025-01-20-ml-in-python-c2.markdown)
 - Unsupervised Learning in Python
 - [**Project** - Clustering Antarctic Penguin Species](_posts/2025-01-20-ml-in-python-c4.markdown)
-- Linear Classifiers in Python
-- Machine Learning with Tree-Vased Models in Python
+- [Linear Classifiers in Python](_posts/2025-01-20-ml-in-python-c5.markdown)
+- [Machine Learning with Tree-Based Models in Python](_posts/2025-01-20-ml-in-python-c6.markdown)
 - **Project** - Predicting Movie Rental Durations
 - Extreme Gradient boosting with XGBoost
 - Cluster Analysis in Python

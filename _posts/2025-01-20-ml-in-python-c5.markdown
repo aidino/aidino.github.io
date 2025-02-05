@@ -7,12 +7,26 @@ categories: machine learning in python
 
 Learn the details of linear classifiers like logistic regression and SVM.
 
+
+### Table of contents
+
+1. [Applying logistic regression and SVM](#ApplyinglogisticregressionandSVM)
+   * 1.1. [**scikit-learn refresher**](#scikit-learnrefresher)
+   * 1.2. [**Applying logistic regression and SVM**](#ApplyinglogisticregressionandSVM-1)
+2. [Loss functions](#Lossfunctions)
+3. [Logistic regression](#Logisticregression)
+   * 3.1. [**Logistic regression and regularization**](#Logisticregressionandregularization)
+   * 3.2. [**Logistic regression and probabilities**](#Logisticregressionandprobabilities)
+   * 3.3. [**Multi-class logistic regression**](#Multi-classlogisticregression)
+   * 3.4. [**Support Vector Machines**](#SupportVectorMachines)
+4. [Logistic regression](#Logisticregression-1)
+
 ---
-### Applying logistic regression and SVM
+###  1. <a name='ApplyinglogisticregressionandSVM'></a>Applying logistic regression and SVM
 
 [Slide]({{site.baseurl}}/files/linears_classifiers_in_python_c1.pdf)
 
-#### **scikit-learn refresher**
+####  1.1. <a name='scikit-learnrefresher'></a>**scikit-learn refresher**
 
 - **KNN classification**
 
@@ -60,7 +74,7 @@ print("Prediction for test example 0:", pred)
 print("Score:", knn.score(X_test, y_test))
 ```
 
-#### **Applying logistic regression and SVM**
+####  1.2. <a name='ApplyinglogisticregressionandSVM-1'></a>**Applying logistic regression and SVM**
 
 **Logistic Regression** là một thuật toán học máy thuộc nhóm **học có giám sát (supervised learning)**, được sử dụng cho bài toán **phân loại (classification)**. Mặc dù có tên "regression" (hồi quy), nhưng thực chất đây là một thuật toán phân loại.
 
@@ -207,16 +221,16 @@ print("Probability of positive review:", lr.predict_proba(review2_features)[0,1]
 ```
 
 ---
-### Loss functions
+###  2. <a name='Lossfunctions'></a>Loss functions
 
 [Slide]({{site.baseurl}}/files/linears_classifiers_in_python_c2.pdf)
 
 ---
-### Logistic regression
+###  3. <a name='Logisticregression'></a>Logistic regression
 
 [Slide]({{site.baseurl}}/files/linears_classifiers_in_python_c3.pdf)
 
-#### **Logistic regression and regularization**
+####  3.1. <a name='Logisticregressionandregularization'></a>**Logistic regression and regularization**
 
 - **Regularized logistic regression**
 
@@ -281,7 +295,7 @@ for i in range(5):
 print("\n")
 ```
 
-#### **Logistic regression and probabilities**
+####  3.2. <a name='Logisticregressionandprobabilities'></a>**Logistic regression and probabilities**
 
 - **Regularization and probabilities**
 
@@ -318,7 +332,7 @@ show_digit(proba_inds[0], lr)
 
 ```
 
-#### **Multi-class logistic regression**
+####  3.3. <a name='Multi-classlogisticregression'></a>**Multi-class logistic regression**
 
 - **Fitting multi-class logistic regression**
 
@@ -338,11 +352,73 @@ print("Softmax training accuracy:", lr_mn.score(X_train, y_train))
 print("Softmax test accuracy    :", lr_mn.score(X_test, y_test))
 ```
 
-#### **Support Vector Machines**
+####  3.4. <a name='SupportVectorMachines'></a>**Support Vector Machines**
 
 
 ---
-### Logistic regression
+###  4. <a name='Logisticregression-1'></a>Logistic regression
 
 [Slide]({{site.baseurl}}/files/linears_classifiers_in_python_c4.pdf)
 
+- **Effect of removing examples**
+
+```python
+# Train a linear SVM
+svm = SVC(kernel="linear")
+svm.fit(X, y)
+plot_classifier(X, y, svm, lims=(11,15,0,6))
+
+# Make a new data set keeping only the support vectors
+print("Number of original examples", len(X))
+print("Number of support vectors", len(svm.support_))
+X_small = X[svm.support_]
+y_small = y[svm.support_]
+
+# Train a new SVM using only the support vectors
+svm_small = SVC(kernel="linear")
+svm_small.fit(X_small, y_small)
+plot_classifier(X_small, y_small, svm_small, lims=(11,15,0,6))
+```
+
+- **GridSearchCV warm-up**
+
+```python
+# Instantiate an RBF SVM
+svm = SVC()
+
+# Instantiate the GridSearchCV object and run the search
+parameters = {'gamma':[0.00001, 0.0001, 0.001, 0.01, 0.1]}
+searcher = GridSearchCV(svm, parameters)
+searcher.fit(X, y)
+
+# Report the best parameters
+print("Best CV params", searcher.best_params_)
+```
+
+- **Using SGDClassifier**
+
+Với **SGDClassifier** thì có thể  chuyển đổi qua lại giữa **LogisticRegression** và **LinearSVM** chỉ cần thay đổi tham số `loss`
+
+```python
+from sklearn.linear_model import SGDClassifier
+logreg = SGDClassifier(loss='log_loss')
+linsvm = SGDClassifier(loss='hinge')
+```
+
+Ngoài ra, **SGDClassifier** còn có regulation `alpha` = 1/C
+
+```python
+# We set random_state=0 for reproducibility 
+linear_classifier = SGDClassifier(random_state=0)
+
+# Instantiate the GridSearchCV object and run the search
+parameters = {'alpha':[0.00001, 0.0001, 0.001, 0.01, 0.1, 1], 
+             'loss':['log_loss', 'hinge']}
+searcher = GridSearchCV(linear_classifier, parameters, cv=10)
+searcher.fit(X_train, y_train)
+
+# Report the best parameters and the corresponding score
+print("Best CV params", searcher.best_params_)
+print("Best CV accuracy", searcher.best_score_)
+print("Test accuracy of best grid search hypers:", searcher.score(X_test, y_test))
+```
