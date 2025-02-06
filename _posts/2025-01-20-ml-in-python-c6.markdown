@@ -903,9 +903,124 @@ print('Test set RMSE of sgbr: {:.3f}'.format(rmse_test))
 ```
 
 
-
 ---
 ### Model Tuning
 
 [Slide]({{site.baseurl}}/files/Machine_Learning_with_Tree_Based_Models_C5.pdf)
 
+#### Tuning a CART's Hyperparameters
+
+
+Trong Machine Learning, mô hình *Classification and Regression Trees (CART)*, hay còn gọi là Cây Quyết Định, có một số *hyperparameters* (siêu tham số) mà chúng ta cần điều chỉnh để đạt được hiệu suất tốt nhất trên dữ liệu.  Việc điều chỉnh *hyperparameters* này được gọi là *tuning* (điều chỉnh) hay *hyperparameter optimization* (tối ưu hóa siêu tham số).  Mục tiêu là tìm ra các giá trị *hyperparameters* tối ưu giúp mô hình *generalize* (khái quát hóa) tốt, tức là hoạt động tốt trên dữ liệu mới, chưa từng gặp.
+
+**Các Hyperparameters quan trọng của CART:**
+
+*   **`max_depth` (Độ sâu tối đa của cây):**  Kiểm soát độ phức tạp của cây.  `max_depth` quá lớn có thể dẫn đến *overfitting* (học quá khớp), trong khi `max_depth` quá nhỏ có thể dẫn đến *underfitting* (học chưa đủ).
+*   **`min_samples_split` (Số mẫu tối thiểu để chia một nút):** Quy định số lượng mẫu tối thiểu cần thiết để một nút được chia thành hai nút con.  Giá trị nhỏ có thể dẫn đến cây quá phức tạp, trong khi giá trị lớn có thể hạn chế khả năng học các mẫu phức tạp.
+*   **`min_samples_leaf` (Số mẫu tối thiểu trong một lá):** Quy định số lượng mẫu tối thiểu trong một lá (nút cuối cùng của cây).  Tương tự như `min_samples_split`, giá trị nhỏ có thể dẫn đến *overfitting*, giá trị lớn có thể dẫn đến *underfitting*.
+*   **`max_leaf_nodes` (Số nút lá tối đa):** Giới hạn số lượng nút lá tối đa của cây.  Giúp kiểm soát kích thước của cây và tránh *overfitting*.
+*   **`cp` (Complexity Parameter - Tham số Phức tạp):**  Kiểm soát sự phát triển của cây.  Giá trị `cp` càng lớn, cây càng nhỏ gọn.  Phương pháp *cost-complexity pruning* (cắt tỉa dựa trên độ phức tạp) sử dụng tham số này.
+
+**Các phương pháp Tuning Hyperparameters:**
+
+1.  **Grid Search:** Thử tất cả các kết hợp có thể của các giá trị *hyperparameters* trong một phạm vi được định nghĩa trước.  Đánh giá hiệu suất của mô hình với mỗi kết hợp và chọn kết hợp tốt nhất.
+
+2.  **Randomized Search:** Tương tự như Grid Search, nhưng thay vì thử tất cả các kết hợp, chúng ta lấy mẫu ngẫu nhiên các giá trị *hyperparameters* từ một phân bố được chỉ định.  Thường hiệu quả hơn Grid Search khi không gian tìm kiếm lớn.
+
+3.  **Cross-Validation (Kiểm tra Chéo):**  Đánh giá hiệu suất của mô hình trên nhiều tập con của dữ liệu huấn luyện (folds).  Ví dụ: *k-fold cross-validation*.  Giúp ước lượng khả năng khái quát hóa của mô hình và chọn *hyperparameters* tốt nhất.
+
+4.  **Bayesian Optimization:** Sử dụng mô hình Bayesian để ước lượng hàm mục tiêu (ví dụ: độ chính xác) và chọn các giá trị *hyperparameters* tiếp theo một cách thông minh.  Thường hiệu quả hơn Grid Search và Randomized Search.
+
+**Ví dụ (sử dụng Python và scikit-learn):**
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV, train_test_split
+
+# Giả sử X là dữ liệu huấn luyện và y là nhãn
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+param_grid = {
+    'max_depth': [None, 5, 10, 15],
+    'min_samples_split':,
+    'min_samples_leaf':
+}
+
+grid_search = GridSearchCV(DecisionTreeClassifier(), param_grid, cv=5) # 5-fold cross-validation
+grid_search.fit(X_train, y_train)
+
+best_cart = grid_search.best_estimator_
+print("Best hyperparameters:", grid_search.best_params_)
+print("Best score:", grid_search.best_score_)
+
+# Đánh giá mô hình trên dữ liệu kiểm tra
+accuracy = best_cart.score(X_test, y_test)
+print("Accuracy on test data:", accuracy)
+```
+
+**Tóm lại:**
+
+*   Việc điều chỉnh *hyperparameters* của CART là rất quan trọng để đạt được hiệu suất tốt nhất.
+*   Có nhiều phương pháp *tuning hyperparameters*, mỗi phương pháp có ưu và nhược điểm riêng.
+*   Sử dụng *cross-validation* là rất quan trọng để đánh giá khách quan hiệu suất của mô hình.
+
+#### Tuning a RF's Hyperparameters
+
+*Random Forest (RF)* là một thuật toán *ensemble learning* mạnh mẽ, nhưng hiệu suất của nó phụ thuộc vào việc điều chỉnh các *hyperparameters* (siêu tham số). Việc *tuning* (điều chỉnh) các *hyperparameters* này là rất quan trọng để đạt được kết quả tốt nhất trên dữ liệu. Mục tiêu là tìm ra sự cân bằng giữa độ chính xác và khả năng khái quát hóa của mô hình, tránh *overfitting* (học quá khớp) hoặc *underfitting* (học chưa đủ).
+
+**Các Hyperparameters quan trọng của Random Forest:**
+
+*   **`n_estimators` (Số cây):** Số lượng cây quyết định được xây dựng trong rừng. Càng nhiều cây, độ chính xác thường càng cao, nhưng cũng tốn kém tính toán hơn.  Tuy nhiên, sau một ngưỡng nhất định, việc tăng `n_estimators` sẽ không mang lại nhiều lợi ích.
+*   **`max_depth` (Độ sâu tối đa của cây):**  Kiểm soát độ phức tạp của mỗi cây. `max_depth` quá lớn có thể dẫn đến *overfitting*, trong khi `max_depth` quá nhỏ có thể dẫn đến *underfitting*.
+*   **`min_samples_split` (Số mẫu tối thiểu để chia một nút):** Quy định số lượng mẫu tối thiểu cần thiết để một nút được chia thành hai nút con. Giá trị nhỏ có thể dẫn đến cây quá phức tạp, trong khi giá trị lớn có thể hạn chế khả năng học các mẫu phức tạp.
+*   **`min_samples_leaf` (Số mẫu tối thiểu trong một lá):** Quy định số lượng mẫu tối thiểu trong một lá (nút cuối cùng của cây). Tương tự như `min_samples_split`, giá trị nhỏ có thể dẫn đến *overfitting*, giá trị lớn có thể dẫn đến *underfitting*.
+*   **`max_features` (Số lượng thuộc tính được xem xét tại mỗi nút):**  Quy định số lượng thuộc tính ngẫu nhiên được xem xét tại mỗi nút khi chọn thuộc tính tốt nhất để phân chia. Giá trị nhỏ giúp tăng tính đa dạng của các cây, giảm *overfitting*, nhưng có thể làm giảm độ chính xác nếu bỏ qua các thuộc tính quan trọng.  Các giá trị thường được sử dụng là "sqrt" (hoặc "auto") cho bài toán phân loại và "log2" cho bài toán hồi quy.
+*   **`bootstrap`:** Cho biết có sử dụng *bootstrap sampling* hay không.  Thường được đặt là `True`.
+*   **`oob_score`:** Cho biết có sử dụng *out-of-bag samples* để đánh giá mô hình hay không.
+
+**Các phương pháp Tuning Hyperparameters:**
+
+1.  **Grid Search:** Thử tất cả các kết hợp có thể của các giá trị *hyperparameters* trong một phạm vi được định nghĩa trước. Đánh giá hiệu suất của mô hình với mỗi kết hợp và chọn kết hợp tốt nhất.
+
+2.  **Randomized Search:** Tương tự như Grid Search, nhưng thay vì thử tất cả các kết hợp, chúng ta lấy mẫu ngẫu nhiên các giá trị *hyperparameters* từ một phân bố được chỉ định. Thường hiệu quả hơn Grid Search khi không gian tìm kiếm lớn.
+
+3.  **Cross-Validation (Kiểm tra Chéo):** Đánh giá hiệu suất của mô hình trên nhiều tập con của dữ liệu huấn luyện (folds). Ví dụ: *k-fold cross-validation*. Giúp ước lượng khả năng khái quát hóa của mô hình và chọn *hyperparameters* tốt nhất.
+
+4.  **Bayesian Optimization:** Sử dụng mô hình Bayesian để ước lượng hàm mục tiêu (ví dụ: độ chính xác) và chọn các giá trị *hyperparameters* tiếp theo một cách thông minh. Thường hiệu quả hơn Grid Search và Randomized Search, đặc biệt khi việc đánh giá mô hình tốn kém.
+
+**Ví dụ (sử dụng Python và scikit-learn):**
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV, train_test_split
+
+# Giả sử X là dữ liệu huấn luyện và y là nhãn
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+param_grid = {
+    'n_estimators':,
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split':,
+    'min_samples_leaf':,
+    'max_features': ['sqrt', 'log2']
+}
+
+grid_search = GridSearchCV(RandomForestClassifier(), param_grid, cv=5, n_jobs=-1) # n_jobs=-1 để sử dụng tất cả các lõi CPU
+grid_search.fit(X_train, y_train)
+
+best_rf = grid_search.best_estimator_
+print("Best hyperparameters:", grid_search.best_params_)
+print("Best score:", grid_search.best_score_)
+
+# Đánh giá mô hình trên dữ liệu kiểm tra
+accuracy = best_rf.score(X_test, y_test)
+print("Accuracy on test data:", accuracy)
+
+```
+
+**Tóm lại:**
+
+*   Việc điều chỉnh *hyperparameters* của Random Forest là rất quan trọng để đạt được hiệu suất tốt nhất.
+*   Có nhiều phương pháp *tuning hyperparameters*, mỗi phương pháp có ưu và nhược điểm riêng.
+*   Sử dụng *cross-validation* là rất quan trọng để đánh giá khách quan hiệu suất của mô hình.
+*   `n_estimators`, `max_depth`, `min_samples_split`, `min_samples_leaf`, và `max_features` là các *hyperparameters* quan trọng cần được điều chỉnh.
