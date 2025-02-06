@@ -9,12 +9,31 @@ Decision trees are supervised learning models used for problems involving classi
 
 Tree models present a high flexibility that comes at a price: on one hand, trees are able to capture complex non-linear relationships; on the other hand, they are prone to memorizing the noise present in a dataset. By aggregating the predictions of trees that are trained differently, ensemble methods take advantage of the flexibility of trees while reducing their tendency to memorize noise. Ensemble methods are used across a variety of fields and have a proven track record of winning many machine learning competitions.
 
+### Table of contents
+
+1. [Classification and Regression Trees](#ClassificationandRegressionTrees)
+    * 1.1. [Decision tree for classification](#Decisiontreeforclassification)
+    * 1.2. [Classification tree Learning](#ClassificationtreeLearning)
+    * 1.3. [Decision tree for regression](#Decisiontreeforregression)
+2. [The Bias-Variance Tradeoff](#TheBias-VarianceTradeoff)
+    * 2.1. [Ensemble Learning](#EnsembleLearning)
+3. [Bagging and Random Forests](#BaggingandRandomForests)
+    * 3.1. [Out Of Bag Evaluation](#OutOfBagEvaluation)
+    * 3.2. [ Random Forests](#RandomForests)
+4. [Boosting](#Boosting)
+    * 4.1. [AdaBoost](#AdaBoost)
+    * 4.2. [Gradient Boosting](#GradientBoosting)
+    * 4.3. [Stochastic Gradient Boosting (SGB)](#StochasticGradientBoostingSGB)
+5. [Model Tuning](#ModelTuning)
+    * 5.1. [Tuning a CART's Hyperparameters](#TuningaCARTsHyperparameters)
+    * 5.2. [Tuning a RF's Hyperparameters](#TuningaRFsHyperparameters)
+
 ---
-### Classification and Regression Trees
+###  1. <a name='ClassificationandRegressionTrees'></a>Classification and Regression Trees
 
 [Slide]({{site.baseurl}}/files/Machine_Learning_with_Tree_Based_Models_C1.pdf)
 
-#### Decision tree for classification
+####  1.1. <a name='Decisiontreeforclassification'></a>Decision tree for classification
 
 **Decision Regions: CART vs. Linear Model (Vùng Quyết Định: CART so với Mô hình Tuyến tính)**
 
@@ -108,7 +127,7 @@ clfs = [logreg, dt]
 # Review the decision regions of the two classifiers
 plot_labeled_decision_regions(X_test, y_test, clfs)
 ```
-#### Classification tree Learning
+####  1.2. <a name='ClassificationtreeLearning'></a>Classification tree Learning
 
 **Information Gain (IG) trong mô hình Cây Quyết Định (Decision Tree)**
 
@@ -171,7 +190,7 @@ dt_entropy = DecisionTreeClassifier(max_depth=8, criterion='entropy', random_sta
 dt_entropy.fit(X_train, y_train)
 ```
 
-#### Decision tree for regression
+####  1.3. <a name='Decisiontreeforregression'></a>Decision tree for regression
 
 Trong Machine Learning, *Decision Tree* (Cây Quyết Định) không chỉ được sử dụng cho bài toán phân loại (*classification*) mà còn có thể áp dụng cho bài toán hồi quy (*regression*), nơi mục tiêu là dự đoán một giá trị liên tục (ví dụ: giá nhà, nhiệt độ, doanh thu).  *Decision Tree for Regression* (Cây Quyết Định cho Hồi Quy) hoạt động dựa trên nguyên tắc chia nhỏ không gian đặc trưng (feature space) thành các vùng nhỏ hơn và gán một giá trị trung bình (hoặc giá trị dự đoán khác) cho mỗi vùng.
 
@@ -245,7 +264,7 @@ print("Test set RMSE of dt: {:.2f}".format(rmse_dt))
 ```
 
 ---
-### The Bias-Variance Tradeoff
+###  2. <a name='TheBias-VarianceTradeoff'></a>The Bias-Variance Tradeoff
 
 [Slide]({{site.baseurl}}/files/Machine_Learning_with_Tree_Based_Models_C2.pdf)
 
@@ -319,7 +338,7 @@ print('CV RMSE: {:.2f}'.format(RMSE_CV))
 
 ```
 
-#### Ensemble Learning
+####  2.1. <a name='EnsembleLearning'></a>Ensemble Learning
 
 Trong Machine Learning, *Ensemble Learning* là một phương pháp sử dụng kết hợp nhiều mô hình học máy yếu (weak learners) để tạo ra một mô hình mạnh mẽ hơn (strong learner) có khả năng dự đoán chính xác hơn.  Ý tưởng cơ bản là "tập thể tốt hơn cá nhân".  Bằng cách kết hợp các mô hình khác nhau, chúng ta có thể tận dụng ưu điểm của từng mô hình và giảm thiểu nhược điểm của chúng.
 
@@ -427,7 +446,7 @@ print('Voting Classifier: {:.3f}'.format(accuracy))
 ```
 
 ---
-### Bagging and Random Forests
+###  3. <a name='BaggingandRandomForests'></a>Bagging and Random Forests
 
 [Slide]({{site.baseurl}}/files/Machine_Learning_with_Tree_Based_Models_C3.pdf)
 
@@ -461,7 +480,7 @@ acc_test = accuracy_score(y_pred, y_test)
 print('Test set accuracy of bc: {:.2f}'.format(acc_test)) 
 ```
 
-#### Out Of Bag Evaluation
+####  3.1. <a name='OutOfBagEvaluation'></a>Out Of Bag Evaluation
 
 Trong Machine Learning, đặc biệt là khi sử dụng các phương pháp *Ensemble Learning* như *Bagging* (ví dụ: *Random Forest*), *Out-of-Bag Evaluation (OOB Evaluation)* là một kỹ thuật thông minh để ước lượng hiệu suất của mô hình mà không cần sử dụng tập dữ liệu kiểm tra riêng biệt.
 
@@ -529,7 +548,7 @@ acc_oob = bc.oob_score_
 print('Test set accuracy: {:.3f}, OOB accuracy: {:.3f}'.format(acc_test, acc_oob))
 ```
 
-####  Random Forests
+####  3.2. <a name='RandomForests'></a> Random Forests
 
 *Random Forests* là một thuật toán *ensemble learning* (học kết hợp) phổ biến và mạnh mẽ, được sử dụng cho cả bài toán phân loại (*classification*) và hồi quy (*regression*).  Nó hoạt động bằng cách xây dựng nhiều cây quyết định (*decision trees*) trên các tập con ngẫu nhiên của dữ liệu huấn luyện và kết hợp dự đoán của chúng để đưa ra dự đoán cuối cùng.
 
@@ -622,11 +641,11 @@ plt.show()
 ```
 
 ---
-### Boosting
+###  4. <a name='Boosting'></a>Boosting
 
 [Slide]({{site.baseurl}}/files/Machine_Learning_with_Tree_Based_Models_C4.pdf)
 
-#### AdaBoost
+####  4.1. <a name='AdaBoost'></a>AdaBoost
 
 AdaBoost (viết tắt của Adaptive Boosting) là một thuật toán *ensemble learning* (học kết hợp) thuộc nhóm *boosting*.  Nó được sử dụng cho cả bài toán phân loại (*classification*) và hồi quy (*regression*), mặc dù phổ biến hơn trong phân loại.  Ý tưởng chính của AdaBoost là huấn luyện một chuỗi các mô hình học máy yếu (weak learners), và mỗi mô hình sau sẽ tập trung vào việc sửa chữa những sai sót của các mô hình trước đó.
 
@@ -717,7 +736,7 @@ ada_roc_auc = roc_auc_score(y_test, y_pred_proba)
 print('ROC AUC score: {:.2f}'.format(ada_roc_auc))
 ```
 
-#### Gradient Boosting
+####  4.2. <a name='GradientBoosting'></a>Gradient Boosting
 
 *Gradient Boosting* là một thuật toán *ensemble learning* (học kết hợp) thuộc nhóm *boosting*. Tương tự như AdaBoost, Gradient Boosting cũng xây dựng một chuỗi các mô hình học máy yếu (weak learners) một cách tuần tự, với mỗi mô hình sau cố gắng sửa chữa những sai sót của các mô hình trước đó. Tuy nhiên, điểm khác biệt chính là cách Gradient Boosting xác định "sai sót" và cách nó tối ưu hóa mô hình.
 
@@ -817,7 +836,7 @@ rmse_test = mse_test**(1/2)
 print('Test set RMSE of gb: {:.3f}'.format(rmse_test))
 ```
 
-#### Stochastic Gradient Boosting (SGB)
+####  4.3. <a name='StochasticGradientBoostingSGB'></a>Stochastic Gradient Boosting (SGB)
 
 *Stochastic Gradient Boosting (SGB)* là một biến thể của *Gradient Boosting* (Tăng cường Gradient) được giới thiệu để cải thiện hiệu suất và khả năng khái quát hóa của mô hình.  Điểm khác biệt chính của SGB so với Gradient Boosting "truyền thống" là việc sử dụng ngẫu nhiên trong quá trình huấn luyện.
 
@@ -904,11 +923,11 @@ print('Test set RMSE of sgbr: {:.3f}'.format(rmse_test))
 
 
 ---
-### Model Tuning
+###  5. <a name='ModelTuning'></a>Model Tuning
 
 [Slide]({{site.baseurl}}/files/Machine_Learning_with_Tree_Based_Models_C5.pdf)
 
-#### Tuning a CART's Hyperparameters
+####  5.1. <a name='TuningaCARTsHyperparameters'></a>Tuning a CART's Hyperparameters
 
 
 Trong Machine Learning, mô hình *Classification and Regression Trees (CART)*, hay còn gọi là Cây Quyết Định, có một số *hyperparameters* (siêu tham số) mà chúng ta cần điều chỉnh để đạt được hiệu suất tốt nhất trên dữ liệu.  Việc điều chỉnh *hyperparameters* này được gọi là *tuning* (điều chỉnh) hay *hyperparameter optimization* (tối ưu hóa siêu tham số).  Mục tiêu là tìm ra các giá trị *hyperparameters* tối ưu giúp mô hình *generalize* (khái quát hóa) tốt, tức là hoạt động tốt trên dữ liệu mới, chưa từng gặp.
@@ -964,7 +983,7 @@ print("Accuracy on test data:", accuracy)
 *   Có nhiều phương pháp *tuning hyperparameters*, mỗi phương pháp có ưu và nhược điểm riêng.
 *   Sử dụng *cross-validation* là rất quan trọng để đánh giá khách quan hiệu suất của mô hình.
 
-#### Tuning a RF's Hyperparameters
+####  5.2. <a name='TuningaRFsHyperparameters'></a>Tuning a RF's Hyperparameters
 
 *Random Forest (RF)* là một thuật toán *ensemble learning* mạnh mẽ, nhưng hiệu suất của nó phụ thuộc vào việc điều chỉnh các *hyperparameters* (siêu tham số). Việc *tuning* (điều chỉnh) các *hyperparameters* này là rất quan trọng để đạt được kết quả tốt nhất trên dữ liệu. Mục tiêu là tìm ra sự cân bằng giữa độ chính xác và khả năng khái quát hóa của mô hình, tránh *overfitting* (học quá khớp) hoặc *underfitting* (học chưa đủ).
 
