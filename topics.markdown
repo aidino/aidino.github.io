@@ -32,8 +32,8 @@ Example code: https://github.com/fluentpython/example-code-2e
 - [**Project** - Clustering Antarctic Penguin Species](_posts/2025-01-20-ml-in-python-c4.markdown)
 - [Linear Classifiers in Python](_posts/2025-01-20-ml-in-python-c5.markdown)
 - [Machine Learning with Tree-Based Models in Python](_posts/2025-01-20-ml-in-python-c6.markdown)
-- **Project** - Predicting Movie Rental Durations
-- Extreme Gradient boosting with XGBoost
+- [**Project** - Predicting Movie Rental Durations](_posts/2025-01-20-ml-in-python-c7.markdown)
+- [Extreme Gradient boosting with XGBoost](_posts/2025-01-20-ml-in-python-c8.markdown)
 - Cluster Analysis in Python
 - Dimensionality Reduction in Python
 - Preprocessing for Machine Learning in Python
