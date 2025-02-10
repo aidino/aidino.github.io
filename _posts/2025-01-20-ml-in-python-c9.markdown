@@ -7,14 +7,58 @@ categories: machine learning in python
 
 In this course, you will be introduced to unsupervised learning through clustering using the SciPy library in Python. This course covers pre-processing of data and application of hierarchical and k-means clustering. Through the course, you will explore player statistics from a popular football video game, FIFA 18. After completing the course, you will be able to quickly apply various clustering algorithms on data, visualize the clusters formed and analyze results.
 
+### Table of content
 
-## Introduction to Clustering
+
+1. [Introduction to Clustering](#IntroductiontoClustering)
+	* 1.1. [Basics of cluster analysis](#Basicsofclusteranalysis)
+		* 1.1.1. [Example - Pokémon sightings: hierarchical clustering](#Example-Pokmonsightings:hierarchicalclustering)
+		* 1.1.2. [Example - Pokémon sightings: k-means clustering](#Example-Pokmonsightings:k-meansclustering)
+	* 1.2. [Data preparation for cluster analysis](#Datapreparationforclusteranalysis)
+		* 1.2.1. [Example - Normalize basic list data (scipy)](#Example-Normalizebasiclistdatascipy)
+		* 1.2.2. [Example - Visualize normalized data](#Example-Visualizenormalizeddata)
+		* 1.2.3. [Example - Normalization of small numbers](#Example-Normalizationofsmallnumbers)
+		* 1.2.4. [Example - FIFA 18: Normalize data](#Example-FIFA18:Normalizedata)
+2. [Hierarchical Clustering](#HierarchicalClustering)
+	* 2.1. [Basics of hierarchical clustering](#Basicsofhierarchicalclustering)
+		* 2.1.1. [Example: Hierarchical clustering: ward method](#Example:Hierarchicalclustering:wardmethod)
+		* 2.1.2. [Hierarchical clustering: single method](#Hierarchicalclustering:singlemethod)
+		* 2.1.3. [Hierarchical clustering: complete method](#Hierarchicalclustering:completemethod)
+	* 2.2. [Visualize clusters](#Visualizeclusters)
+		* 2.2.1. [Example - Visualize clusters with matplotlib](#Example-Visualizeclusterswithmatplotlib)
+		* 2.2.2. [Visualize clusters with seaborn](#Visualizeclusterswithseaborn)
+	* 2.3. [How many clusters?](#Howmanyclusters)
+		* 2.3.1. [Example - Create a dendrogram](#Example-Createadendrogram)
+	* 2.4. [Limitations of hierarchical clustering](#Limitationsofhierarchicalclustering)
+		* 2.4.1. [Example - FIFA 18: exploring defenders](#Example-FIFA18:exploringdefenders)
+3. [K-Means Clustering](#K-MeansClustering)
+	* 3.1. [Basics of k-means clustering](#Basicsofk-meansclustering)
+		* 3.1.1. [Example](#Example)
+	* 3.2. [How many clusters?](#Howmanyclusters-1)
+		* 3.2.1. [Example - Elbow method on distinct clusters](#Example-Elbowmethodondistinctclusters)
+	* 3.3. [Limitations of k-means clustering](#Limitationsofk-meansclustering)
+		* 3.3.1. [Impact of seeds on distinct clusters](#Impactofseedsondistinctclusters)
+		* 3.3.2. [Example: FIFA 18: defenders revisited](#Example:FIFA18:defendersrevisited)
+4. [Clustering in Real World](#ClusteringinRealWorld)
+	* 4.1. [Sử dụng Clustering để tìm màu chủ đạo trong ảnh](#SdngClusteringtmmuchotrongnh)
+		* 4.1.1. [Example: Extract RGB values from image](#Example:ExtractRGBvaluesfromimage)
+		* 4.1.2. [Example: How many dominant colors? (elbow_plot)](#Example:Howmanydominantcolorselbow_plot)
+		* 4.1.3. [Display dominant colors](#Displaydominantcolors)
+	* 4.2. [Sử dụng Clustering để giải quyết bài toán Phân cụm Văn bản (Document Clustering)](#SdngClusteringgiiquytbitonPhncmVnbnDocumentClustering)
+		* 4.2.1. [Example - TF-IDF of movie plots](#Example-TF-IDFofmovieplots)
+		* 4.2.2. [Top terms in movie clusters](#Toptermsinmovieclusters)
+	* 4.3. [Clustering with multiple features](#Clusteringwithmultiplefeatures)
+		* 4.3.1. [Example - FIFA 18: what makes a complete player?](#Example-FIFA18:whatmakesacompleteplayer)
+
+
+
+##  1. <a name='IntroductiontoClustering'></a>Introduction to Clustering
 
 [Slide]({{site.baseurl}}/files/Cluster_Analysis_in_Python_C1.pdf)
 
-### Basics of cluster analysis
+###  1.1. <a name='Basicsofclusteranalysis'></a>Basics of cluster analysis
 
-#### Example - Pokémon sightings: hierarchical clustering
+####  1.1.1. <a name='Example-Pokmonsightings:hierarchicalclustering'></a>Example - Pokémon sightings: hierarchical clustering
 
 ```python
 # Import linkage and fcluster functions
@@ -37,7 +81,7 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster1.svg)
 
-#### Example - Pokémon sightings: k-means clustering
+####  1.1.2. <a name='Example-Pokmonsightings:k-meansclustering'></a>Example - Pokémon sightings: k-means clustering
 
 ```python
 # Import kmeans and vq functions
@@ -61,9 +105,9 @@ Output
 ![]({{site.baseurl}}/images/cluster2.svg)
 
 
-### Data preparation for cluster analysis 
+###  1.2. <a name='Datapreparationforclusteranalysis'></a>Data preparation for cluster analysis 
 
-#### Example - Normalize basic list data (scipy)
+####  1.2.1. <a name='Example-Normalizebasiclistdatascipy'></a>Example - Normalize basic list data (scipy)
 
 ```python
 # Import the whiten function
@@ -76,7 +120,7 @@ scaled_data = whiten(goals_for)
 print(scaled_data)
 ```
 
-#### Example - Visualize normalized data
+####  1.2.2. <a name='Example-Visualizenormalizeddata'></a>Example - Visualize normalized data
 
 ```python
 # Plot original data
@@ -96,7 +140,7 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster3.svg)
 
-#### Example - Normalization of small numbers
+####  1.2.3. <a name='Example-Normalizationofsmallnumbers'></a>Example - Normalization of small numbers
 
 In earlier examples, you have normalization of whole numbers. In this exercise, you will look at the treatment of fractional numbers - the change of interest rates in the country of Bangalla over the years. 
 
@@ -121,7 +165,7 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster4.svg)
 
-#### Example - FIFA 18: Normalize data
+####  1.2.4. <a name='Example-FIFA18:Normalizedata'></a>Example - FIFA 18: Normalize data
 
 ```python
 # Scale wage and value
@@ -141,13 +185,13 @@ Output
 ![]({{site.baseurl}}/images/cluster5.svg)
 
 ---
-## Hierarchical Clustering
+##  2. <a name='HierarchicalClustering'></a>Hierarchical Clustering
 
 [Slide]({{site.baseurl}}/files/Cluster_Analysis_in_Python_C2.pdf)
 
-### Basics of hierarchical clustering
+###  2.1. <a name='Basicsofhierarchicalclustering'></a>Basics of hierarchical clustering
 
-#### Example: Hierarchical clustering: ward method
+####  2.1.1. <a name='Example:Hierarchicalclustering:wardmethod'></a>Example: Hierarchical clustering: ward method
 
 **1. Hierarchical Clustering (Phân cụm phân cấp)**
 
@@ -186,7 +230,7 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster6.svg)
 
-#### Hierarchical clustering: single method
+####  2.1.2. <a name='Hierarchicalclustering:singlemethod'></a>Hierarchical clustering: single method
 
 Như đã đề cập trước đó, *Hierarchical Clustering* (phân cụm phân cấp) là một thuật toán học máy không giám sát (unsupervised learning) để nhóm các điểm dữ liệu dựa trên sự tương đồng.  Nó tạo ra một cấu trúc dạng cây phân cấp (dendrogram).  *Single Method* (hay còn gọi là *single-linkage clustering*) là một trong những phương pháp liên kết (linkage criteria) được sử dụng trong *agglomerative hierarchical clustering*.
 
@@ -255,7 +299,7 @@ Output
 ![]({{site.baseurl}}/images/cluster7.svg)
 
 
-#### Hierarchical clustering: complete method
+####  2.1.3. <a name='Hierarchicalclustering:completemethod'></a>Hierarchical clustering: complete method
 
 Như đã đề cập, *Hierarchical Clustering* (phân cụm phân cấp) là một thuật toán học máy không giám sát (unsupervised learning) để nhóm dữ liệu dựa trên sự tương đồng, tạo ra cấu trúc cây phân cấp (dendrogram). *Complete Method* (hay còn gọi là *complete-linkage clustering* hoặc *maximum linkage clustering*) là một trong các phương pháp liên kết (linkage criteria) được dùng trong *agglomerative hierarchical clustering*.
 
@@ -317,9 +361,9 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster8.svg)
 
-### Visualize clusters
+###  2.2. <a name='Visualizeclusters'></a>Visualize clusters
 
-#### Example - Visualize clusters with matplotlib
+####  2.2.1. <a name='Example-Visualizeclusterswithmatplotlib'></a>Example - Visualize clusters with matplotlib
 
 ```python
 # Import the pyplot class
@@ -338,7 +382,7 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster9.svg)
 
-#### Visualize clusters with seaborn
+####  2.2.2. <a name='Visualizeclusterswithseaborn'></a>Visualize clusters with seaborn
 
 ```python
 # Import the seaborn module
@@ -356,9 +400,9 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster10.svg)
 
-### How many clusters?
+###  2.3. <a name='Howmanyclusters'></a>How many clusters?
 
-#### Example - Create a dendrogram
+####  2.3.1. <a name='Example-Createadendrogram'></a>Example - Create a dendrogram
 
 ```python
 # Import the dendrogram function
@@ -375,9 +419,9 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster11.svg)
 
-### Limitations of hierarchical clustering
+###  2.4. <a name='Limitationsofhierarchicalclustering'></a>Limitations of hierarchical clustering
 
-#### Example - FIFA 18: exploring defenders
+####  2.4.1. <a name='Example-FIFA18:exploringdefenders'></a>Example - FIFA 18: exploring defenders
 
 ```python
 # Fit the data into a hierarchical clustering algorithm
@@ -399,13 +443,13 @@ Output:
 ![]({{site.baseurl}}/images/cluster12.svg)
 
 ---
-## K-Means Clustering
+##  3. <a name='K-MeansClustering'></a>K-Means Clustering
 
 [Slide]({{site.baseurl}}/files/Cluster_Analysis_in_Python_C3.pdf)
 
-### Basics of k-means clustering
+###  3.1. <a name='Basicsofk-meansclustering'></a>Basics of k-means clustering
 
-#### Example
+####  3.1.1. <a name='Example'></a>Example
 
 ```python
 # Import the kmeans and vq functions
@@ -427,9 +471,9 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster13.svg)
 
-### How many clusters?
+###  3.2. <a name='Howmanyclusters-1'></a>How many clusters?
 
-#### Example - Elbow method on distinct clusters
+####  3.2.1. <a name='Example-Elbowmethodondistinctclusters'></a>Example - Elbow method on distinct clusters
 
 ```python
 distortions = []
@@ -454,7 +498,7 @@ Output
 ![]({{site.baseurl}}/images/cluster14.svg)
 
 
-### Limitations of k-means clustering
+###  3.3. <a name='Limitationsofk-meansclustering'></a>Limitations of k-means clustering
 
 K-means là một thuật toán phân cụm phổ biến, nhưng nó cũng có một số hạn chế cần lưu ý:
 
@@ -474,7 +518,7 @@ K-means là một thuật toán phân cụm phổ biến, nhưng nó cũng có m
 
 K-means là một thuật toán phân cụm hữu ích, nhưng cần lưu ý các hạn chế của nó.  Việc hiểu rõ những hạn chế này giúp bạn lựa chọn thuật toán phù hợp và xử lý dữ liệu một cách hiệu quả hơn.  Nếu dữ liệu của bạn không thỏa mãn các giả định của k-means, bạn có thể xem xét các thuật toán phân cụm khác như *hierarchical clustering*, *DBSCAN*, hoặc *Gaussian Mixture Models (GMMs)*.
 
-#### Impact of seeds on distinct clusters
+####  3.3.1. <a name='Impactofseedsondistinctclusters'></a>Impact of seeds on distinct clusters
 
 ```python
 # Import random class
@@ -519,7 +563,7 @@ Output
 
 ![]({{site.baseurl}}/images/cluster17.svg)
 
-#### Example: FIFA 18: defenders revisited
+####  3.3.2. <a name='Example:FIFA18:defendersrevisited'></a>Example: FIFA 18: defenders revisited
 
 ```python
 # Set up a random seed in numpy
@@ -544,11 +588,11 @@ Output
 ![]({{site.baseurl}}/images/cluster18.svg)
 
 ---
-## Clustering in Real World
+##  4. <a name='ClusteringinRealWorld'></a>Clustering in Real World
 
 [Slide]({{site.baseurl}}/files/Cluster_Analysis_in_Python_C4.pdf)
 
-### Sử dụng Clustering để tìm màu chủ đạo trong ảnh
+###  4.1. <a name='SdngClusteringtmmuchotrongnh'></a>Sử dụng Clustering để tìm màu chủ đạo trong ảnh
 
 Bài toán "Tìm màu chủ đạo trong ảnh" là xác định một tập hợp các màu đại diện cho một hình ảnh, thường là những màu xuất hiện nhiều nhất hoặc quan trọng nhất.  Clustering là một kỹ thuật học máy không giám sát (unsupervised learning) rất phù hợp để giải quyết vấn đề này.
 
@@ -590,7 +634,7 @@ Giả sử bạn muốn tìm 5 màu chủ đạo trong một bức ảnh.
 *   Kết quả phụ thuộc vào thuật toán clustering được sử dụng và các tham số của nó (ví dụ: *k* trong k-means).
 *   Có thể bỏ sót các màu ít xuất hiện nhưng vẫn quan trọng về mặt cảm quan.
 
-#### Example: Extract RGB values from image
+####  4.1.1. <a name='Example:ExtractRGBvaluesfromimage'></a>Example: Extract RGB values from image
 
 ```python
 # Import image class of matplotlib
@@ -626,7 +670,7 @@ Out[1]:
 
 The RGB values have been standardized used the `whiten()`
 
-#### Example: How many dominant colors? (elbow_plot)
+####  4.1.2. <a name='Example:Howmanydominantcolorselbow_plot'></a>Example: How many dominant colors? (elbow_plot)
 
 ```python
 distortions = []
@@ -653,7 +697,7 @@ Output:
 
 ![]({{site.baseurl}}/images/cluster19.svg)
 
-#### Display dominant colors
+####  4.1.3. <a name='Displaydominantcolors'></a>Display dominant colors
 
 ```python
 # Get standard deviations of each color
@@ -678,7 +722,7 @@ Output:
 ![]({{site.baseurl}}/images/cluster20.svg)
 
 
-### Sử dụng Clustering để giải quyết bài toán Phân cụm Văn bản (Document Clustering)
+###  4.2. <a name='SdngClusteringgiiquytbitonPhncmVnbnDocumentClustering'></a>Sử dụng Clustering để giải quyết bài toán Phân cụm Văn bản (Document Clustering)
 
 Bài toán *Document Clustering* là việc nhóm các văn bản lại với nhau dựa trên sự tương đồng về nội dung.  Clustering là một kỹ thuật học máy không giám sát (unsupervised learning) rất phù hợp để giải quyết vấn đề này.
 
@@ -726,7 +770,7 @@ Giả sử bạn có một tập hợp các bài báo về các chủ đề khá
 *   Kết quả phụ thuộc vào thuật toán clustering, phương pháp biểu diễn vector đặc trưng, và các tham số của chúng.
 *   Việc lựa chọn *k* trong k-means có thể khó khăn.
 
-#### Example - TF-IDF of movie plots
+####  4.2.1. <a name='Example-TF-IDFofmovieplots'></a>Example - TF-IDF of movie plots
 
 ```python
 
@@ -755,7 +799,7 @@ tfidf_vectorizer = TfidfVectorizer(max_df=0.75, max_features=50, min_df=0.1, tok
 tfidf_matrix = tfidf_vectorizer.fit_transform(plots)
 ```
 
-#### Top terms in movie clusters
+####  4.2.2. <a name='Toptermsinmovieclusters'></a>Top terms in movie clusters
 
 ```python
 num_clusters = 2
@@ -782,7 +826,7 @@ Output
 ```
 
 
-### Clustering with multiple features
+###  4.3. <a name='Clusteringwithmultiplefeatures'></a>Clustering with multiple features
 
 Bài toán "Phân cụm với nhiều đặc trưng" đề cập đến việc phân cụm dữ liệu khi mỗi điểm dữ liệu được mô tả bởi nhiều đặc trưng (features).  Các đặc trưng này có thể thuộc các kiểu dữ liệu khác nhau (ví dụ: số, văn bản, hoặc categorical).  Clustering là một kỹ thuật học máy không giám sát (unsupervised learning) rất phù hợp để giải quyết vấn đề này.
 
@@ -831,7 +875,7 @@ Giả sử bạn muốn phân cụm khách hàng dựa trên nhiều đặc trư
 *   **Lời nguyền chiều cao (Curse of Dimensionality):**  Khi số lượng đặc trưng quá lớn, dữ liệu trở nên thưa thớt, gây khó khăn cho việc phân cụm.  Cần xem xét giảm chiều dữ liệu (dimensionality reduction) bằng PCA hoặc các phương pháp khác.
 *   **Lựa chọn tham số:**  Nhiều thuật toán clustering có các tham số cần được điều chỉnh (ví dụ: *k* trong k-means).  Cần sử dụng các phương pháp như *cross-validation* hoặc *grid search* để tìm tham số tốt nhất.
 
-#### Example - FIFA 18: what makes a complete player?
+####  4.3.1. <a name='Example-FIFA18:whatmakesacompleteplayer'></a>Example - FIFA 18: what makes a complete player?
 
 ```python
 # Create centroids with kmeans for 2 clusters
