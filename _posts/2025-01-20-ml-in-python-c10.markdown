@@ -298,7 +298,96 @@ print(reduced_df.shape)
 ```
 
 ### Pairwise correlation
+
+#### Visualizing the correlation matrix
+
+```python
+# Create the correlation matrix
+corr = ansur_df.corr()
+
+# Draw a heatmap of the correlation matrix
+sns.heatmap(corr,  cmap=cmap, center=0, linewidths=1, annot=True, fmt=".2f")
+plt.show()
+```
+
+![]({{site.baseurl}}/images/corr1.svg)
+
+```python
+# Create the correlation matrix
+corr = ansur_df.corr()
+
+# Generate a mask for the upper triangle 
+mask = np.triu(np.ones_like(corr, dtype=bool))
+
+# Add the mask to the heatmap
+sns.heatmap(corr, mask=mask, cmap=cmap, center=0, linewidths=1, annot=True, fmt=".2f")
+plt.show()
+```
+
+Output:
+
+```bash
+<script.py> output:
+    [[ True  True  True  True  True]
+     [False  True  True  True  True]
+     [False False  True  True  True]
+     [False False False  True  True]
+     [False False False False  True]]
+```
+
+![]({{site.baseurl}}/images/corr2.svg)
+
 ### Removing highly correlated features
+
+#### Filtering out highly correlated features
+
+```python
+# Calculate the correlation matrix and take the absolute value
+corr_df = ansur_df.corr().abs()
+
+# Create a True/False mask and apply it
+mask = np.triu(np.ones_like(corr_df, dtype=bool))
+tri_df = corr_df.mask(mask)
+
+# List column names of highly correlated features (r > 0.95)
+to_drop = [c for c in tri_df.columns if any(tri_df[c] >  0.95)]
+
+# Drop the features in the to_drop list
+reduced_df = ansur_df.drop(to_drop, axis=1)
+
+print(f"The reduced_df DataFrame has {reduced_df.shape[1]} columns.")
+```
+
+```bash
+The reduced_df DataFrame has 88 columns.
+```
+
+#### Nuclear energy and pool drownings
+
+```python
+# Print the first five lines of weird_df
+print(weird_df.head())
+```
+
+```bash
+<script.py> output:
+       pool_drownings  nuclear_energy
+    0             421           728.3
+    1             465           753.9
+    2             494           768.8
+    3             538           780.1
+    4             430           763.7
+```
+
+```python
+# Put nuclear energy production on the x-axis and the number of pool drownings on the y-axis
+sns.scatterplot(x='nuclear_energy', y='pool_drownings', data=weird_df)
+plt.show()
+```
+
+![]({{site.baseurl}}/images/corr3.svg)
+
+
 
 ---
 ## Feature Selection II - Selecting for Model Accuracy
