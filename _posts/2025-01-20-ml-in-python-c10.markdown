@@ -387,17 +387,411 @@ plt.show()
 
 ![]({{site.baseurl}}/images/corr3.svg)
 
-
-
 ---
 ## Feature Selection II - Selecting for Model Accuracy
 
 [Slide]({{site.baseurl}}/files/Dimensionality_Reduction_in_Python_C3.pdf)
 
 ### Selecting features for model performance
+
+Phương pháp này sẽ sử dụng model để train với toàn bộ các feature, dựa vào hệ số `coef` (gần bằng 0) sẽ quyết định được feature nào ít ảnh hưởng tới kết quả,
+qua đó sẽ lọai bỏ các tính năng ít quan trọng
+
+#### Example 1 - Building a diabetes classifier
+
+```python
+# Fit the scaler on the training features and transform these in one go
+X_train_std = scaler.fit_transform(X_train)
+
+# Fit the logistic regression model on the scaled training data
+lr.fit(X_train_std, y_train)
+
+# Scale the test features
+X_test_std = scaler.transform(X_test)
+
+# Predict diabetes presence on the scaled test set
+y_pred = lr.predict(X_test_std)
+
+# Prints accuracy metrics and feature coefficients
+print(f"{accuracy_score(y_test, y_pred):.1%} accuracy on test set.")
+print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
+```
+
+Output
+
+```bash
+<script.py> output:
+    79.6% accuracy on test set.
+    {'pregnant': 0.05, 'glucose': 1.23, 'diastolic': 0.03, 'triceps': 0.24, 'insulin': 0.19, 'bmi': 0.38, 'family': 0.35, 'age': 0.34}
+```
+
+#### Example 2 - Manual Recursive Feature Elimination
+
+remove the feature with the lowest model coefficient
+
+```python
+# Remove the feature with the lowest model coefficient
+X = diabetes_df[['pregnant', 'glucose', 'triceps', 'insulin', 'bmi', 'family', 'age']]
+
+# Performs a 25-75% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Scales features and fits the logistic regression model
+lr.fit(scaler.fit_transform(X_train), y_train)
+
+# Calculates the accuracy on the test set and prints coefficients
+acc = accuracy_score(y_test, lr.predict(scaler.transform(X_test)))
+print(f"{acc:.1%} accuracy on test set.") 
+print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
+```
+
+```bash 
+80.6% accuracy on test set.
+{'pregnant': 0.05, 'glucose': 1.24, 'triceps': 0.24, 'insulin': 0.2, 'bmi': 0.39, 'family': 0.34, 'age': 0.35}
+```
+
+Remove 2 more features with the lowest model coefficients.
+
+```python
+# Remove the 2 features with the lowest model coefficients
+X = diabetes_df[['glucose', 'triceps', 'bmi', 'family', 'age']]
+
+# Performs a 25-75% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Scales features and fits the logistic regression model
+lr.fit(scaler.fit_transform(X_train), y_train)
+
+# Calculates the accuracy on the test set and prints coefficients
+acc = accuracy_score(y_test, lr.predict(scaler.transform(X_test)))
+print(f"{acc:.1%} accuracy on test set.") 
+print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
+```
+
+```bash
+79.6% accuracy on test set.
+{'glucose': 1.13, 'triceps': 0.25, 'bmi': 0.34, 'family': 0.34, 'age': 0.37}
+```
+
+Run the code and only keep the feature with the highest coefficient.
+
+```python
+# Only keep the feature with the highest coefficient
+X = diabetes_df[['glucose']]
+
+# Performs a 25-75% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Scales features and fits the logistic regression model to the data
+lr.fit(scaler.fit_transform(X_train), y_train)
+
+# Calculates the accuracy on the test set and prints coefficients
+acc = accuracy_score(y_test, lr.predict(scaler.transform(X_test)))
+print(f"{acc:.1%} accuracy on test set.")  
+print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
+```
+
+```bash 
+<script.py> output:
+    75.5% accuracy on test set.
+    {'glucose': 1.28}
+```
+
+#### Example 3 - Automatic Recursive Feature Elimination
+
+```python
+from sklearn.feature_selection import RFE
+
+# Create the RFE with a LogisticRegression estimator and 3 features to select
+rfe = RFE(estimator=LogisticRegression(), n_features_to_select=3, verbose=1)
+
+# Fits the eliminator to the data
+rfe.fit(X_train, y_train)
+
+# Print the features and their ranking (high = dropped early on)
+print(dict(zip(X.columns, rfe.ranking_)))
+
+# Print the features that are not eliminated
+print(X.columns[rfe.support_])
+
+# Calculates the test set accuracy
+acc = accuracy_score(y_test, rfe.predict(X_test))
+print(f"{acc:.1%} accuracy on test set.") 
+```
+
+```bash
+Fitting estimator with 8 features.
+Fitting estimator with 7 features.
+Fitting estimator with 6 features.
+Fitting estimator with 5 features.
+Fitting estimator with 4 features.
+{'pregnant': 5, 'glucose': 1, 'diastolic': 6, 'triceps': 3, 'insulin': 4, 'bmi': 1, 'family': 2, 'age': 1}
+Index(['glucose', 'bmi', 'age'], dtype='object')
+80.6% accuracy on test set
+```
+
 ### Tree-based feature selection
+
+#### Building a random forest model
+
+```python
+# Perform a 75% training and 25% test data split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Fit the random forest model to the training data
+rf = RandomForestClassifier(random_state=0)
+rf.fit(X_train, y_train)
+
+# Calculate the accuracy
+acc = accuracy_score(rf.predict(X_test), y_test)
+
+# Print the importances per feature
+print(dict(zip(X.columns, rf.feature_importances_.round(2))))
+
+# Print accuracy
+print(f"{acc:.1%} accuracy on test set.") 
+```
+
+```bash
+<script.py> output:
+    {'pregnant': 0.07, 'glucose': 0.25, 'diastolic': 0.09, 'triceps': 0.09, 'insulin': 0.14, 'bmi': 0.12, 'family': 0.12, 'age': 0.13}
+    79.6% accuracy on test set.
+```
+
+#### Random forest for feature selection
+
+```python 
+# Create a mask for features importances above the threshold
+mask = rf.feature_importances_ > 0.15
+
+# Prints out the mask
+print(mask)
+```
+
+```bash 
+[False  True False False False False False  True]
+```
+
+#### Random forest for feature selection
+
+```python 
+# Create a mask for features importances above the threshold
+mask = rf.feature_importances_ > 0.15
+
+# Apply the mask to the feature dataset X
+reduced_X = X.loc[:, mask]
+
+# prints out the selected column names
+print(reduced_X.columns)
+```
+
+```bash 
+Index(['glucose', 'age'], dtype='object')
+```
+
+#### Recursive Feature Elimination with random forests
+
+```python 
+from sklearn.feature_selection import RFE
+
+# Wrap the feature eliminator around the random forest model
+# Có thể bổ xung param: step=10 để tốc độ nhanh hơn, mỗi vòng lặp sẽ loại đi 10 features cho đến khi đến số lượng chỉ định. 
+rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=2, verbose=1)
+
+# Fit the model to the training data
+rfe.fit(X_train, y_train)
+
+# Create a mask using the support_ attribute of rfe
+mask = rfe.support_
+
+# Apply the mask to the feature dataset X and print the result
+reduced_X = X.loc[:, mask]
+print(reduced_X.columns)
+```
+
+```bash 
+Fitting estimator with 8 features.
+Fitting estimator with 7 features.
+Fitting estimator with 6 features.
+Fitting estimator with 5 features.
+Fitting estimator with 4 features.
+Fitting estimator with 3 features.
+Index(['glucose', 'insulin'], dtype='object')
+```
+
 ### Regularized linear regression
+
+#### Creating a LASSO regressor
+
+```python
+# Set the test size to 30% to get a 70-30% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+# Fit the scaler on the training features and transform these in one go
+X_train_std = scaler.fit_transform(X_train)
+
+# Create the Lasso model
+la = Lasso()
+
+# Fit it to the standardized training data
+la.fit(X_train_std, y_train)
+```
+
+#### Lasso model results
+
+```python
+# Transform the test set with the pre-fitted scaler
+X_test_std = scaler.transform(X_test)
+
+# Calculate the coefficient of determination (R squared) on X_test_std
+r_squared = la.score(X_test_std, y_test)
+print(f"The model can predict {r_squared:.1%} of the variance in the test set.")
+
+# Create a list that has True values when coefficients equal 0
+zero_coef = la.coef_ == 0
+
+# Calculate how many features have a zero coefficient
+n_ignored = sum(zero_coef)
+print(f"The model has ignored {n_ignored} out of {len(la.coef_)} features.")
+```
+
+```bash
+The model can predict 84.7% of the variance in the test set.
+The model has ignored 82 out of 91 features.
+```
+
+#### Adjusting the regularization strength
+
+```python 
+# Find the highest alpha value with R-squared above 98%
+la = Lasso(alpha=0.1, random_state=0)
+
+# Fits the model and calculates performance stats
+la.fit(X_train_std, y_train)
+r_squared = la.score(X_test_std, y_test)
+n_ignored_features = sum(la.coef_ == 0)
+
+# Print peformance stats 
+print(f"The model can predict {r_squared:.1%} of the variance in the test set.")
+print(f"{n_ignored_features} out of {len(la.coef_)} features were ignored.")
+```
+
+```bash 
+The model can predict 98.3% of the variance in the test set.
+64 out of 91 features were ignored
+```
+
 ### Combining feature selectors
+
+#### Creating a LassoCV regressor
+
+```python
+from sklearn.linear_model import LassoCV
+
+# Create and fit the LassoCV model on the training set
+lcv = LassoCV()
+lcv.fit(X_train, y_train)
+print(f'Optimal alpha = {lcv.alpha_:.3f}')
+
+# Calculate R squared on the test set
+r_squared = lcv.score(X_test, y_test)
+print(f'The model explains {r_squared:.1%} of the test set variance')
+
+# Create a mask for coefficients not equal to zero
+lcv_mask = lcv.coef_ != 0
+print(f'{sum(lcv_mask)} features out of {len(lcv_mask)} selected')
+``` 
+
+```bash 
+Optimal alpha = 0.097
+The model explains 87.4% of the test set variance
+22 features out of 32 selected
+``` 
+
+#### Ensemble models for extra votes
+
+```python 
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
+rfe_gb = RFE(estimator=GradientBoostingRegressor(), 
+             n_features_to_select=10, step=3, verbose=1)
+rfe_gb.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_gb.score(X_test, y_test)
+print(f'The model can explain {r_squared:.1%} of the variance in the test set')
+
+# Assign the support array to gb_mask
+gb_mask = rfe_gb.support_
+```
+
+```bash 
+Fitting estimator with 32 features.
+Fitting estimator with 29 features.
+Fitting estimator with 26 features.
+Fitting estimator with 23 features.
+Fitting estimator with 20 features.
+Fitting estimator with 17 features.
+Fitting estimator with 14 features.
+Fitting estimator with 11 features.
+The model can explain 85.2% of the variance in the test set
+```
+
+```python 
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestRegressor
+
+# Select 10 features with RFE on a RandomForestRegressor, drop 3 features on each step
+rfe_rf = RFE(estimator=RandomForestRegressor(), 
+             n_features_to_select=10, step=3, verbose=1)
+rfe_rf.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_rf.score(X_test, y_test)
+print(f'The model can explain {r_squared:.1%} of the variance in the test set')
+
+# Assign the support array to rf_mask
+rf_mask = rfe_rf.support_
+```
+
+```bash 
+<script.py> output:
+    Fitting estimator with 32 features.
+    Fitting estimator with 29 features.
+    Fitting estimator with 26 features.
+    Fitting estimator with 23 features.
+    Fitting estimator with 20 features.
+    Fitting estimator with 17 features.
+    Fitting estimator with 14 features.
+    Fitting estimator with 11 features.
+    The model can explain 84.4% of the variance in the test set
+```
+
+#### Combining 3 feature selectors
+
+```python 
+# Sum the votes of the three models
+votes = np.sum([lcv_mask, rf_mask, gb_mask], axis=0)
+
+# Create a mask for features selected by all 3 models
+meta_mask = votes == 3
+
+# Apply the dimensionality reduction on X
+X_reduced = X.loc[:, meta_mask]
+
+# Plug the reduced dataset into a linear regression pipeline
+X_train, X_test, y_train, y_test = train_test_split(X_reduced, y, test_size=0.3, random_state=0)
+lm.fit(scaler.fit_transform(X_train), y_train)
+r_squared = lm.score(scaler.transform(X_test), y_test)
+print(f'The model can explain {r_squared:.1%} of the variance in the test set using {len(lm.coef_)} features.')
+```
+
+```bash
+<script.py> output:
+    The model can explain 86.7% of the variance in the test set using 7 features.
+```
 
 ---
 ## Feature Extraction
@@ -405,6 +799,160 @@ plt.show()
 [Slide]({{site.baseurl}}/files/Dimensionality_Reduction_in_Python_C4.pdf)
 
 ### Feature extraction
+
+#### Manual feature extraction I
+
+```python
+# Calculate the price from the quantity sold and revenue
+sales_df['price'] = sales_df['revenue'] / sales_df['quantity']
+
+# Drop the quantity and revenue features
+reduced_df = sales_df.drop(['quantity', 'revenue'], axis=1)
+
+print(reduced_df.head())
+```
+
+#### Manual feature extraction II
+
+```python 
+# Calculate the mean height
+height_df['height'] = height_df[['height_1', 'height_2', 'height_3']].mean(axis=1)
+
+# Drop the 3 original height features
+reduced_df = height_df.drop(['height_1', 'height_2', 'height_3'], axis=1)
+
+print(reduced_df.head())
+```
+
 ### Principal component analysis
+
+#### Calculating Principal Components
+
+```python 
+# Create a pairplot to inspect ansur_df
+sns.pairplot(ansur_df)
+
+plt.show()
+```
+
+![]({{site.baseurl}}/images/pca1.svg)
+
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Create the scaler
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Create the PCA instance and fit and transform the data with pca
+pca = PCA()
+pc = pca.fit_transform(ansur_std)
+pc_df = pd.DataFrame(pc, columns=['PC 1', 'PC 2', 'PC 3', 'PC 4'])
+
+# Create a pairplot of the principal component DataFrame
+sns.pairplot(pc_df)
+plt.show()
+```
+
+![]({{site.baseurl}}/images/pca2.svg)
+
+
 ### PCA applications
+
+#### Understanding the components
+
+```python 
+# Build the pipeline
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=2))])
+
+# Fit it to the dataset and extract the component vectors
+pipe.fit(poke_df)
+vectors = pipe['reducer'].components_.round(2)
+
+# Print feature effects
+print('PC 1 effects = ' + str(dict(zip(poke_df.columns, vectors[0]))))
+print('PC 2 effects = ' + str(dict(zip(poke_df.columns, vectors[1]))))
+```
+
+```bash
+PC 1 effects = {'HP': 0.39, 'Attack': 0.44, 'Defense': 0.36, 'Sp. Atk': 0.46, 'Sp. Def': 0.45, 'Speed': 0.34}
+PC 2 effects = {'HP': 0.08, 'Attack': -0.01, 'Defense': 0.63, 'Sp. Atk': -0.31, 'Sp. Def': 0.24, 'Speed': -0.67}
+```
+
 ### Principal Component selection
+
+#### Selecting the proportion of variance to keep
+
+```python
+# Pipe a scaler to PCA selecting 80% of the variance
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=0.8))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+print(f'{len(pipe["reducer"].components_)} components selected')
+```
+
+```bash
+11 components selected
+```
+
+```python 
+# Let PCA select 90% of the variance
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=0.9))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+print(f'{len(pipe["reducer"].components_)} components selected')
+```
+
+```bash 
+23 components selected
+```
+
+#### Choosing the number of components
+
+```python
+# Pipeline a scaler and pca selecting 10 components
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=10))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+# Plot the explained variance ratio
+plt.plot(pipe['reducer'].explained_variance_ratio_)
+
+plt.xlabel('Principal component index')
+plt.ylabel('Explained variance ratio')
+plt.show()
+```
+
+![]({{site.baseurl}}/images/pca3.svg)
+
+#### PCA for image compression
+
+```python
+# Plot the MNIST sample data
+plot_digits(X_test)
+```
+
+![]({{site.baseurl}}/images/pca4.svg)
+
+```python 
+# Transform the input data to principal components
+pc = pipe.transform(X_test)
+
+# Inverse transform the components to original feature space
+X_rebuilt = pipe.inverse_transform(pc)
+
+# Plot the reconstructed data
+plot_digits(X_rebuilt)
+```
+
+![]({{site.baseurl}}/images/pca5.svg)
