@@ -37,7 +37,7 @@ Example code: https://github.com/fluentpython/example-code-2e
 - [Cluster Analysis in Python](_posts/2025-01-20-ml-in-python-c9.markdown)
 - [Dimensionality Reduction in Python](_posts/2025-01-20-ml-in-python-c10.markdown)
 - [Preprocessing for Machine Learning in Python](_posts/2025-01-20-ml-in-python-c11.markdown)
-- Machine Learning for Time Series Data in Python
+- [Machine Learning for Time Series Data in Python](_posts/2025-01-20-ml-in-python-c12.markdown)
 - Feature Engineering for Machine Learning in Python
 - Model Validation in Python
 - Hyperparameter turning in Python

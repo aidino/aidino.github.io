@@ -7,13 +7,68 @@ categories: machine learning in python
 
 This course covers the basics of how and when to perform data preprocessing. This essential step in any machine learning project is when you get your data ready for modeling. Between importing and cleaning your data and fitting your machine learning model is when preprocessing comes into play. You'll learn how to standardize your data so that it's in the right form for your model, create new features to best leverage the information in your dataset, and select the best features to improve your model fit. Finally, you'll have some practice preprocessing by getting a dataset on UFO sightings ready for modeling.
 
-## Introduction to Data Preprocessing
+### Table of contents
+
+- [1. Introduction to Data Preprocessing](#1-introduction-to-data-preprocessing)
+  - [1.1. Working with data types](#11-working-with-data-types)
+    - [1.1.1. Converting a column type](#111-converting-a-column-type)
+  - [1.2. Training and test sets](#12-training-and-test-sets)
+    - [1.2.1. Stratified sampling](#121-stratified-sampling)
+- [2. Standardizing Data](#2-standardizing-data)
+  - [2.1. Standardization](#21-standardization)
+    - [2.1.1. Modeling without normalizing](#211-modeling-without-normalizing)
+  - [2.2. Log normalization](#22-log-normalization)
+    - [2.2.1. Log normalization in Python](#221-log-normalization-in-python)
+  - [2.3. Scaling data for feature comparison](#23-scaling-data-for-feature-comparison)
+    - [2.3.1. Scaling data - standardizing columns](#231-scaling-data---standardizing-columns)
+  - [2.4. Standardized data and modeling](#24-standardized-data-and-modeling)
+    - [2.4.1. KNN on non-scaled data](#241-knn-on-non-scaled-data)
+    - [2.4.2. KNN on scaled data](#242-knn-on-scaled-data)
+- [3. Feature Engineering](#3-feature-engineering)
+  - [3.1. Encoding categorical variables](#31-encoding-categorical-variables)
+    - [3.1.1. Encoding categorical variables - binary](#311-encoding-categorical-variables---binary)
+    - [3.1.2. Encoding categorical variables - one-hot](#312-encoding-categorical-variables---one-hot)
+  - [3.2. Engineering numerical features](#32-engineering-numerical-features)
+    - [3.2.1. Aggregating numerical features](#321-aggregating-numerical-features)
+    - [3.2.2. Extracting datetime components](#322-extracting-datetime-components)
+  - [3.3. Engineering text features](#33-engineering-text-features)
+    - [3.3.1. Extracting string patterns](#331-extracting-string-patterns)
+    - [3.3.2. Vectorizing text](#332-vectorizing-text)
+    - [3.3.3. Text classification using tf/idf vectors](#333-text-classification-using-tfidf-vectors)
+- [4. Selecting Features for Modeling](#4-selecting-features-for-modeling)
+  - [4.1. Removing redundant features](#41-removing-redundant-features)
+    - [4.1.1. Checking for correlated features](#411-checking-for-correlated-features)
+  - [4.2. Selecting features using text vectors](#42-selecting-features-using-text-vectors)
+    - [4.2.1. Exploring text vectors, part 1](#421-exploring-text-vectors-part-1)
+    - [4.2.2. Exploring text vectors, part 2](#422-exploring-text-vectors-part-2)
+    - [4.2.3. Training Naive Bayes with feature selection](#423-training-naive-bayes-with-feature-selection)
+  - [4.3. Dimensionality reduction](#43-dimensionality-reduction)
+    - [4.3.1. Using PCA](#431-using-pca)
+    - [4.3.2. Training a model with PCA](#432-training-a-model-with-pca)
+- [5. Putting It All Together](#5-putting-it-all-together)
+  - [5.1. UFOs and preprocessing](#51-ufos-and-preprocessing)
+    - [5.1.1. Checking column types](#511-checking-column-types)
+    - [5.1.2. Dropping missing data](#512-dropping-missing-data)
+  - [5.2. Categorical variables and standardization](#52-categorical-variables-and-standardization)
+    - [5.2.1. Extracting numbers from strings](#521-extracting-numbers-from-strings)
+    - [5.2.2. Identifying features for standardization](#522-identifying-features-for-standardization)
+  - [5.3. Engineering new features](#53-engineering-new-features)
+    - [5.3.1. Encoding categorical variables](#531-encoding-categorical-variables)
+    - [5.3.2. Features from dates](#532-features-from-dates)
+    - [5.3.3. Text vectorization](#533-text-vectorization)
+  - [5.4. Feature selection and modeling](#54-feature-selection-and-modeling)
+    - [5.4.1. Selecting the ideal dataset](#541-selecting-the-ideal-dataset)
+    - [5.4.2. Modeling the UFO dataset, part 1](#542-modeling-the-ufo-dataset-part-1)
+    - [5.4.3. Modeling the UFO dataset, part 2](#543-modeling-the-ufo-dataset-part-2)
+
+
+##  1. <a name='IntroductiontoDataPreprocessing'></a>Introduction to Data Preprocessing
 
 [Slide]({{site.baseurl}}/files/Preprocessing_for_Machine_Learning_in_Python_C1.pdf)
 
-### Working with data types
+###  1.1. <a name='Workingwithdatatypes'></a>Working with data types
 
-#### Converting a column type
+####  1.1.1. <a name='Convertingacolumntype'></a>Converting a column type
 
 ```python
 # Print the head of the hits column
@@ -73,9 +128,9 @@ opportunity_id          int64
     dtype: object
 ```
 
-### Training and test sets
+###  1.2. <a name='Trainingandtestsets'></a>Training and test sets
 
-#### Stratified sampling
+####  1.2.1. <a name='Stratifiedsampling'></a>Stratified sampling
 
 ```python
 # Create a DataFrame with all columns except category_desc
@@ -102,13 +157,13 @@ print(y_train['category_desc'].value_counts())
     Name: category_desc, dtype: int64
 ```
 
-## Standardizing Data
+##  2. <a name='StandardizingData'></a>Standardizing Data
 
 [Slide]({{site.baseurl}}/files/Preprocessing_for_Machine_Learning_in_Python_C2.pdf)
 
-### Standardization
+###  2.1. <a name='Standardization'></a>Standardization
 
-#### Modeling without normalizing
+####  2.1.1. <a name='Modelingwithoutnormalizing'></a>Modeling without normalizing
 
 ```python
 # Split the dataset into training and test sets
@@ -128,9 +183,9 @@ print(knn.score(X_test, y_test))
     0.6888888888888889
 ```
 
-### Log normalization
+###  2.2. <a name='Lognormalization'></a>Log normalization
 
-#### Log normalization in Python
+####  2.2.1. <a name='LognormalizationinPython'></a>Log normalization in Python
 
 ```python
 # Print out the variance of the Proline column
@@ -149,9 +204,9 @@ print(wine['Proline_log'].var())
     0.17231366191842012
 ```
 
-### Scaling data for feature comparison
+###  2.3. <a name='Scalingdataforfeaturecomparison'></a>Scaling data for feature comparison
 
-#### Scaling data - standardizing columns
+####  2.3.1. <a name='Scalingdata-standardizingcolumns'></a>Scaling data - standardizing columns
 
 ```python
 # Import StandardScaler
@@ -177,9 +232,9 @@ wine_subset = wine[['Ash', 'Alcalinity of ash', 'Magnesium']]
 wine_subset_scaled = scaler.fit_transform(wine_subset)
 ```
 
-### Standardized data and modeling
+###  2.4. <a name='Standardizeddataandmodeling'></a>Standardized data and modeling
 
-#### KNN on non-scaled data
+####  2.4.1. <a name='KNNonnon-scaleddata'></a>KNN on non-scaled data
 
 ```python
 # Split the dataset and labels into training and test sets
@@ -197,7 +252,7 @@ print(knn.score(X_test, y_test))
     0.7777777777777778
 ```
 
-#### KNN on scaled data
+####  2.4.2. <a name='KNNonscaleddata'></a>KNN on scaled data
 
 ```python
 X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=42)
@@ -221,13 +276,13 @@ print(knn.score(X_test_scaled, y_test))
     0.9333333333333333
 ```
 
-## Feature Engineering
+##  3. <a name='FeatureEngineering'></a>Feature Engineering
 
 [Slide]({{site.baseurl}}/files/Preprocessing_for_Machine_Learning_in_Python_C3.pdf)
 
-### Encoding categorical variables
+###  3.1. <a name='Encodingcategoricalvariables'></a>Encoding categorical variables
 
-#### Encoding categorical variables - binary
+####  3.1.1. <a name='Encodingcategoricalvariables-binary'></a>Encoding categorical variables - binary
 
 ```python
 from sklearn.preprocessing import LabelEncoder
@@ -252,7 +307,7 @@ print(hiking[['Accessible_enc', 'Accessible']].head())
     4               0          N
 ```
 
-#### Encoding categorical variables - one-hot
+####  3.1.2. <a name='Encodingcategoricalvariables-one-hot'></a>Encoding categorical variables - one-hot
 
 ```python
 # Transform the category_desc column
@@ -272,9 +327,9 @@ print(category_enc.head())
     4          0                       0            1       0                          0                          0
 ```
 
-### Engineering numerical features
+###  3.2. <a name='Engineeringnumericalfeatures'></a>Engineering numerical features
 
-#### Aggregating numerical features
+####  3.2.1. <a name='Aggregatingnumericalfeatures'></a>Aggregating numerical features
 
 ```python
 # Use .loc to create a mean column
@@ -294,7 +349,7 @@ print(running_times_5k.head())
     4  Jenny  25.8  27.1  26.1  26.7  26.9  26.52
 ``` 
 
-#### Extracting datetime components
+####  3.2.2. <a name='Extractingdatetimecomponents'></a>Extracting datetime components
 
 ```python
 # First, convert string column to date column
@@ -318,9 +373,9 @@ print(volunteer[['start_date_converted', 'start_date_month']].head())
 ```
 
 
-### Engineering text features
+###  3.3. <a name='Engineeringtextfeatures'></a>Engineering text features
 
-#### Extracting string patterns
+####  3.3.1. <a name='Extractingstringpatterns'></a>Extracting string patterns
 
 ```python
 import re
@@ -350,7 +405,7 @@ print(hiking[["Length", "Length_num"]].head())
     4   0.5 miles        0.50
 ```
 
-#### Vectorizing text
+####  3.3.2. <a name='Vectorizingtext'></a>Vectorizing text
 
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -365,7 +420,7 @@ tfidf_vec = TfidfVectorizer()
 text_tfidf = tfidf_vec.fit_transform(title_text)
 ```
 
-#### Text classification using tf/idf vectors
+####  3.3.3. <a name='Textclassificationusingtfidfvectors'></a>Text classification using tf/idf vectors
 
 ```python
 # Split the dataset according to the class distribution of category_desc
@@ -384,13 +439,13 @@ print(nb.score(X_test, y_test))
     0.5161290322580645
 ```
 
-## Selecting Features for Modeling
+##  4. <a name='SelectingFeaturesforModeling'></a>Selecting Features for Modeling
 
 [Slide]({{site.baseurl}}/files/Preprocessing_for_Machine_Learning_in_Python_C4.pdf)
 
-### Removing redundant features
+###  4.1. <a name='Removingredundantfeatures'></a>Removing redundant features
 
-#### Checking for correlated features
+####  4.1.1. <a name='Checkingforcorrelatedfeatures'></a>Checking for correlated features
 
 ```python
 # Print out the column correlations of the wine dataset
@@ -418,9 +473,9 @@ print(wine.head())
     4           2.80        2.59                          2.93  1.04
 ```
 
-### Selecting features using text vectors
+###  4.2. <a name='Selectingfeaturesusingtextvectors'></a>Selecting features using text vectors
 
-#### Exploring text vectors, part 1
+####  4.2.1. <a name='Exploringtextvectorspart1'></a>Exploring text vectors, part 1
 
 ```python
 def return_weights(vocab, original_vocab, vector, vector_index, top_n):
@@ -442,7 +497,7 @@ print(return_weights(vocab, tfidf_vec.vocabulary_, text_tfidf, 8, 3))
     [189, 942, 466]
 ```
 
-#### Exploring text vectors, part 2
+####  4.2.2. <a name='Exploringtextvectorspart2'></a>Exploring text vectors, part 2
 
 ```python
 def words_to_filter(vocab, original_vocab, vector, top_n):
@@ -463,7 +518,7 @@ filtered_words = words_to_filter(vocab, tfidf_vec.vocabulary_, text_tfidf, 3)
 filtered_text = text_tfidf[:, list(filtered_words)]
 ```
 
-#### Training Naive Bayes with feature selection
+####  4.2.3. <a name='TrainingNaiveBayeswithfeatureselection'></a>Training Naive Bayes with feature selection
 
 ```python
 # Split the dataset according to the class distribution of category_desc
@@ -481,9 +536,9 @@ print(nb.score(X_test, y_test))
     0.5161290322580645
 ```
 
-### Dimensionality reduction
+###  4.3. <a name='Dimensionalityreduction'></a>Dimensionality reduction
 
-#### Using PCA
+####  4.3.1. <a name='UsingPCA'></a>Using PCA
 
 ```python
 from sklearn.decomposition import PCA
@@ -505,7 +560,7 @@ pca_X_test = pca.transform(X_test)
 print(pca.explained_variance_ratio_)
 ```
 
-#### Training a model with PCA
+####  4.3.2. <a name='TrainingamodelwithPCA'></a>Training a model with PCA
 
 ```python
 # Fit knn to the training data
@@ -520,13 +575,13 @@ print(knn.score(pca_X_test, y_test))
     0.7777777777777778
 ```
 
-## Putting It All Together
+##  5. <a name='PuttingItAllTogether'></a>Putting It All Together
 
 [Slide]({{site.baseurl}}/files/Preprocessing_for_Machine_Learning_in_Python_C5.pdf)
 
-### UFOs and preprocessing
+###  5.1. <a name='UFOsandpreprocessing'></a>UFOs and preprocessing
 
-#### Checking column types
+####  5.1.1. <a name='Checkingcolumntypes'></a>Checking column types
 
 ```python
 # Print the DataFrame info
@@ -584,7 +639,7 @@ print(ufo.info())
     None
 ```
 
-#### Dropping missing data
+####  5.1.2. <a name='Droppingmissingdata'></a>Dropping missing data
 
 ```python
 # Count the missing values in the length_of_time, state, and type columns, in that order
@@ -606,9 +661,9 @@ print(ufo_no_missing.shape)
     (4283, 4)
 ```
 
-### Categorical variables and standardization
+###  5.2. <a name='Categoricalvariablesandstandardization'></a>Categorical variables and standardization
 
-#### Extracting numbers from strings
+####  5.2.1. <a name='Extractingnumbersfromstrings'></a>Extracting numbers from strings
 
 ```python
 def return_minutes(time_string):
@@ -635,7 +690,7 @@ print(ufo[['length_of_time', 'minutes']].head())
     9        5 minutes      5.0
 ```
 
-#### Identifying features for standardization
+####  5.2.2. <a name='Identifyingfeaturesforstandardization'></a>Identifying features for standardization
 
 ```python
 # Check the variance of the seconds and minutes columns
@@ -656,9 +711,9 @@ print(ufo["seconds_log"].var())
     1.1223923881183004
 ```
 
-### Engineering new features
+###  5.3. <a name='Engineeringnewfeatures'></a>Engineering new features
 
-#### Encoding categorical variables
+####  5.3.1. <a name='Encodingcategoricalvariables-1'></a>Encoding categorical variables
 
 ```python
 # Use pandas to encode us values as 1 and others as 0
@@ -679,7 +734,7 @@ ufo = pd.concat([ufo, type_set], axis=1)
     21
 ```
 
-#### Features from dates
+####  5.3.2. <a name='Featuresfromdates'></a>Features from dates
 
 ```python
 # Look at the first 5 rows of the date column
@@ -711,7 +766,7 @@ print(ufo[['date', 'month', 'year']].head())
     4 2013-09-13 20:30:00      9  2013
 ```
 
-#### Text vectorization
+####  5.3.3. <a name='Textvectorization'></a>Text vectorization
 
 ```python
 # Take a look at the head of the desc field
@@ -738,9 +793,9 @@ print(desc_tfidf.shape)
     (1866, 3422)
 ```
 
-### Feature selection and modeling
+###  5.4. <a name='Featureselectionandmodeling'></a>Feature selection and modeling
 
-#### Selecting the ideal dataset
+####  5.4.1. <a name='Selectingtheidealdataset'></a>Selecting the ideal dataset
 
 ```python
 # Make a list of features to drop
@@ -753,7 +808,7 @@ ufo_dropped = ufo.drop(to_drop, axis=1)
 filtered_words = words_to_filter(vocab, vec.vocabulary_, desc_tfidf, 4)
 ```
 
-#### Modeling the UFO dataset, part 1
+####  5.4.2. <a name='ModelingtheUFOdatasetpart1'></a>Modeling the UFO dataset, part 1
 
 ```python
 # Take a look at the features in the X set of data
@@ -777,7 +832,7 @@ print(knn.score(X_test, y_test))
     0.8650963597430407
 ```
 
-#### Modeling the UFO dataset, part 2
+####  5.4.3. <a name='ModelingtheUFOdatasetpart2'></a>Modeling the UFO dataset, part 2
 
 ```python
 # Use the list of filtered words we created to filter the text vector
