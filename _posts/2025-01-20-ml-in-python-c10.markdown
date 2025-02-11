@@ -7,12 +7,62 @@ categories: machine learning in python
 
 High-dimensional datasets can be overwhelming and leave you not knowing where to start. Typically, you’d visually explore a new dataset first, but when you have too many dimensions the classical approaches will seem insufficient. Fortunately, there are visualization techniques designed specifically for high dimensional data and you’ll be introduced to these in this course. After exploring the data, you’ll often find that many features hold little information because they don’t show any variance or because they are duplicates of other features. 
 
+### Table of content 
 
-## Exploring High Dimensional Data
+1. [Exploring High Dimensional Data](#ExploringHighDimensionalData)
+	* 1.1. [Feature selection vs. feature extraction](#Featureselectionvs.featureextraction)
+		* 1.1.1. [Example: Visually detecting redundant features](#Example:Visuallydetectingredundantfeatures)
+	* 1.2. [t-SNE visualization of high-dimensional data (Trực quan hóa dữ liệu nhiều chiều bằng t-SNE)](#t-SNEvisualizationofhigh-dimensionaldataTrcquanhadliunhiuchiubngt-SNE)
+		* 1.2.1. [Example - Fitting t-SNE to the ANSUR data](#Example-Fittingt-SNEtotheANSURdata)
+		* 1.2.2. [t-SNE visualisation of dimensionality](#t-SNEvisualisationofdimensionality)
+2. [Feature Selection I - Selecting for Feature Information](#FeatureSelectionI-SelectingforFeatureInformation)
+	* 2.1. [The curse of dimensionality (Lời nguyền chiều cao)](#ThecurseofdimensionalityLinguynchiucao)
+	* 2.2. [Features with missing values or little variance](#Featureswithmissingvaluesorlittlevariance)
+		* 2.2.1. [Finding a good variance threshold](#Findingagoodvariancethreshold)
+		* 2.2.2. [Features with low variance](#Featureswithlowvariance)
+		* 2.2.3. [Removing features with many missing values](#Removingfeatureswithmanymissingvalues)
+	* 2.3. [Pairwise correlation](#Pairwisecorrelation)
+		* 2.3.1. [Visualizing the correlation matrix](#Visualizingthecorrelationmatrix)
+	* 2.4. [Removing highly correlated features](#Removinghighlycorrelatedfeatures)
+		* 2.4.1. [Filtering out highly correlated features](#Filteringouthighlycorrelatedfeatures)
+		* 2.4.2. [Nuclear energy and pool drownings](#Nuclearenergyandpooldrownings)
+3. [Feature Selection II - Selecting for Model Accuracy](#FeatureSelectionII-SelectingforModelAccuracy)
+	* 3.1. [Selecting features for model performance](#Selectingfeaturesformodelperformance)
+		* 3.1.1. [Example 1 - Building a diabetes classifier](#Example1-Buildingadiabetesclassifier)
+		* 3.1.2. [Example 2 - Manual Recursive Feature Elimination](#Example2-ManualRecursiveFeatureElimination)
+		* 3.1.3. [Example 3 - Automatic Recursive Feature Elimination](#Example3-AutomaticRecursiveFeatureElimination)
+	* 3.2. [Tree-based feature selection](#Tree-basedfeatureselection)
+		* 3.2.1. [Building a random forest model](#Buildingarandomforestmodel)
+		* 3.2.2. [Random forest for feature selection](#Randomforestforfeatureselection)
+		* 3.2.3. [Random forest for feature selection](#Randomforestforfeatureselection-1)
+		* 3.2.4. [Recursive Feature Elimination with random forests](#RecursiveFeatureEliminationwithrandomforests)
+	* 3.3. [Regularized linear regression](#Regularizedlinearregression)
+		* 3.3.1. [Creating a LASSO regressor](#CreatingaLASSOregressor)
+		* 3.3.2. [Lasso model results](#Lassomodelresults)
+		* 3.3.3. [Adjusting the regularization strength](#Adjustingtheregularizationstrength)
+	* 3.4. [Combining feature selectors](#Combiningfeatureselectors)
+		* 3.4.1. [Creating a LassoCV regressor](#CreatingaLassoCVregressor)
+		* 3.4.2. [Ensemble models for extra votes](#Ensemblemodelsforextravotes)
+		* 3.4.3. [Combining 3 feature selectors](#Combining3featureselectors)
+4. [Feature Extraction](#FeatureExtraction)
+	* 4.1. [Feature extraction](#Featureextraction)
+		* 4.1.1. [Manual feature extraction I](#ManualfeatureextractionI)
+		* 4.1.2. [Manual feature extraction II](#ManualfeatureextractionII)
+	* 4.2. [Principal component analysis](#Principalcomponentanalysis)
+		* 4.2.1. [Calculating Principal Components](#CalculatingPrincipalComponents)
+	* 4.3. [PCA applications](#PCAapplications)
+		* 4.3.1. [Understanding the components](#Understandingthecomponents)
+	* 4.4. [Principal Component selection](#PrincipalComponentselection)
+		* 4.4.1. [Selecting the proportion of variance to keep](#Selectingtheproportionofvariancetokeep)
+		* 4.4.2. [Choosing the number of components](#Choosingthenumberofcomponents)
+		* 4.4.3. [PCA for image compression](#PCAforimagecompression)
+
+
+##  1. <a name='ExploringHighDimensionalData'></a>Exploring High Dimensional Data
 
 [Slide]({{site.baseurl}}/files/Dimensionality_Reduction_in_Python_C1.pdf)
 
-### Feature selection vs. feature extraction
+###  1.1. <a name='Featureselectionvs.featureextraction'></a>Feature selection vs. feature extraction
 
 Cả *Feature Selection* (lựa chọn đặc trưng) và *Feature Extraction* (khai thác đặc trưng) đều là các kỹ thuật quan trọng trong tiền xử lý dữ liệu và xây dựng mô hình học máy. Mục tiêu chung của chúng là cải thiện hiệu suất của mô hình bằng cách giảm số lượng đặc trưng đầu vào, nhưng cách thức thực hiện của chúng khác nhau.
 
@@ -55,7 +105,7 @@ Cả *Feature Selection* (lựa chọn đặc trưng) và *Feature Extraction* (
 *   **Feature Selection:**  Trong bài toán dự đoán giá nhà, bạn có thể chọn các đặc trưng như diện tích, số phòng ngủ, vị trí, và loại bỏ các đặc trưng ít quan trọng hơn như màu sơn tường.
 *   **Feature Extraction:**  Trong bài toán nhận dạng khuôn mặt, bạn có thể sử dụng PCA để giảm chiều dữ liệu của ảnh khuôn mặt và tạo ra các đặc trưng mới đại diện cho khuôn mặt.
 
-#### Example: Visually detecting redundant features
+####  1.1.1. <a name='Example:Visuallydetectingredundantfeatures'></a>Example: Visually detecting redundant features
 
 ```python
 # Create a pairplot and color the points using the 'Gender' feature
@@ -81,7 +131,7 @@ plt.show()
 ![]({{site.baseurl}}/images/redundant_feature_1.svg)
 
 
-### t-SNE visualization of high-dimensional data (Trực quan hóa dữ liệu nhiều chiều bằng t-SNE)
+###  1.2. <a name='t-SNEvisualizationofhigh-dimensionaldataTrcquanhadliunhiuchiubngt-SNE'></a>t-SNE visualization of high-dimensional data (Trực quan hóa dữ liệu nhiều chiều bằng t-SNE)
 
 Dữ liệu trong các bài toán học máy thường có nhiều chiều (high-dimensional), ví dụ như ảnh (mỗi pixel là một chiều), văn bản (mỗi từ là một chiều), hoặc dữ liệu gen.  Việc trực quan hóa dữ liệu nhiều chiều để hiểu cấu trúc và phân bố của dữ liệu là một thách thức.  t-SNE (t-distributed Stochastic Neighbor Embedding) là một thuật toán giảm chiều dữ liệu (dimensionality reduction) và trực quan hóa dữ liệu rất hiệu quả, đặc biệt cho dữ liệu nhiều chiều.
 
@@ -123,7 +173,7 @@ t-SNE chuyển đổi dữ liệu nhiều chiều thành dữ liệu hai hoặc 
 *   Không nên diễn giải ý nghĩa của các trục trong không gian chiều thấp.
 *   t-SNE chỉ là một công cụ trực quan hóa, không phải là một thuật toán phân cụm.
 
-#### Example - Fitting t-SNE to the ANSUR data
+####  1.2.1. <a name='Example-Fittingt-SNEtotheANSURdata'></a>Example - Fitting t-SNE to the ANSUR data
 
 ```python
 from sklearn.manifold import TSNE
@@ -142,7 +192,7 @@ tsne_features = m.fit_transform(df_numeric)
 print(tsne_features.shape)
 ```
 
-#### t-SNE visualisation of dimensionality
+####  1.2.2. <a name='t-SNEvisualisationofdimensionality'></a>t-SNE visualisation of dimensionality
 
 ```python
 df['x'] = tsne_features[:,0]
@@ -179,11 +229,11 @@ plt.show()
 ![]({{site.baseurl}}/images/redundant_feature_4.svg)
 
 ---
-## Feature Selection I - Selecting for Feature Information
+##  2. <a name='FeatureSelectionI-SelectingforFeatureInformation'></a>Feature Selection I - Selecting for Feature Information
 
 [Slide]({{site.baseurl}}/files/Dimensionality_Reduction_in_Python_C2.pdf)
 
-### The curse of dimensionality (Lời nguyền chiều cao)
+###  2.1. <a name='ThecurseofdimensionalityLinguynchiucao'></a>The curse of dimensionality (Lời nguyền chiều cao)
 
 "Lời nguyền chiều cao" (The Curse of Dimensionality) là một thuật ngữ trong học máy mô tả các vấn đề phát sinh khi làm việc với dữ liệu có số chiều (số lượng đặc trưng - features) *quá lớn*.  Nó đề cập đến sự gia tăng độ phức tạp và giảm hiệu suất của các thuật toán học máy khi số chiều của dữ liệu tăng lên.
 
@@ -211,11 +261,11 @@ plt.show()
 
 5.  **Sử dụng các thuật toán phù hợp:**  Một số thuật toán học máy ít bị ảnh hưởng bởi Lời nguyền chiều cao hơn các thuật toán khác.
 
-### Features with missing values or little variance
+###  2.2. <a name='Featureswithmissingvaluesorlittlevariance'></a>Features with missing values or little variance
 
 => Giảm chiều dữ liệu bằng cách loại bỏ các features chứa nhiều dữ liệu bị thiếu và phương sai không đủ.
 
-#### Finding a good variance threshold
+####  2.2.1. <a name='Findingagoodvariancethreshold'></a>Finding a good variance threshold
 
 ```python
 # Create the boxplot
@@ -253,7 +303,7 @@ print(normalized_df.var())
     dtype: float64
 ```
 
-#### Features with low variance
+####  2.2.2. <a name='Featureswithlowvariance'></a>Features with low variance
 
 ```python
 from sklearn.feature_selection import VarianceThreshold
@@ -278,7 +328,7 @@ print(f"Dimensionality reduced from {head_df.shape[1]} to {reduced_df.shape[1]}.
     Dimensionality reduced from 6 to 4.
 ```
 
-#### Removing features with many missing values
+####  2.2.3. <a name='Removingfeatureswithmanymissingvalues'></a>Removing features with many missing values
 
 ```python
 # Create a boolean mask on whether each feature less than 50% missing values.
@@ -297,9 +347,9 @@ print(reduced_df.shape)
     (131, 19)
 ```
 
-### Pairwise correlation
+###  2.3. <a name='Pairwisecorrelation'></a>Pairwise correlation
 
-#### Visualizing the correlation matrix
+####  2.3.1. <a name='Visualizingthecorrelationmatrix'></a>Visualizing the correlation matrix
 
 ```python
 # Create the correlation matrix
@@ -337,9 +387,9 @@ Output:
 
 ![]({{site.baseurl}}/images/corr2.svg)
 
-### Removing highly correlated features
+###  2.4. <a name='Removinghighlycorrelatedfeatures'></a>Removing highly correlated features
 
-#### Filtering out highly correlated features
+####  2.4.1. <a name='Filteringouthighlycorrelatedfeatures'></a>Filtering out highly correlated features
 
 ```python
 # Calculate the correlation matrix and take the absolute value
@@ -362,7 +412,7 @@ print(f"The reduced_df DataFrame has {reduced_df.shape[1]} columns.")
 The reduced_df DataFrame has 88 columns.
 ```
 
-#### Nuclear energy and pool drownings
+####  2.4.2. <a name='Nuclearenergyandpooldrownings'></a>Nuclear energy and pool drownings
 
 ```python
 # Print the first five lines of weird_df
@@ -388,16 +438,16 @@ plt.show()
 ![]({{site.baseurl}}/images/corr3.svg)
 
 ---
-## Feature Selection II - Selecting for Model Accuracy
+##  3. <a name='FeatureSelectionII-SelectingforModelAccuracy'></a>Feature Selection II - Selecting for Model Accuracy
 
 [Slide]({{site.baseurl}}/files/Dimensionality_Reduction_in_Python_C3.pdf)
 
-### Selecting features for model performance
+###  3.1. <a name='Selectingfeaturesformodelperformance'></a>Selecting features for model performance
 
 Phương pháp này sẽ sử dụng model để train với toàn bộ các feature, dựa vào hệ số `coef` (gần bằng 0) sẽ quyết định được feature nào ít ảnh hưởng tới kết quả,
 qua đó sẽ lọai bỏ các tính năng ít quan trọng
 
-#### Example 1 - Building a diabetes classifier
+####  3.1.1. <a name='Example1-Buildingadiabetesclassifier'></a>Example 1 - Building a diabetes classifier
 
 ```python
 # Fit the scaler on the training features and transform these in one go
@@ -425,7 +475,7 @@ Output
     {'pregnant': 0.05, 'glucose': 1.23, 'diastolic': 0.03, 'triceps': 0.24, 'insulin': 0.19, 'bmi': 0.38, 'family': 0.35, 'age': 0.34}
 ```
 
-#### Example 2 - Manual Recursive Feature Elimination
+####  3.1.2. <a name='Example2-ManualRecursiveFeatureElimination'></a>Example 2 - Manual Recursive Feature Elimination
 
 remove the feature with the lowest model coefficient
 
@@ -497,7 +547,7 @@ print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
     {'glucose': 1.28}
 ```
 
-#### Example 3 - Automatic Recursive Feature Elimination
+####  3.1.3. <a name='Example3-AutomaticRecursiveFeatureElimination'></a>Example 3 - Automatic Recursive Feature Elimination
 
 ```python
 from sklearn.feature_selection import RFE
@@ -530,9 +580,9 @@ Index(['glucose', 'bmi', 'age'], dtype='object')
 80.6% accuracy on test set
 ```
 
-### Tree-based feature selection
+###  3.2. <a name='Tree-basedfeatureselection'></a>Tree-based feature selection
 
-#### Building a random forest model
+####  3.2.1. <a name='Buildingarandomforestmodel'></a>Building a random forest model
 
 ```python
 # Perform a 75% training and 25% test data split
@@ -558,7 +608,7 @@ print(f"{acc:.1%} accuracy on test set.")
     79.6% accuracy on test set.
 ```
 
-#### Random forest for feature selection
+####  3.2.2. <a name='Randomforestforfeatureselection'></a>Random forest for feature selection
 
 ```python 
 # Create a mask for features importances above the threshold
@@ -572,7 +622,7 @@ print(mask)
 [False  True False False False False False  True]
 ```
 
-#### Random forest for feature selection
+####  3.2.3. <a name='Randomforestforfeatureselection-1'></a>Random forest for feature selection
 
 ```python 
 # Create a mask for features importances above the threshold
@@ -589,7 +639,7 @@ print(reduced_X.columns)
 Index(['glucose', 'age'], dtype='object')
 ```
 
-#### Recursive Feature Elimination with random forests
+####  3.2.4. <a name='RecursiveFeatureEliminationwithrandomforests'></a>Recursive Feature Elimination with random forests
 
 ```python 
 from sklearn.feature_selection import RFE
@@ -619,9 +669,9 @@ Fitting estimator with 3 features.
 Index(['glucose', 'insulin'], dtype='object')
 ```
 
-### Regularized linear regression
+###  3.3. <a name='Regularizedlinearregression'></a>Regularized linear regression
 
-#### Creating a LASSO regressor
+####  3.3.1. <a name='CreatingaLASSOregressor'></a>Creating a LASSO regressor
 
 ```python
 # Set the test size to 30% to get a 70-30% train test split
@@ -637,7 +687,7 @@ la = Lasso()
 la.fit(X_train_std, y_train)
 ```
 
-#### Lasso model results
+####  3.3.2. <a name='Lassomodelresults'></a>Lasso model results
 
 ```python
 # Transform the test set with the pre-fitted scaler
@@ -660,7 +710,7 @@ The model can predict 84.7% of the variance in the test set.
 The model has ignored 82 out of 91 features.
 ```
 
-#### Adjusting the regularization strength
+####  3.3.3. <a name='Adjustingtheregularizationstrength'></a>Adjusting the regularization strength
 
 ```python 
 # Find the highest alpha value with R-squared above 98%
@@ -681,9 +731,9 @@ The model can predict 98.3% of the variance in the test set.
 64 out of 91 features were ignored
 ```
 
-### Combining feature selectors
+###  3.4. <a name='Combiningfeatureselectors'></a>Combining feature selectors
 
-#### Creating a LassoCV regressor
+####  3.4.1. <a name='CreatingaLassoCVregressor'></a>Creating a LassoCV regressor
 
 ```python
 from sklearn.linear_model import LassoCV
@@ -708,7 +758,7 @@ The model explains 87.4% of the test set variance
 22 features out of 32 selected
 ``` 
 
-#### Ensemble models for extra votes
+####  3.4.2. <a name='Ensemblemodelsforextravotes'></a>Ensemble models for extra votes
 
 ```python 
 from sklearn.feature_selection import RFE
@@ -769,7 +819,7 @@ rf_mask = rfe_rf.support_
     The model can explain 84.4% of the variance in the test set
 ```
 
-#### Combining 3 feature selectors
+####  3.4.3. <a name='Combining3featureselectors'></a>Combining 3 feature selectors
 
 ```python 
 # Sum the votes of the three models
@@ -794,13 +844,13 @@ print(f'The model can explain {r_squared:.1%} of the variance in the test set us
 ```
 
 ---
-## Feature Extraction
+##  4. <a name='FeatureExtraction'></a>Feature Extraction
 
 [Slide]({{site.baseurl}}/files/Dimensionality_Reduction_in_Python_C4.pdf)
 
-### Feature extraction
+###  4.1. <a name='Featureextraction'></a>Feature extraction
 
-#### Manual feature extraction I
+####  4.1.1. <a name='ManualfeatureextractionI'></a>Manual feature extraction I
 
 ```python
 # Calculate the price from the quantity sold and revenue
@@ -812,7 +862,7 @@ reduced_df = sales_df.drop(['quantity', 'revenue'], axis=1)
 print(reduced_df.head())
 ```
 
-#### Manual feature extraction II
+####  4.1.2. <a name='ManualfeatureextractionII'></a>Manual feature extraction II
 
 ```python 
 # Calculate the mean height
@@ -824,9 +874,9 @@ reduced_df = height_df.drop(['height_1', 'height_2', 'height_3'], axis=1)
 print(reduced_df.head())
 ```
 
-### Principal component analysis
+###  4.2. <a name='Principalcomponentanalysis'></a>Principal component analysis
 
-#### Calculating Principal Components
+####  4.2.1. <a name='CalculatingPrincipalComponents'></a>Calculating Principal Components
 
 ```python 
 # Create a pairplot to inspect ansur_df
@@ -858,9 +908,9 @@ plt.show()
 ![]({{site.baseurl}}/images/pca2.svg)
 
 
-### PCA applications
+###  4.3. <a name='PCAapplications'></a>PCA applications
 
-#### Understanding the components
+####  4.3.1. <a name='Understandingthecomponents'></a>Understanding the components
 
 ```python 
 # Build the pipeline
@@ -881,9 +931,9 @@ PC 1 effects = {'HP': 0.39, 'Attack': 0.44, 'Defense': 0.36, 'Sp. Atk': 0.46, 'S
 PC 2 effects = {'HP': 0.08, 'Attack': -0.01, 'Defense': 0.63, 'Sp. Atk': -0.31, 'Sp. Def': 0.24, 'Speed': -0.67}
 ```
 
-### Principal Component selection
+###  4.4. <a name='PrincipalComponentselection'></a>Principal Component selection
 
-#### Selecting the proportion of variance to keep
+####  4.4.1. <a name='Selectingtheproportionofvariancetokeep'></a>Selecting the proportion of variance to keep
 
 ```python
 # Pipe a scaler to PCA selecting 80% of the variance
@@ -915,7 +965,7 @@ print(f'{len(pipe["reducer"].components_)} components selected')
 23 components selected
 ```
 
-#### Choosing the number of components
+####  4.4.2. <a name='Choosingthenumberofcomponents'></a>Choosing the number of components
 
 ```python
 # Pipeline a scaler and pca selecting 10 components
@@ -935,7 +985,7 @@ plt.show()
 
 ![]({{site.baseurl}}/images/pca3.svg)
 
-#### PCA for image compression
+####  4.4.3. <a name='PCAforimagecompression'></a>PCA for image compression
 
 ```python
 # Plot the MNIST sample data
