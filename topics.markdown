@@ -28,15 +28,15 @@ Example code: https://github.com/fluentpython/example-code-2e
 
 - [Suppervised Learning with scikit-learn](_posts/2025-01-20-ml-in-python-c1.markdown)
 - [**Project** - Predictive Modeling for Agriculture](_posts/2025-01-20-ml-in-python-c2.markdown)
-- Unsupervised Learning in Python
+- [Unsupervised Learning in Python](_posts/2025-01-20-ml-in-python-c3.markdown)
 - [**Project** - Clustering Antarctic Penguin Species](_posts/2025-01-20-ml-in-python-c4.markdown)
 - [Linear Classifiers in Python](_posts/2025-01-20-ml-in-python-c5.markdown)
 - [Machine Learning with Tree-Based Models in Python](_posts/2025-01-20-ml-in-python-c6.markdown)
 - [**Project** - Predicting Movie Rental Durations](_posts/2025-01-20-ml-in-python-c7.markdown)
 - [Extreme Gradient boosting with XGBoost](_posts/2025-01-20-ml-in-python-c8.markdown)
 - [Cluster Analysis in Python](_posts/2025-01-20-ml-in-python-c9.markdown)
-- Dimensionality Reduction in Python
-- Preprocessing for Machine Learning in Python
+- [Dimensionality Reduction in Python](_posts/2025-01-20-ml-in-python-c10.markdown)
+- [Preprocessing for Machine Learning in Python](_posts/2025-01-20-ml-in-python-c11.markdown)
 - Machine Learning for Time Series Data in Python
 - Feature Engineering for Machine Learning in Python
 - Model Validation in Python
