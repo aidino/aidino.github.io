@@ -44,10 +44,10 @@ Example code: https://github.com/fluentpython/example-code-2e
 - ~~**Project** - Machine Learning Fundamentals in Python~~
 - [Introduction to Natural Language Processing in Python](_posts/2025-01-20-ml-in-python-c17.markdown)
 - [Natural Language Processing with spaCy](_posts/2025-01-20-ml-in-python-c18.markdown)
-- Feature Engineering for NLP in Python
+- [Feature Engineering for NLP in Python](_posts/2025-01-20-ml-in-python-c19.markdown)
 - [Introduction Deep learning with PyTorch](_posts/2025-01-21-developing-llm-c1.markdown)
 - [Intermediate Deep learning with PyTorch](_posts/2025-01-21-developing-llm-c2.markdown)
-- Image processing in Python
+- [Image processing in Python](_posts/2025-01-20-ml-in-python-c22.markdown)
 - Introduction to PySpark
 - Machine Learning with PySpark
 - Winning a Kaggle Competition in Python
