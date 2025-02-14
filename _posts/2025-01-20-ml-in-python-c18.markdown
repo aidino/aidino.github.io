@@ -9,14 +9,66 @@ categories: machine learning in python
 
 Learn spaCy, the fast-growing industry-standard NLP library, for tasks like tokenization, parsing, and named entity recognition. Master core operations, use classes like Doc and Token, and train models. Extract terms with pattern matching, create custom pipeline components, and handle real-world examples for your NLP projects.
 
+### Table of contents
+
+1. [Introduction to NLP and spaCy](#IntroductiontoNLPandspaCy)
+	* 1.1. [Natural Language Processing (NLP) basics](#NaturalLanguageProcessingNLPbasics)
+		* 1.1.1. [Doc container in spaCy](#DoccontainerinspaCy)
+	* 1.2. [spaCy basics](#spaCybasics)
+		* 1.2.1. [Running a spaCy pipeline](#RunningaspaCypipeline)
+		* 1.2.2. [Lemmatization with spaCy](#LemmatizationwithspaCy)
+		* 1.2.3. [Sentence segmentation with spaCy](#SentencesegmentationwithspaCy)
+	* 1.3. [Linguistic features in spaCy](#LinguisticfeaturesinspaCy)
+		* 1.3.1. [POS tagging with spaCy](#POStaggingwithspaCy)
+		* 1.3.2. [NER with spaCy](#NERwithspaCy)
+		* 1.3.3. [Text processing with spaCy](#TextprocessingwithspaCy)
+2. [spaCy Linguistic Annotations and Word Vectors](#spaCyLinguisticAnnotationsandWordVectors)
+	* 2.1. [Linguistic features](#Linguisticfeatures)
+		* 2.1.1. [Word-sense disambiguation with spaCy](#Word-sensedisambiguationwithspaCy)
+		* 2.1.2. [Dependency parsing with spaCy](#DependencyparsingwithspaCy)
+	* 2.2. [Introduction to word vectors](#Introductiontowordvectors)
+		* 2.2.1. [spaCy vocabulary](#spaCyvocabulary)
+		* 2.2.2. [Word vectors in spaCy vocabulary](#WordvectorsinspaCyvocabulary)
+	* 2.3. [Word vectors and spaCy](#WordvectorsandspaCy)
+		* 2.3.1. [Word vectors projection](#Wordvectorsprojection)
+		* 2.3.2. [Similar words in a vocabulary](#Similarwordsinavocabulary)
+	* 2.4. [Measuring semantic similarity with spaCy](#MeasuringsemanticsimilaritywithspaCy)
+		* 2.4.1. [Doc similarity with spaCy](#DocsimilaritywithspaCy)
+		* 2.4.2. [Span similarity with spaCy](#SpansimilaritywithspaCy)
+		* 2.4.3. [Semantic similarity for categorizing text](#Semanticsimilarityforcategorizingtext)
+3. [Data Analysis with spaCy](#DataAnalysiswithspaCy)
+	* 3.1. [spaCy pipelines](#spaCypipelines)
+		* 3.1.1. [Analyzing pipelines in spaCy](#AnalyzingpipelinesinspaCy)
+	* 3.2. [spaCy EntityRuler](#spaCyEntityRuler)
+		* 3.2.1. [EntityRuler with blank spaCy model](#EntityRulerwithblankspaCymodel)
+		* 3.2.2. [EntityRuler for NER](#EntityRulerforNER)
+		* 3.2.3. [EntityRuler with multi-patterns in spaCy](#EntityRulerwithmulti-patternsinspaCy)
+	* 3.3. [RegEx with spaCy](#RegExwithspaCy)
+		* 3.3.1. [RegEx in Python](#RegExinPython)
+		* 3.3.2. [RegEx with EntityRuler in spaCy](#RegExwithEntityRulerinspaCy)
+	* 3.4. [spaCy Matcher and PhraseMatcher](#spaCyMatcherandPhraseMatcher)
+		* 3.4.1. [Matching a single term in spaCy](#MatchingasingleterminspaCy)
+		* 3.4.2. [PhraseMatcher in spaCy](#PhraseMatcherinspaCy)
+		* 3.4.3. [Matching with extended syntax in spaCy](#MatchingwithextendedsyntaxinspaCy)
+4. [Customizing spaCy Models](#CustomizingspaCyModels)
+	* 4.1. [Customizing spaCy models](#CustomizingspaCymodels)
+		* 4.1.1. [Model performance on your data](#Modelperformanceonyourdata)
+	* 4.2. [spaCy training data format](#spaCytrainingdataformat)
+		* 4.2.1. [Annotation and preparing training data](#Annotationandpreparingtrainingdata)
+		* 4.2.2. [Compatible training data](#Compatibletrainingdata)
+	* 4.3. [Training with spaCy](#TrainingwithspaCy)
+		* 4.3.1. [Training preparation steps](#Trainingpreparationsteps)
+		* 4.3.2. [Train an existing NER model](#TrainanexistingNERmodel)
+		* 4.3.3. [Training a spaCy model from scratch](#TrainingaspaCymodelfromscratch)
+
 ---
-## Introduction to NLP and spaCy
+##  1. <a name='IntroductiontoNLPandspaCy'></a>Introduction to NLP and spaCy
 
 [Slide]({{site.baseurl}}/files/Natural_Language_Processing_with_spaCy_C1.pdf)
 
-### Natural Language Processing (NLP) basics
+###  1.1. <a name='NaturalLanguageProcessingNLPbasics'></a>Natural Language Processing (NLP) basics
 
-#### Doc container in spaCy
+####  1.1.1. <a name='DoccontainerinspaCy'></a>Doc container in spaCy
 
 ```python
 import spacy
@@ -38,9 +90,9 @@ print([token.text for token in doc])
     ['NLP', 'is', 'becoming', 'increasingly', 'popular', 'for', 'providing', 'business', 'solutions', '.']
 ```
 
-### spaCy basics
+###  1.2. <a name='spaCybasics'></a>spaCy basics
 
-#### Running a spaCy pipeline
+####  1.2.1. <a name='RunningaspaCypipeline'></a>Running a spaCy pipeline
 
 ```python
 # Load en_core_web_sm model as nlp
@@ -62,7 +114,7 @@ for doc in documents:
     ['Tokenization', 'is', 'the', 'first', 'step', 'in', 'any', 'spacy', 'pipeline', '.']
 ```
 
-#### Lemmatization with spaCy
+####  1.2.2. <a name='LemmatizationwithspaCy'></a>Lemmatization with spaCy
 
 ```python
 document = nlp(text)
@@ -85,7 +137,7 @@ print("Tokens:\n", tokens)
      ['I', 'have', 'bought', 'several', 'of', 'the', 'Vitality', 'canned', 'dog', 'food', 'products', 'and', 'have', 'found', 'them', 'all', 'to', 'be', 'of', 'good', 'quality', '.', 'The', 'product', 'looks', 'more', 'like', 'a', 'stew', 'than', 'a', 'processed', 'meat', 'and', 'it', 'smells', 'better', '.', 'My', 'Labrador', 'is', 'finicky', 'and', 'she', 'appreciates', 'this', 'product', 'better', 'than', ' ', 'most', '.']
 ```
 
-#### Sentence segmentation with spaCy
+####  1.2.3. <a name='SentencesegmentationwithspaCy'></a>Sentence segmentation with spaCy
 
 ```python
 # Generating a documents list of all Doc containers
@@ -105,9 +157,9 @@ print([len(s) for s in sentences])
     [3, 3, 8, 3, 4, 5, 5, 5, 3, 4]
 ```
 
-### Linguistic features in spaCy
+###  1.3. <a name='LinguisticfeaturesinspaCy'></a>Linguistic features in spaCy
 
-#### POS tagging with spaCy
+####  1.3.1. <a name='POStaggingwithspaCy'></a>POS tagging with spaCy
 
 ```python
 # Compile a list of all Doc containers of texts
@@ -166,7 +218,7 @@ for doc in documents:
     Text:  ! | POS tag:  PUNCT
 ```
 
-#### NER with spaCy
+####  1.3.2. <a name='NERwithspaCy'></a>NER with spaCy
 
 ```python
 # Compile a list of all Doc containers of texts
@@ -189,7 +241,7 @@ print("\nText:", documents[1][5].text, "| Entity type: ", documents[1][5].ent_ty
     Text: Pittsburgh | Entity type:  GPE
 ```
 
-#### Text processing with spaCy
+####  1.3.3. <a name='TextprocessingwithspaCy'></a>Text processing with spaCy
 
 ![]({{site.baseurl}}/images/spacy_convention.jpeg)
 
@@ -223,14 +275,14 @@ print("First ten tokens of third text:\n", third_text_10_pos)
 ```
 
 ---
-## spaCy Linguistic Annotations and Word Vectors
+##  2. <a name='spaCyLinguisticAnnotationsandWordVectors'></a>spaCy Linguistic Annotations and Word Vectors
 
 [Slide]({{site.baseurl}}/files/Natural_Language_Processing_with_spaCy_C2.pdf)
 
 
-### Linguistic features
+###  2.1. <a name='Linguisticfeatures'></a>Linguistic features
 
-#### Word-sense disambiguation with spaCy
+####  2.1.1. <a name='Word-sensedisambiguationwithspaCy'></a>Word-sense disambiguation with spaCy
 
 ```python
 texts = ["This device is used to jam the signal.",
@@ -250,7 +302,7 @@ Sentence 1:  [('jam', 'VERB')]
 Sentence 2:  [('jam', 'NOUN')] 
 ```
 
-#### Dependency parsing with spaCy
+####  2.1.2. <a name='DependencyparsingwithspaCy'></a>Dependency parsing with spaCy
 
 ```python
 # Create a list of Doc containts of texts list
@@ -271,9 +323,9 @@ for doc in documents:
     
 ```
 
-### Introduction to word vectors
+###  2.2. <a name='Introductiontowordvectors'></a>Introduction to word vectors
 
-#### spaCy vocabulary
+####  2.2.1. <a name='spaCyvocabulary'></a>spaCy vocabulary
 
 ```python
 # Load the en_core_web_md model
@@ -293,7 +345,7 @@ print("Dimension of word vectors: ", md_nlp.meta["vectors"]["width"])
     Dimension of word vectors:  300
 ```
 
-#### Word vectors in spaCy vocabulary
+####  2.2.2. <a name='WordvectorsinspaCyvocabulary'></a>Word vectors in spaCy vocabulary
 
 ```python
 words = ["like", "love"]
@@ -314,9 +366,9 @@ print(word_vectors[0])
      -0.16437  -0.070268  2.1638  ]
 ```
 
-### Word vectors and spaCy
+###  2.3. <a name='WordvectorsandspaCy'></a>Word vectors and spaCy
 
-#### Word vectors projection
+####  2.3.1. <a name='Wordvectorsprojection'></a>Word vectors projection
 
 ```python
 words = ["tiger", "bird"]
@@ -340,7 +392,7 @@ print(word_vectors_transformed[:, 0])
     [ 0.5182773 -0.5182773]
 ```
 
-#### Similar words in a vocabulary
+####  2.3.2. <a name='Similarwordsinavocabulary'></a>Similar words in a vocabulary
 
 ```python
 # Find the most similar word to the word computer
@@ -356,9 +408,9 @@ print(words)
     ['computer-related']
 ```
 
-### Measuring semantic similarity with spaCy
+###  2.4. <a name='MeasuringsemanticsimilaritywithspaCy'></a>Measuring semantic similarity with spaCy
 
-#### Doc similarity with spaCy
+####  2.4.1. <a name='DocsimilaritywithspaCy'></a>Doc similarity with spaCy
 
 ```bash
 In [1]:
@@ -394,7 +446,7 @@ for i, doc in enumerate(documents):
     Semantic similarity with document 5: 0.526
 ```
 
-#### Span similarity with spaCy
+####  2.4.2. <a name='SpansimilaritywithspaCy'></a>Span similarity with spaCy
 
 ```python
 # Create a Doc container for the category
@@ -411,7 +463,7 @@ print(f"Semantic similarity with", document_span.text, ":", round(document_span.
     Semantic similarity with canned food products : 0.866
 ```
 
-#### Semantic similarity for categorizing text
+####  2.4.3. <a name='Semanticsimilarityforcategorizingtext'></a>Semantic similarity for categorizing text
 
 ```bash
 In [1]:
@@ -438,11 +490,11 @@ print(semantic_scores)
 ```
 
 ---
-## Data Analysis with spaCy
+##  3. <a name='DataAnalysiswithspaCy'></a>Data Analysis with spaCy
 
 [Slide]({{site.baseurl}}/files/Natural_Language_Processing_with_spaCy_C3.pdf)
 
-### spaCy pipelines
+###  3.1. <a name='spaCypipelines'></a>spaCy pipelines
 
 ```python
 # Load a blank spaCy English model and add a sentencizer component
@@ -465,7 +517,7 @@ print("Second sentence tokens: ", [token for token in sentences[1]])
     Second sentence tokens:  [The, product, looks, more, like, a, stew, than, a, processed, meat, and, it, smells, better, .]
 ```
 
-#### Analyzing pipelines in spaCy
+####  3.1.1. <a name='AnalyzingpipelinesinspaCy'></a>Analyzing pipelines in spaCy
 
 ```python
 # Load a blank spaCy English model
@@ -499,7 +551,7 @@ analysis = nlp.analyze_pipes(pretty=True)
     token.ent_iob, token.ent_type[0m
 ``` 
 
-### spaCy EntityRuler
+###  3.2. <a name='spaCyEntityRuler'></a>spaCy EntityRuler
 
 Trong lĩnh vực Xử lý Ngôn ngữ Tự nhiên (Natural Language Processing - NLP) và đặc biệt là Nhận dạng Thực thể Có tên (Named Entity Recognition - NER), việc xác định và phân loại các thực thể như tên người, tổ chức, địa điểm, ngày tháng, v.v. là một nhiệm vụ quan trọng.  `spaCy EntityRuler` là một thành phần mạnh mẽ của thư viện spaCy, cho phép chúng ta tạo các quy tắc (rules) để nhận diện các thực thể tùy chỉnh (custom entities) một cách linh hoạt và chính xác.
 
@@ -521,7 +573,7 @@ Trong lĩnh vực Xử lý Ngôn ngữ Tự nhiên (Natural Language Processing 
 
 `spaCy EntityRuler` là một công cụ mạnh mẽ và hữu ích cho việc nhận diện các thực thể tùy chỉnh trong NLP. Nó bổ sung cho các mô hình NER được huấn luyện sẵn bằng cách cho phép chúng ta định nghĩa các quy tắc riêng biệt, giúp tăng cường độ chính xác và linh hoạt trong quá trình xử lý ngôn ngữ.  Hy vọng giải thích này giúp bạn hiểu rõ hơn về `spaCy EntityRuler` trong ngữ cảnh Machine Learning.
 
-#### EntityRuler with blank spaCy model
+####  3.2.1. <a name='EntityRulerwithblankspaCymodel'></a>EntityRuler with blank spaCy model
 
 ```python
 nlp = spacy.blank("en")
@@ -547,7 +599,7 @@ print([(ent.text, ent.label_) for ent in doc.ents])
     [('OpenAI', 'ORG'), ('Microsoft', 'ORG')]
 ```
 
-#### EntityRuler for NER
+####  3.2.2. <a name='EntityRulerforNER'></a>EntityRuler for NER
 
 ```python
 nlp = spacy.load("en_core_web_sm")
@@ -572,7 +624,7 @@ print([(ent.text, ent.label_) for ent in doc.ents])
     [('New York Group', 'ORG'), ('1987', 'DATE')]
 ```
 
-#### EntityRuler with multi-patterns in spaCy
+####  3.2.3. <a name='EntityRulerwithmulti-patternsinspaCy'></a>EntityRuler with multi-patterns in spaCy
 
 ```python
 nlp = spacy.load("en_core_web_md")
@@ -599,15 +651,322 @@ print("After EntityRuler: ", [(ent.text, ent.label_) for ent in nlp(example_text
     After EntityRuler:  [('Filberts', 'ORG'), ('Edmund', 'PERSON'), ('Brother', 'PERSON'), ('Sisters', 'PERSON')]
 ```
 
-### RegEx with spaCy
-### spaCy Matcher and PhraseMatcher
+###  3.3. <a name='RegExwithspaCy'></a>RegEx with spaCy
 
+####  3.3.1. <a name='RegExinPython'></a>RegEx in Python
+
+```python
+text = "Our phone number is (425)-123-4567."
+
+# Define a pattern to match phone numbers
+pattern = r"\((\d){3}\)-(\d){3}-(\d){4}"
+
+# Find all the matching patterns in the text
+phones = re.finditer(pattern, text)
+
+# Print start and end characters and matching section of the text
+for match in phones:
+    start_char = match.start()
+    end_char = match.end()
+    print("Start character: ", start_char, "| End character: ", end_char, "| Matching text: ", text[start_char:end_char])
+```
+
+```bash
+<script.py> output:
+    Start character:  20 | End character:  34 | Matching text:  (425)-123-4567
+```
+
+####  3.3.2. <a name='RegExwithEntityRulerinspaCy'></a>RegEx with EntityRuler in spaCy
+
+```python
+text = "Our phone number is 4251234567."
+
+# Define a pattern to match phone numbers
+patterns = [{"label": "PHONE_NUMBERS", "pattern": [{"TEXT": {"REGEX": "(\d){10}"}}]}]
+
+# Load a blank model and add an EntityRuler
+nlp = spacy.blank("en")
+ruler = nlp.add_pipe("entity_ruler")
+
+# Add the compiled patterns to the EntityRuler
+ruler.add_patterns(patterns)
+
+# Print the tuple of entities texts and types for the given text
+doc = nlp(text)
+print([(ent.text, ent.label_) for ent in doc.ents])
+```
+
+```bash
+<script.py> output:
+    [('4251234567', 'PHONE_NUMBERS')]
+```
+
+###  3.4. <a name='spaCyMatcherandPhraseMatcher'></a>spaCy Matcher and PhraseMatcher
+
+####  3.4.1. <a name='MatchingasingleterminspaCy'></a>Matching a single term in spaCy
+
+```python
+nlp = spacy.load("en_core_web_sm")
+doc = nlp(example_text)
+
+# Initialize a Matcher object
+matcher = Matcher(nlp.vocab)
+
+# Define a pattern to match lower cased word witch
+pattern = [{"lower" : "witch"}]
+
+# Add the pattern to matcher object and find matches
+matcher.add("CustomMatcher", [pattern])
+matches = matcher(doc)
+
+# Print start and end token indices and span of the matched text
+for match_id, start, end in matches:
+    print("Start token: ", start, " | End token: ", end, "| Matched text: ", doc[start:end].text)
+```
+
+```bash
+<script.py> output:
+    Start token:  24  | End token:  25 | Matched text:  Witch
+    Start token:  47  | End token:  48 | Matched text:  Witch
+```
+
+####  3.4.2. <a name='PhraseMatcherinspaCy'></a>PhraseMatcher in spaCy
+
+- "LOWER": So sánh chữ thường của token.
+- "LEMMA": So sánh từ gốc của token.
+- "TEXT": So sánh văn bản của token (mặc định).
+- "SHAPE": So sánh hình dạng của token (ví dụ: "Xx" cho từ viết hoa, "dd" cho số).
+
+
+```python
+text = "There are only a few acceptable IP addresse: (1) 127.100.0.1, (2) 123.4.1.0."
+terms = ["110.0.0.0", "101.243.0.0"]
+
+# Initialize a PhraseMatcher class to match to shapes of given terms
+matcher = PhraseMatcher(nlp.vocab, attr = "SHAPE")
+
+# Create patterns to add to the PhraseMatcher object
+patterns = [nlp.make_doc(term) for term in terms]
+matcher.add("IPAddresses", patterns)
+
+# Find matches to the given patterns and print start and end characters and matches texts
+doc = nlp(text)
+matches = matcher(doc)
+for match_id, start, end in matches:
+    print("Start token: ", start, " | End token: ", end, "| Matched text: ", doc[start:end].text)
+```
+
+```bash
+<script.py> output:
+    Start token:  12  | End token:  13 | Matched text:  127.100.0.1
+    Start token:  17  | End token:  18 | Matched text:  123.4.1.0
+```
+
+####  3.4.3. <a name='MatchingwithextendedsyntaxinspaCy'></a>Matching with extended syntax in spaCy
+
+```python
+nlp = spacy.load("en_core_web_sm")
+doc = nlp(example_text)
+
+# Define a matcher object
+matcher = Matcher(nlp.vocab)
+# Define a pattern to match tiny squares and tiny mouthful
+pattern = [{"lower": "tiny"}, {"lower": {"IN": ["squares", "mouthful"]}}]
+
+# Add the pattern to matcher object and find matches
+matcher.add("CustomMatcher", [pattern])
+matches = matcher(doc)
+
+# Print out start and end token indices and the matched text span per match
+for match_id, start, end in matches:
+    print("Start token: ", start, " | End token: ", end, "| Matched text: ", doc[start:end].text)
+```
+
+```bash
+<script.py> output:
+    Start token:  4  | End token:  6 | Matched text:  tiny squares
+    Start token:  19  | End token:  21 | Matched text:  tiny mouthful
+```
 
 ---
-## Customizing spaCy Models
+##  4. <a name='CustomizingspaCyModels'></a>Customizing spaCy Models
 
 [Slide]({{site.baseurl}}/files/Natural_Language_Processing_with_spaCy_C4.pdf)
 
-### Customizing spaCy models
-### spaCy training data format
-### Training with spaCy
+###  4.1. <a name='CustomizingspaCymodels'></a>Customizing spaCy models
+
+####  4.1.1. <a name='Modelperformanceonyourdata'></a>Model performance on your data
+
+```python
+# Append a tuple of (entities text, entities label) if Jumbo is in the entity
+target_entities = []
+for doc in documents:
+  target_entities.extend([(ent.text, ent.label_) for ent in doc.ents if "Jumbo" in ent.text])
+print(target_entities)
+
+# Append True to the correct_labels list if the entity label is `PRODUCT`
+correct_labels = []
+for ent in target_entities:
+  if ent[1] == "PRODUCT":
+    correct_labels.append(True)
+  else:
+    correct_labels.append(False)
+print(correct_labels)
+```
+
+```bash
+<script.py> output:
+    [('Jumbo', 'PERSON'), ('Jumbo', 'PERSON')]
+    [False, False]
+```
+
+###  4.2. <a name='spaCytrainingdataformat'></a>spaCy training data format
+
+####  4.2.1. <a name='Annotationandpreparingtrainingdata'></a>Annotation and preparing training data
+
+```python
+text = "A patient with chest pain had hyperthyroidism."
+entity_1 = "chest pain"
+entity_2 = "hyperthyroidism"
+
+# Store annotated data information in the correct format
+annotated_data = {"sentence": text, "entities": [{"label": "SYMPTOM", "value": entity_1}, {"label": "DISEASE", "value": entity_2}]}
+
+# Extract start and end characters of each entity
+entity_1_start_char = text.find(entity_1)
+entity_1_end_char = entity_1_start_char + len(entity_1)
+entity_2_start_char = text.find(entity_2)
+entity_2_end_char = entity_2_start_char + len(entity_2)
+
+# Store the same input information in the proper format for training
+training_data = [(text, {"entities": [(entity_1_start_char,entity_1_end_char,"SYMPTOM"), 
+                                      (entity_2_start_char,entity_2_end_char,"DISEASE")]})]
+print(training_data)
+```
+
+```bash
+<script.py> output:
+    [('A patient with chest pain had hyperthyroidism.', {'entities': [(15, 25, 'SYMPTOM'), (30, 45, 'DISEASE')]})]
+```
+
+####  4.2.2. <a name='Compatibletrainingdata'></a>Compatible training data
+
+```python
+example_text = 'A patient with chest pain had hyperthyroidism.'
+training_data = [(example_text, {'entities': [(15, 25, 'SYMPTOM'), (30, 45, 'DISEASE')]})]
+
+all_examples = []
+# Iterate through text and annotations and convert text to a Doc container
+for text, annotations in training_data:
+  doc = nlp(text)
+  
+  # Create an Example object from the doc contianer and annotations
+  example_sentence = Example.from_dict(doc, annotations)
+  print(example_sentence.to_dict(), "\n")
+  
+  # Append the Example object to the list of all examples
+  all_examples.append(example_sentence)
+  
+print("Number of formatted training data: ", len(all_examples))
+```
+
+```bash
+<script.py> output:
+    {'doc_annotation': {'cats': {}, 'entities': ['O', 'O', 'O', 'B-SYMPTOM', 'L-SYMPTOM', 'O', 'U-DISEASE', 'O'], 'links': {}}, 'token_annotation': {'ORTH': ['A', 'patient', 'with', 'chest', 'pain', 'had', 'hyperthyroidism', '.'], 'SPACY': [True, True, True, True, True, True, False, False], 'TAG': ['', '', '', '', '', '', '', ''], 'LEMMA': ['', '', '', '', '', '', '', ''], 'POS': ['', '', '', '', '', '', '', ''], 'MORPH': ['', '', '', '', '', '', '', ''], 'HEAD': [0, 1, 2, 3, 4, 5, 6, 7], 'DEP': ['', '', '', '', '', '', '', ''], 'SENT_START': [1, 0, 0, 0, 0, 0, 0, 0]}} 
+    
+    Number of formatted training data:  1
+```
+
+###  4.3. <a name='TrainingwithspaCy'></a>Training with spaCy
+
+####  4.3.1. <a name='Trainingpreparationsteps'></a>Training preparation steps
+
+```python
+nlp = spacy.load("en_core_web_sm")
+
+# Disable all pipeline components of  except `ner`
+other_pipes = [pipe for pipe in nlp.pipe_names if pipe != 'ner']
+nlp.disable_pipes(*other_pipes)
+
+# Convert a text and its annotations to the correct format usable for training
+doc = nlp.make_doc(text)
+example = Example.from_dict(doc, annotations)
+print("Example object for training: \n", example.to_dict())
+```
+
+```bash
+<script.py> output:
+    Example object for training: 
+     {'doc_annotation': {'cats': {}, 'entities': ['O', 'O', 'O', 'O', 'O', 'U-GPE', 'O'], 'links': {}}, 'token_annotation': {'ORTH': ['I', 'will', 'visit', 'you', 'in', 'Austin', '.'], 'SPACY': [True, True, True, True, True, False, False], 'TAG': ['', '', '', '', '', '', ''], 'LEMMA': ['', '', '', '', '', '', ''], 'POS': ['', '', '', '', '', '', ''], 'MORPH': ['', '', '', '', '', '', ''], 'HEAD': [0, 1, 2, 3, 4, 5, 6], 'DEP': ['', '', '', '', '', '', ''], 'SENT_START': [1, 0, 0, 0, 0, 0, 0]}}
+```
+
+####  4.3.2. <a name='TrainanexistingNERmodel'></a>Train an existing NER model
+
+```python
+nlp = spacy.load("en_core_web_sm")
+print("Before training: ", [(ent.text, ent.label_) for ent in nlp(test).ents])
+other_pipes = [pipe for pipe in nlp.pipe_names if pipe != 'ner']
+nlp.disable_pipes(*other_pipes)
+optimizer = nlp.create_optimizer()
+
+# Shuffle training data and the dataset using random package per epoch
+for i in range(epochs):
+    random.shuffle(training_data)
+    for text, annotations in training_data:
+      doc = nlp.make_doc(text)
+      # Update nlp model after setting sgd argument to optimizer
+      example = Example.from_dict(doc, annotations)
+      nlp.update([example], sgd = optimizer)
+print("After training: ", [(ent.text, ent.label_) for ent in nlp(test).ents])
+```
+
+```bash
+<script.py> output:
+    Before training:  [('Sam', 'PERSON')]
+    After training:  [('Sam', 'PERSON'), ('house', 'GPE')]
+```
+
+####  4.3.3. <a name='TrainingaspaCymodelfromscratch'></a>Training a spaCy model from scratch
+
+```python
+# Load a blank English model, add NER component, add given labels to the ner pipeline
+nlp = spacy.blank("en")
+ner = nlp.add_pipe("ner")
+for ent in labels:
+    ner.add_label(ent)
+
+# Disable other pipeline components, complete training loop and run training loop
+other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
+nlp.disable_pipes(*other_pipes)
+losses = {}
+optimizer = nlp.begin_training()
+for text, annotation in training_data:
+    doc = nlp.make_doc(text)
+    example = Example.from_dict(doc, annotation)
+    nlp.update([example], sgd=optimizer, losses=losses)
+    print(losses)
+```
+
+```bash
+<script.py> output:
+    {'ner': 98.42856240272522}
+    {'ner': 189.34197914600372}
+    {'ner': 310.98384952545166}
+    {'ner': 377.18853384256363}
+    {'ner': 578.3004557490349}
+    {'ner': 608.2531691193581}
+    {'ner': 673.164011657238}
+    {'ner': 723.6257713735104}
+    {'ner': 746.0405215527862}
+    {'ner': 756.4262755732052}
+    {'ner': 790.0200939634815}
+    {'ner': 795.990012896822}
+    {'ner': 796.0241677922168}
+    {'ner': 798.0212131336592}
+    {'ner': 813.9837758949773}
+    {'ner': 817.9703837852048}
+    {'ner': 829.9056551901582}
+    {'ner': 845.8729668580933}
+    {'ner': 853.8427640225843}
+    {'ner': 863.77342558173}
+```

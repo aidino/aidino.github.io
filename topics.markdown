@@ -42,8 +42,8 @@ Example code: https://github.com/fluentpython/example-code-2e
 - [Model Validation in Python](_posts/2025-01-20-ml-in-python-c14.markdown)
 - Hyperparameter turning in Python
 - ~~**Project** - Machine Learning Fundamentals in Python~~
-- Introduction to Natural Language Processing in Python
-- Natural Language Processing with spaCy
+- [Introduction to Natural Language Processing in Python](_posts/2025-01-20-ml-in-python-c17.markdown)
+- [Natural Language Processing with spaCy](_posts/2025-01-20-ml-in-python-c18.markdown)
 - Feature Engineering for NLP in Python
 - [Introduction Deep learning with PyTorch](_posts/2025-01-21-developing-llm-c1.markdown)
 - [Intermediate Deep learning with PyTorch](_posts/2025-01-21-developing-llm-c2.markdown)
