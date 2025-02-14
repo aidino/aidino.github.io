@@ -12,8 +12,51 @@ Images are everywhere! We live in a time where images contain lots of informatio
 
 [Slide]({{site.baseurl}}/files/Image_Processing_in_Python_C1.pdf)
 
+**Helper function**
+
+```python
+from matplotlib import pyplot as plt
+
+def show_image(image, title='Image', cmap_type='gray'):
+    plt.imshow(image, cmap=cmap_type)
+    plt.title(title)
+    plt.axis('off')
+    plt.show()
+```
+
 ### Make images come alive with scikit-image
+
+#### RGB to grayscale
+
+```python
+# Import the modules from skimage
+from skimage import data, color
+
+# Load the rocket image
+rocket = data.rocket()
+
+# Convert the image to grayscale
+gray_scaled_rocket = color.rgb2gray(rocket)
+
+# Show the original image
+show_image(rocket, 'Original RGB image')
+
+# Show the grayscale image
+show_image(gray_scaled_rocket, 'Grayscale image')
+```
+
+![]({{site.baseurl}}/images/img_processing1.svg)
+
+![]({{site.baseurl}}/images/img_processing2.svg)
+
 ### NumPy for images
+
+#### Flipping out
+
+```python
+
+```
+
 ### Getting started with thresholding
 
 
