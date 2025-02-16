@@ -5,6 +5,8 @@ date: 2025-01-20 17:00:00 +0700
 categories: machine learning in python
 ---
 
+Learn how to approach and win competitions on Kaggle.
+
 
 ## Kaggle competitions process
 
@@ -347,11 +349,180 @@ count    20000.000
 #### EDA plots I
 
 ```python
+# Calculate the ride distance
+train['distance_km'] = haversine_distance(train)
 
+# Draw a scatterplot
+plt.scatter(x=train['fare_amount'], y=train['distance_km'], alpha=0.5)
+plt.xlabel('Fare amount')
+plt.ylabel('Distance, km')
+plt.title('Fare amount based on the distance')
+
+# Limit on the distance
+plt.ylim(0, 50)
+plt.show()
 ```
 
+![]({{site.baseurl}}/images/eda1.svg)
+
+#### EDA plots II
+
+```python
+# Create hour feature
+train['pickup_datetime'] = pd.to_datetime(train.pickup_datetime)
+train['hour'] = train.pickup_datetime.dt.hour
+
+# Find median fare_amount for each hour
+hour_price = train.groupby('hour', as_index=False)['fare_amount'].median()
+
+# Plot the line plot
+plt.plot(hour_price['hour'], hour_price['fare_amount'], marker='o')
+plt.xlabel('Hour of the day')
+plt.ylabel('Median fare amount')
+plt.title('Fare amount based on day time')
+plt.xticks(range(24))
+plt.show()
+```
+
+![]({{site.baseurl}}/images/eda2.svg)
+
 ### Local validation
+
+#### K-fold cross-validation
+
+```python
+# Import KFold
+from sklearn.model_selection import KFold
+
+# Create a KFold object
+kf = KFold(n_splits=3, shuffle=True, random_state=123)
+
+# Loop through each split
+fold = 0
+for train_index, test_index in kf.split(train):
+    # Obtain training and testing folds
+    cv_train, cv_test = train.iloc[train_index], train.iloc[test_index]
+    print('Fold: {}'.format(fold))
+    print('CV train shape: {}'.format(cv_train.shape))
+    print('Medium interest listings in CV train: {}\n'.format(sum(cv_train.interest_level == 'medium')))
+    fold += 1
+```
+
+```bash
+<script.py> output:
+    Fold: 0
+    CV train shape: (666, 9)
+    Medium interest listings in CV train: 175
+    
+    Fold: 1
+    CV train shape: (667, 9)
+    Medium interest listings in CV train: 165
+    
+    Fold: 2
+    CV train shape: (667, 9)
+    Medium interest listings in CV train: 162
+```
+
+#### Stratified K-fold
+
+```python
+# Import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
+
+# Create a StratifiedKFold object
+str_kf = StratifiedKFold(n_splits=3, shuffle=True, random_state=123)
+
+# Loop through each split
+fold = 0
+for train_index, test_index in str_kf.split(train, train['interest_level']):
+    # Obtain training and testing folds
+    cv_train, cv_test = train.iloc[train_index], train.iloc[test_index]
+    print('Fold: {}'.format(fold))
+    print('CV train shape: {}'.format(cv_train.shape))
+    print('Medium interest listings in CV train: {}\n'.format(sum(cv_train.interest_level == 'medium')))
+    fold += 1
+```
+
+```bash
+<script.py> output:
+    Fold: 0
+    CV train shape: (666, 9)
+    Medium interest listings in CV train: 167
+    
+    Fold: 1
+    CV train shape: (667, 9)
+    Medium interest listings in CV train: 167
+    
+    Fold: 2
+    CV train shape: (667, 9)
+    Medium interest listings in CV train: 168
+```
+
 ### Validation usage
+
+#### Time K-fold
+
+```python
+from sklearn.model_selection import TimeSeriesSplit
+
+# Create TimeSeriesSplit object
+time_kfold = TimeSeriesSplit(n_splits=3)
+
+# Sort train data by date
+train = train.sort_values("date")
+
+# Iterate through each split
+fold = 0
+for train_index, test_index in time_kfold.split(train):
+    cv_train, cv_test = train.iloc[train_index], train.iloc[test_index]
+    
+    print('Fold :', fold)
+    print('Train date range: from {} to {}'.format(cv_train.date.min(), cv_train.date.max()))
+    print('Test date range: from {} to {}\n'.format(cv_test.date.min(), cv_test.date.max()))
+    fold += 1
+```
+
+```bash
+<script.py> output:
+    Fold : 0
+    Train date range: from 2017-12-01 to 2017-12-08
+    Test date range: from 2017-12-08 to 2017-12-16
+    
+    Fold : 1
+    Train date range: from 2017-12-01 to 2017-12-16
+    Test date range: from 2017-12-16 to 2017-12-24
+    
+    Fold : 2
+    Train date range: from 2017-12-01 to 2017-12-24
+    Test date range: from 2017-12-24 to 2017-12-31
+```
+
+#### Overall validation score
+
+```python
+from sklearn.model_selection import TimeSeriesSplit
+import numpy as np
+
+# Sort train data by date
+train = train.sort_values('date')
+
+# Initialize 3-fold time cross-validation
+kf = TimeSeriesSplit(n_splits=3)
+
+# Get MSE scores for each cross-validation split
+mse_scores = get_fold_mse(train, kf)
+
+print('Mean validation MSE: {:.5f}'.format(np.mean(mse_scores)))
+print('MSE by fold: {}'.format(mse_scores))
+print('Overall validation MSE: {:.5f}'.format(np.mean(mse_scores) + np.std(mse_scores)))
+```
+
+```bash
+<script.py> output:
+    Mean validation MSE: 955.49186
+    MSE by fold: [890.30336, 961.65797, 1014.51424]
+    Overall validation MSE: 1006.38784
+```
 
 ---
 ## Feature Engineering
@@ -359,8 +530,118 @@ count    20000.000
 [Slide]({{site.baseurl}}/files/Winning_a_Kaggle_Competition_in_Python_C3.pdf)
 
 ### Feature engineering
+
+#### Arithmetical features
+
+```python
+# Look at the initial RMSE
+print('RMSE before feature engineering:', get_kfold_rmse(train))
+
+# Find the total area of the house
+train['TotalArea'] = train['TotalBsmtSF'] + train['FirstFlrSF'] + train['SecondFlrSF']
+print('RMSE with total area:', get_kfold_rmse(train))
+
+# Find the area of the garden
+train['GardenArea'] = train['LotArea'] - train['FirstFlrSF']
+print('RMSE with garden area:', get_kfold_rmse(train))
+
+# Find total number of bathrooms
+train['TotalBath'] = train['FullBath'] + train['HalfBath']
+print('RMSE with number of bathrooms:', get_kfold_rmse(train))
+```
+
+```bash
+<script.py> output:
+    RMSE before feature engineering: 36029.39
+    RMSE with total area: 35073.2
+    RMSE with garden area: 34413.55
+    RMSE with number of bathrooms: 34506.78
+```
+
+#### Date features
+
+```python
+# Concatenate train and test together
+taxi = pd.concat([train, test])
+
+# Convert pickup date to datetime object
+taxi['pickup_datetime'] = pd.to_datetime(taxi['pickup_datetime'])
+
+# Create a day of week feature
+taxi['dayofweek'] = taxi['pickup_datetime'].dt.dayofweek
+
+# Create an hour feature
+taxi['hour'] = taxi['pickup_datetime'].dt.hour
+
+# Split back into train and test
+new_train = taxi[taxi['id'].isin(train['id'])]
+new_test = taxi[taxi['id'].isin(test['id'])]
+```
+
 ### Categorical features
-### Target encoding
+
+#### Label encoding
+
+```python
+# Concatenate train and test together
+houses = pd.concat([train, test])
+
+# Label encoder
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+
+# Create new features
+houses['RoofStyle_enc'] = le.fit_transform(houses['RoofStyle'])
+houses['CentralAir_enc'] = le.fit_transform(houses['CentralAir'])
+
+# Look at new features
+print(houses[['RoofStyle', 'RoofStyle_enc', 'CentralAir', 'CentralAir_enc']].head())
+```
+
+```bash
+<script.py> output:
+      RoofStyle  RoofStyle_enc CentralAir  CentralAir_enc
+    0     Gable              1          Y               1
+    1     Gable              1          Y               1
+    2     Gable              1          Y               1
+    3     Gable              1          Y               1
+    4     Gable              1          Y               1
+```
+
+#### One-Hot encoding
+
+The problem with label encoding is that it implicitly assumes that there is a ranking dependency between the categories. 
+
+```python
+# Concatenate train and test together
+houses = pd.concat([train, test])
+
+# Label encode binary 'CentralAir' feature
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+houses['CentralAir_enc'] = le.fit_transform(houses['CentralAir'])
+
+# Create One-Hot encoded features
+ohe = pd.get_dummies(houses['RoofStyle'], prefix='RoofStyle')
+
+# Concatenate OHE features to houses
+houses = pd.concat([houses, ohe], axis=1)
+
+# Look at OHE features
+print(houses[[col for col in houses.columns if 'RoofStyle' in col]].head(3))
+```
+
+```bash
+<script.py> output:
+      RoofStyle  RoofStyle_Flat  RoofStyle_Gable  RoofStyle_Gambrel  RoofStyle_Hip  RoofStyle_Mansard  RoofStyle_Shed
+    0     Gable               0                1                  0              0                  0               0
+    1     Gable               0                1                  0              0                  0               0
+    2     Gable               0                1                  0              0                  0               0
+```
+
+### Target encoding - Đối tượng địa lý
+
+
 ### Missing data
 
 ---
