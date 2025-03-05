@@ -525,8 +525,6 @@ Với những cải tiến này, FlashAttention-2 là một bước thành công
 
 #### LongNet: A Leap Towards Billion-Token Context Window
 
-Chắc chắn, đây là bản dịch và giải thích về LongNet:
-
 **LongNet: Mở Rộng Context Window Lên 1 Tỷ Tokens**
 
 LongNet đại diện cho một bước tiến mang tính chuyển đổi trong lĩnh vực tối ưu hóa *transformer*, như được trình bày chi tiết trong bài báo "LONGNET: Scaling Transformers to 1,000,000,000 Tokens". Phương pháp sáng tạo này được thiết lập để mở rộng *context window* của các mô hình ngôn ngữ lên đến 1 tỷ *tokens* chưa từng có, tăng cường đáng kể khả năng xử lý và phân tích khối lượng dữ liệu lớn của chúng.
