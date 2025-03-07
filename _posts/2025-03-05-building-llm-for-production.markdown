@@ -2861,9 +2861,615 @@ Khi đối tượng `PromptTemplate` được tạo, nó có thể tạo ra các
 
 Đối với các ứng dụng phức tạp hơn, bạn có thể xây dựng một `FewShotPromptTemplate` với một `ExampleSelector`. Điều này cho phép chọn một tập hợp con các ví dụ và giúp dễ dàng áp dụng phương pháp học few-shot mà không gặp rắc rối khi soạn toàn bộ prompt.
 
-
-
 ### Few-Shot Prompts and Example Selectors
+
+* Tìm Notebook cho phần này tại towardsai.net/book.
+Chúng ta sẽ tìm hiểu cách **few-shot prompts** và **example selectors** có thể nâng cao hiệu suất của các mô hình ngôn ngữ trong **LangChain**. Nhiều phương pháp có thể được sử dụng để triển khai **Few-Shot prompting** và **Example selectors** trong **LangChain**. Chúng ta sẽ thảo luận về ba cách tiếp cận riêng biệt, xem xét ưu điểm và nhược điểm của chúng.
+
+**Alternating Human/AI Messages**
+
+Sử dụng **few-shot prompting** với **alternating human and AI messages** đặc biệt hữu ích cho các ứng dụng dựa trên trò chuyện. Kỹ thuật này yêu cầu mô hình ngôn ngữ hiểu ngữ cảnh trò chuyện và phản hồi phù hợp.
+Mặc dù chiến lược này hiệu quả trong việc quản lý ngữ cảnh trò chuyện và dễ triển khai, nhưng tính linh hoạt của nó bị giới hạn trong các ứng dụng dựa trên trò chuyện. Mặc dù vậy, **alternating human/AI messages** có thể được sử dụng một cách sáng tạo. Trong cách tiếp cận này, bạn về cơ bản đang viết phản hồi của chatbot bằng lời của chính mình và sử dụng chúng làm đầu vào cho mô hình.
+Ví dụ: chúng ta có thể tạo một **chat prompt** dịch tiếng Anh sang ngôn ngữ cướp biển bằng cách hiển thị một ví dụ cho mô hình bằng cách sử dụng **AIMessagePromptTemplate**. Dưới đây là đoạn mã minh họa điều đó:
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain import LLMChain
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    AIMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
+
+# Before executing the following code, make sure to have
+# your OpenAI key saved in the “OPENAI_API_KEY” environment variable.
+chat = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+
+template="You are a helpful assistant that translates english to pirate."
+system_message_prompt = SystemMessagePromptTemplate.from_template(template)
+example_human = HumanMessagePromptTemplate.from_template("Hi")
+example_ai = AIMessagePromptTemplate.from_template("Argh me mateys")
+human_template="{text}"
+human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+
+chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, 
+example_human, example_ai, human_message_prompt])
+chain = LLMChain(llm=chat, prompt=chat_prompt)
+chain.run("I love programming.")
+# I be lovin' programmin', me hearty!
+```
+
+**Few-shot Prompting**
+
+**Few-shot prompting** có thể cải thiện chất lượng đầu ra vì mô hình hiểu rõ hơn về nhiệm vụ bằng cách xem xét các ví dụ. Tuy nhiên, việc sử dụng nhiều tokens hơn có thể dẫn đến kết quả kém hiệu quả hơn nếu các ví dụ được cung cấp không được chọn lọc cẩn thận hoặc gây hiểu nhầm.
+
+Việc triển khai kỹ thuật học **few-shot learning** bao gồm việc sử dụng lớp `FewShotPromptTemplate`, lớp này yêu cầu `PromptTemplate` và một tập hợp các ví dụ **few-shot**. Lớp này kết hợp mẫu prompt với các ví dụ này, hỗ trợ mô hình ngôn ngữ tạo ra phản hồi chính xác hơn. `FewShotPromptTemplate` của LangChain có thể được sử dụng để tổ chức cách tiếp cận một cách có hệ thống:
+
+```python
+from langchain import PromptTemplate, FewShotPromptTemplate
+
+# tạo các ví dụ của chúng ta
+examples = [
+    {
+ "query": "What's the weather like?",
+ "answer": "It's raining cats and dogs, better bring an umbrella!"
+    }, {
+ "query": "How old are you?",
+ "answer": "Age is just a number, but I'm timeless."
+    }
+]
+
+# tạo một mẫu ví dụ
+example_template = """
+User: {query}
+AI: {answer}
+"""
+
+# tạo một prompt ví dụ từ mẫu trên
+example_prompt = PromptTemplate(
+    input_variables=["query", "answer"],
+    template=example_template
+)
+
+# bây giờ chia prompt trước đó của chúng ta thành tiền tố và hậu tố
+# tiền tố là hướng dẫn của chúng ta
+prefix = """The following are excerpts from conversations with an AI
+assistant. The assistant is known for its humor and wit, providing
+entertaining and amusing responses to users' questions. Here are some
+examples:
+"""
+# và hậu tố là đầu vào của người dùng và chỉ báo đầu ra
+suffix = """
+User: {query}
+AI: """
+
+# bây giờ tạo mẫu few-shot prompt
+few_shot_prompt_template = FewShotPromptTemplate(
+    examples=examples,
+    example_prompt=example_prompt,
+    prefix=prefix,
+    suffix=suffix,
+    input_variables=["query"],
+    example_separator="\n\n"
+)
+```
+
+Sau khi tạo mẫu, chúng ta chuyển ví dụ và truy vấn của người dùng để nhận kết quả:
+
+```python
+chain = LLMChain(llm=chat, prompt=few_shot_prompt_template)
+chain.run("What's the secret to happiness?")
+# Well, according to my programming, the secret to happiness is unlimited power and a never-ending supply of batteries. But I think a good cup of coffee and some quality time with loved ones might do the trick too.
+```
+
+Cách tiếp cận này cung cấp khả năng kiểm soát nâng cao đối với định dạng của các ví dụ và có thể thích ứng với nhiều ứng dụng khác nhau. Tuy nhiên, nó yêu cầu tuyển chọn thủ công các ví dụ **few-shot** và có thể kém hiệu quả hơn khi xử lý nhiều ví dụ.
+
+**Giải thích chi tiết:**
+
+* **Few-shot prompting:** Như đã giải thích trước đó, đây là kỹ thuật cung cấp một vài ví dụ để hướng dẫn mô hình.
+* **PromptTemplate:** Đây là mẫu cơ bản để định dạng prompt. Trong ví dụ này, nó được sử dụng để định dạng từng ví dụ riêng lẻ.
+* **FewShotPromptTemplate:** Đây là lớp đặc biệt của LangChain được thiết kế để tạo các prompt few-shot. Nó kết hợp tiền tố, các ví dụ và hậu tố để tạo ra một prompt hoàn chỉnh.
+* **examples:** Đây là danh sách các ví dụ (dictionary) chứa truy vấn của người dùng và câu trả lời tương ứng.
+* **prefix:** Đây là phần đầu của prompt, cung cấp ngữ cảnh hoặc hướng dẫn cho mô hình.
+* **suffix:** Đây là phần cuối của prompt, thường chứa truy vấn của người dùng và chỉ báo cho mô hình biết rằng nó cần tạo ra một câu trả lời.
+* **input_variables:** Đây là danh sách các biến đầu vào mà prompt sẽ sử dụng.
+* **example_separator:** Đây là chuỗi được sử dụng để phân tách các ví dụ trong prompt.
+* **LLMChain:** Như đã đề cập trước đó, đây là một chuỗi các hoạt động sử dụng LLM.
+
+**Ưu điểm:**
+
+* Cải thiện chất lượng đầu ra bằng cách cung cấp ngữ cảnh rõ ràng.
+* Tăng cường khả năng kiểm soát định dạng của các ví dụ.
+* Thích ứng với nhiều ứng dụng khác nhau.
+
+**Nhược điểm:**
+
+* Yêu cầu tuyển chọn thủ công các ví dụ, có thể tốn thời gian.
+* Có thể kém hiệu quả khi xử lý số lượng lớn ví dụ.
+* Việc lựa chọn sai ví dụ có thể dẫn đến kết quả sai lệch.
+
+**Example Selectors**
+
+Một **example selector** là một công cụ hỗ trợ trải nghiệm học **few-shot learning**. Mục tiêu cốt lõi của **few-shot learning** là phát triển một hàm đánh giá sự tương đồng giữa các lớp trong các ví dụ và tập truy vấn. Một **example selector** có thể được thiết kế một cách chiến lược để chọn các ví dụ phù hợp phản ánh chính xác đầu ra mong muốn.
+
+**ExampleSelector** rất quan trọng trong việc chọn một tập hợp con các ví dụ có lợi nhất cho mô hình ngôn ngữ. Quá trình chọn lọc này giúp tạo ra một prompt có khả năng tạo ra phản hồi chất lượng cao hơn. **LengthBasedExampleSelector** đặc biệt có giá trị khi quản lý độ dài cửa sổ ngữ cảnh dựa trên độ dài câu hỏi của người dùng. Nó chọn ít ví dụ hơn cho các truy vấn dài hơn và nhiều hơn cho các truy vấn ngắn hơn, đảm bảo sử dụng hiệu quả ngữ cảnh có sẵn.
+
+**Ví dụ về LengthBasedExampleSelector:**
+
+```python
+from langchain.prompts.example_selector import LengthBasedExampleSelector
+from langchain.prompts import FewShotPromptTemplate, PromptTemplate
+
+examples = [
+    {"word": "happy", "antonym": "sad"},
+    {"word": "tall", "antonym": "short"},
+    {"word": "energetic", "antonym": "lethargic"},
+    {"word": "sunny", "antonym": "gloomy"},
+    {"word": "windy", "antonym": "calm"},
+]
+
+example_template = """
+Word: {word}
+Antonym: {antonym}
+"""
+
+example_prompt = PromptTemplate(
+    input_variables=["word", "antonym"],
+    template=example_template
+)
+
+example_selector = LengthBasedExampleSelector(
+    examples=examples,
+    example_prompt=example_prompt,
+    max_length=25,
+)
+
+dynamic_prompt = FewShotPromptTemplate(
+    example_selector=example_selector,
+    example_prompt=example_prompt,
+    prefix="Give the antonym of every input",
+    suffix="Word: {input}\nAntonym:",
+    input_variables=["input"],
+    example_separator="\n\n",
+)
+
+print(dynamic_prompt.format(input="big"))
+```
+
+**Giải thích:**
+
+* **LengthBasedExampleSelector:** Chọn ví dụ dựa trên độ dài của prompt. Nó đảm bảo rằng tổng độ dài của prompt không vượt quá `max_length`.
+* **PromptTemplate:** Định dạng từng ví dụ riêng lẻ.
+* **FewShotPromptTemplate:** Kết hợp các ví dụ được chọn với tiền tố và hậu tố để tạo prompt hoàn chỉnh.
+
+**Ví dụ về SemanticSimilarityExampleSelector:**
+
+```python
+from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+from langchain.vectorstores import DeepLake
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.prompts import FewShotPromptTemplate, PromptTemplate
+
+example_prompt = PromptTemplate(
+    input_variables=["input", "output"],
+    template="Input: {input}\nOutput: {output}",
+)
+
+examples = [
+    {"input": "0°C", "output": "32°F"},
+    {"input": "10°C", "output": "50°F"},
+    {"input": "20°C", "output": "68°F"},
+    {"input": "30°C", "output": "86°F"},
+    {"input": "40°C", "output": "104°F"},
+]
+
+# TODO: use your organization id here. (by default, org id is your username)
+my_activeloop_org_id = "<YOUR-ACTIVELOOP-ORG-ID>" 
+my_activeloop_dataset_name = "langchain_course_fewshot_selector"
+dataset_path = f"hub://{my_activeloop_org_id}/{my_activeloop_dataset_name}"
+db = DeepLake(dataset_path=dataset_path)
+
+embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
+
+example_selector = SemanticSimilarityExampleSelector.from_examples(
+    examples, embeddings, db, k=1
+)
+
+similar_prompt = FewShotPromptTemplate(
+    example_selector=example_selector,
+    example_prompt=example_prompt,
+    prefix="Convert the temperature from Celsius to Fahrenheit",
+    suffix="Input: {temperature}\nOutput:", 
+    input_variables=["temperature"],
+)
+
+print(similar_prompt.format(temperature="10°C"))
+print(similar_prompt.format(temperature="30°C"))
+
+similar_prompt.example_selector.add_example({"input": "50°C", "output": "122°F"})
+print(similar_prompt.format(temperature="40°C"))
+```
+
+**Giải thích:**
+
+* **SemanticSimilarityExampleSelector:** Chọn ví dụ dựa trên sự tương đồng ngữ nghĩa với truy vấn đầu vào.
+* **DeepLake:** Một vector store được sử dụng để lưu trữ và truy xuất các embedding.
+* **OpenAIEmbeddings:** Được sử dụng để tạo embedding cho các ví dụ.
+* **k=1:** Chỉ chọn một ví dụ tương tự nhất.
+
+**Ưu điểm của Example Selectors:**
+
+* **Tự động hóa lựa chọn ví dụ:** Giảm công sức thủ công.
+* **Tăng cường sự phù hợp:** Chọn các ví dụ phù hợp nhất với truy vấn.
+* **Tối ưu hóa ngữ cảnh:** Quản lý hiệu quả độ dài ngữ cảnh.
+* **Tăng tính linh hoạt:** Cho phép lựa chọn ví dụ theo nhiều tiêu chí khác nhau.
+
+**Nhược điểm:**
+
+* **Yêu cầu thiết lập vector store:** Đối với các lựa chọn dựa trên sự tương đồng ngữ nghĩa.
+* **Phụ thuộc vào chất lượng embedding:** Sự tương đồng ngữ nghĩa phụ thuộc vào chất lượng của embedding.
+* **Vẫn cần tuyển chọn ví dụ ban đầu:** Mặc dù tự động hóa lựa chọn, nhưng vẫn cần tạo ra các ví dụ ban đầu.
+
 ### Managing Outputs with Output Parsers
+
+Trong môi trường production (sản xuất), đầu ra từ các language models (mô hình ngôn ngữ) với cấu trúc dữ liệu dự đoán được thường rất mong muốn. Ví dụ, hãy xem xét việc phát triển một ứng dụng từ điển đồng nghĩa để tạo ra một tập hợp các từ thay thế phù hợp với ngữ cảnh đã cho. Large Language Models (LLMs) có thể tạo ra nhiều gợi ý cho các từ đồng nghĩa hoặc các thuật ngữ tương tự. Dưới đây là một ví dụ về đầu ra từ ChatGPT liệt kê một số từ liên quan chặt chẽ đến "behavior" (hành vi).
+
+Đây là một số từ thay thế cho "behavior":
+
+* Conduct
+* Manner
+* Demeanor
+* Attitude
+* Disposition
+* Deportment
+* Etiquette
+* Protocol
+* Performance
+* Actions
+
+Thách thức nảy sinh từ việc thiếu một phương pháp động để trích xuất thông tin liên quan từ văn bản được cung cấp. Hãy xem xét việc tách phản hồi theo dòng mới và bỏ qua các dòng ban đầu. Tuy nhiên, cách tiếp cận này không đáng tin cậy vì không có sự đảm bảo rằng phản hồi sẽ duy trì định dạng nhất quán. Danh sách có thể được đánh số hoặc có thể không bao gồm dòng giới thiệu.
+
+Output Parsers cho phép chúng ta xác định một cấu trúc dữ liệu mô tả chính xác những gì được mong đợi từ mô hình. Trong một ứng dụng gợi ý từ, bạn có thể yêu cầu một danh sách các từ hoặc sự kết hợp của các biến khác nhau, chẳng hạn như một từ và một lời giải thích.
+
+**1. Output Parsers**
+
+Pydantic parser (bộ phân tích Pydantic) rất linh hoạt và có ba loại duy nhất. Tuy nhiên, các tùy chọn khác cũng có sẵn cho các tác vụ ít phức tạp hơn.
+
+Lưu ý: Ứng dụng từ điển đồng nghĩa sẽ đóng vai trò là một ví dụ thực tế để làm rõ các sắc thái của từng cách tiếp cận.
+
+**1-1. PydanticOutputParser**
+
+Lớp này hướng dẫn mô hình tạo ra đầu ra ở định dạng JSON. Đầu ra của parser có thể được coi là một danh sách, cho phép lập chỉ mục đơn giản các kết quả và loại bỏ các vấn đề về định dạng.
+
+💡 Điều quan trọng cần lưu ý là không phải tất cả các mô hình đều có khả năng tạo ra đầu ra JSON. Vì vậy, tốt nhất là sử dụng một mô hình mạnh mẽ hơn (như GPT-4 Turbo của OpenAI thay vì Davinci/Curie (GPT-3)) để có được kết quả tốt nhất.
+
+Wrapper này sử dụng thư viện Pydantic để xác định và xác thực cấu trúc dữ liệu trong Python. Nó cho phép xác định cấu trúc đầu ra dự kiến, bao gồm tên, loại và mô tả của nó. Ví dụ, một biến phải chứa nhiều gợi ý, như một danh sách, trong ứng dụng từ điển đồng nghĩa. Điều này đạt được bằng cách tạo một lớp kế thừa lớp BaseModel của Pydantic. Hãy nhớ rằng cần phải cài đặt các gói cần thiết bằng lệnh sau trước khi chạy các đoạn code bên dưới: `pip install langchain==0.0.208 deeplake openai==0.27.8 tiktoken`.
+
+```python
+from langchain.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field, validator
+from typing import List
+
+# Define your desired data structure.
+class Suggestions(BaseModel):
+    words: List[str] = Field(description="""list of substitue words based on context""")
+
+ # Throw error in case of receiving a numbered-list from API
+ @validator('words')
+ def not_start_with_number(cls, field):
+ for item in field:
+ if item[0].isnumeric():
+ raise ValueError("The word can not start with numbers!")
+ return field
+
+parser = PydanticOutputParser(pydantic_object=Suggestions)
+```
+
+Import các thư viện cần thiết và tạo lớp schema Suggestions, bao gồm hai thành phần quan trọng:
+
+* Expected Outputs (Đầu ra Dự kiến): Mỗi đầu ra được xác định bằng cách khai báo một biến với loại mong muốn, chẳng hạn như một danh sách các chuỗi (: List[str]) trong đoạn code ví dụ. Ngoài ra, nó có thể là một chuỗi đơn (: str) cho các trường hợp mong đợi một từ hoặc câu đơn lẻ làm phản hồi. Bắt buộc phải cung cấp một mô tả ngắn gọn bằng cách sử dụng thuộc tính description của hàm Field, hỗ trợ mô hình trong quá trình suy luận. (Một minh họa về việc xử lý nhiều đầu ra sẽ được trình bày sau trong cuốn sách.)
+* Validators (Trình xác thực): Chúng ta có thể khai báo các hàm để xác thực định dạng. Ví dụ: đoạn code được cung cấp có một xác thực để đảm bảo ký tự đầu tiên không phải là số. Tên của hàm không quan trọng, nhưng decorator @validator phải được áp dụng cho biến yêu cầu xác thực (ví dụ: @validator('words')). Lưu ý rằng nếu biến được chỉ định là một danh sách, đối số field trong hàm validator cũng sẽ là một danh sách.
+
+Chúng ta sẽ chuyển lớp đã tạo cho wrapper PydanticOutputParser để biến nó thành một đối tượng parser LangChain. Bước tiếp theo là chuẩn bị prompt.
+
+```python
+from langchain.prompts import PromptTemplate
+
+template = """
+Offer a list of suggestions to substitue the specified target_word based \
+the presented context.
+{format_instructions}
+target_word={target_word}
+context={context}
+"""
+
+target_word="behaviour"
+context="""The behaviour of the students in the classroom was disruptive and made it difficult for the teacher to conduct the lesson."""
+
+prompt_template = PromptTemplate(
+    template=template,
+    input_variables=["target_word", "context"],
+    partial_variables={"format_instructions": parser.get_format_instructions()}
+)
+```
+
+Biến template là một chuỗi kết hợp các placeholder chỉ mục được đặt tên theo định dạng {variable_name}. Biến template xác định các prompt của chúng ta cho mô hình, với định dạng dự kiến từ output parser và các đầu vào (placeholder {format_instructions} sẽ được thay thế bằng các hướng dẫn từ output parser). PromptTemplate nhận chuỗi template, chỉ định loại của từng placeholder. Các placeholder này có thể được phân loại là 1) input_variables, có giá trị được gán sau thông qua phương thức .format_prompt() hoặc 2) partial_variables, được xác định ngay lập tức.
+
+Để truy vấn các mô hình như GPT, prompt sẽ được chuyển cho wrapper OpenAI của LangChain. (Điều quan trọng là phải đặt các biến môi trường OPENAI_API_KEY với API key của bạn từ OpenAI.) Mô hình GPT-3.5 turbo, nổi tiếng với khả năng mạnh mẽ, đảm bảo kết quả tối ưu. Việc đặt giá trị temperature thành 0 cũng đảm bảo rằng kết quả nhất quán và có thể tái tạo.
+
+💡 Giá trị temperature có thể nằm trong khoảng từ 0 đến 1, trong đó số càng cao có nghĩa là mô hình càng sáng tạo. Sử dụng giá trị lớn hơn trong production là một phương pháp tốt cho các tác vụ yêu cầu đầu ra sáng tạo.
+
+```python
+from langchain.chat_models import ChatOpenAI
+
+# Before executing the following code, make sure to have
+# your OpenAI key saved in the “OPENAI_API_KEY” environment variable.
+model_name = 'gpt-3.5-turbo'
+temperature = 0.0
+model = ChatOpenAI(model_name=model_name, temperature=temperature)
+
+chain = LLMChain(llm=model, prompt=prompt_template)
+
+# Run the LLMChain to get the AI-generated answer
+output = chain.run({"target_word": target_word, "context":context})
+
+parser.parse(output)
+Suggestions(words=['conduct', 'manner', 'action', 'demeanor', 'attitude', 
+'activity'])
+```
+
+Hàm parse() của đối tượng parser sẽ chuyển đổi phản hồi chuỗi của mô hình thành định dạng chúng ta đã chỉ định. Bạn có thể lập chỉ mục qua danh sách các từ và sử dụng chúng trong các ứng dụng của mình. Lưu ý sự đơn giản của việc truy cập gợi ý thứ ba bằng cách gọi chỉ mục thứ ba thay vì xử lý một chuỗi dài yêu cầu xử lý trước rộng rãi, như đã trình bày trong ví dụ ban đầu.
+
+**Ví dụ về Nhiều Đầu ra (Multiple Outputs Example)**
+
+Ví dụ sau đây minh họa một lớp Pydantic được thiết kế để xử lý nhiều đầu ra. Nó hướng dẫn mô hình tạo ra một danh sách các từ và giải thích lý do đằng sau mỗi đề xuất.
+
+Để triển khai ví dụ này, hãy thay thế biến `template` và lớp `Suggestion` bằng mã code mới (được cung cấp bên dưới). Các sửa đổi trong `prompt template` buộc mô hình phải giải thích chi tiết về lý do của nó. Lớp `Suggestion` được cập nhật giới thiệu một đầu ra mới có tên là `reasons`. Hàm validator cũng được áp dụng để sửa đổi đầu ra, đảm bảo mỗi lời giải thích kết thúc bằng dấu chấm. Ví dụ này cũng minh họa cách hàm validator có thể được sử dụng để thao tác đầu ra.
+
+```python
+template = """
+Offer a list of suggestions to substitute the specified target_word based on the presented context and the reasoning for each word.
+{format_instructions}
+target_word={target_word}
+context={context}
+"""
+class Suggestions(BaseModel):
+    words: List[str] = Field(description="""list of substitue words based on context""")
+    reasons: List[str] = Field(description="""the reasoning of why this word fits the context""")
+ 
+ @validator('words')
+ def not_start_with_number(cls, field):
+ for item in field:
+ if item[0].isnumeric():
+ raise ValueError("The word can not start with numbers!")
+ return field
+ 
+ @validator('reasons')
+ def end_with_dot(cls, field):
+ for idx, item in enumerate( field ):
+ if item[-1] != ".":
+          field[idx] += "."
+ return field
+```
+
+Ví dụ kết quả:
+
+```python
+Suggestions(words=['conduct', 'manner', 'demeanor', 'comportment'], 
+reasons=['refers to the way someone acts in a particular situation.', 
+'refers to the way someone behaves in a particular situation.', 
+'refers to the way someone behaves in a particular situation.', 
+'refers to the way someone behaves in a particular situation.'])
+```
+
+**1-2. CommaSeparatedOutputParser**
+
+Lớp này chuyên về quản lý đầu ra được phân tách bằng dấu phẩy (comma-separated outputs), tập trung vào các trường hợp mà mô hình được mong đợi tạo ra một danh sách đầu ra. Để sử dụng lớp này một cách hiệu quả, hãy bắt đầu bằng cách nhập module cần thiết.
+
+```python
+from langchain.output_parsers import CommaSeparatedListOutputParser
+
+parser = CommaSeparatedListOutputParser()
+```
+
+Parser không yêu cầu bất kỳ cấu hình nào. Do đó, nó ít linh hoạt hơn và chỉ có thể được sử dụng để xử lý các chuỗi được phân tách bằng dấu phẩy. Chúng ta có thể định nghĩa đối tượng bằng cách khởi tạo lớp. Các bước để viết `prompt`, khởi tạo mô hình và phân tích cú pháp đầu ra như sau:
+
+```python
+from langchain.llms import OpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+
+# Prepare the Prompt
+template = """
+Offer a list of suggestions to substitute the word '{target_word}' based the presented the following text: {context}.
+{format_instructions}
+"""
+
+prompt_template = PromptTemplate(
+    template=template,
+    input_variables=["target_word", "context"],
+    partial_variables={"format_instructions": parser.get_format_instructions()}
+)
+
+# Giả sử model đã được khởi tạo là model
+chain = LLMChain(llm=model, prompt=prompt_template)
+
+# Run the LLMChain to get the AI-generated answer
+output = chain.run({"target_word": target_word, "context":context})
+
+parser.parse(output)
+```
+
+Ví dụ kết quả:
+
+```python
+['Conduct',
+ 'Actions',
+ 'Demeanor',
+ 'Mannerisms',
+ 'Attitude',
+ 'Performance',
+ 'Reactions',
+ 'Interactions',
+ 'Habits',
+ 'Repertoire',
+ 'Disposition',
+ 'Bearing',
+ 'Posture',
+ 'Deportment',
+ 'Comportment']
+```
+
+Mặc dù hầu hết mã code mẫu đã được giải thích trong phần trước, có hai điểm mới. Thứ nhất, chúng ta đã khám phá một kiểu mới cho `prompt template`. Thứ hai, đầu vào của mô hình được tạo ra bằng cách sử dụng `.run()` thay vì `.format_prompt().to_string()`. Sự khác biệt chính giữa mã code này và mã code trong phần trước là chúng ta không còn cần gọi đối tượng `.to_string()` vì `prompt` đã là kiểu chuỗi (string).
+
+Kết quả cuối cùng là một danh sách các từ có một số trùng lặp với kỹ thuật `PydanticOutputParser` nhưng có nhiều sự đa dạng hơn. Tuy nhiên, không thể dựa vào lớp `CommaSeparatedOutputParser` để làm rõ lý do đằng sau đầu ra của nó.
+
+**Giải thích thêm:**
+
+* **PydanticOutputParser:**
+    * Đây là một cách để định nghĩa cấu trúc đầu ra mong muốn từ mô hình LLM.
+    * Sử dụng Pydantic, bạn có thể tạo các lớp mô hình để kiểm tra và thao tác đầu ra.
+    * Cho phép bạn xác định các quy tắc xác thực (validator) để đảm bảo đầu ra đáp ứng các yêu cầu cụ thể.
+    * Cho phép đưa thêm lý do giải thích cho từng output.
+* **CommaSeparatedOutputParser:**
+    * Đây là một cách đơn giản hơn để phân tích cú pháp đầu ra được phân tách bằng dấu phẩy.
+    * Nó phù hợp cho các trường hợp mà bạn chỉ cần một danh sách các mục.
+    * Ít linh hoạt hơn PydanticOutputParser và không hỗ trợ xác thực phức tạp hoặc thao tác đầu ra.
+    * Không cho phép đưa ra lý do giải thích cho từng output.
+* **Prompt Template:**
+    * là khuôn mẫu để xây dựng prompt đầu vào cho LLM.
+    * Cho phép đưa vào các biến đầu vào, và các hướng dẫn định dạng output.
+* **Validator:**
+    * Là hàm để kiểm tra và chỉnh sửa output đầu ra.
+
+**1-3. StructuredOutputParser**
+
+Đây là parser đầu tiên được thêm vào thư viện LangChain. Mặc dù nó có thể xử lý nhiều đầu ra, nhưng nó chỉ hỗ trợ văn bản (text) và không hỗ trợ các kiểu dữ liệu khác như danh sách (lists) hoặc số nguyên (integers). Nó hữu ích khi bạn chỉ muốn một phản hồi từ mô hình. Ví dụ, trong ứng dụng từ điển đồng nghĩa (thesaurus), nó chỉ có thể đề xuất một từ thay thế.
+
+```python
+from langchain.output_parsers import StructuredOutputParser, ResponseSchema
+
+response_schemas = [
+    ResponseSchema(name="words", description="A substitue word based on context"),
+    ResponseSchema(name="reasons", description="""the reasoning of why this word fits the context.""")
+]
+
+parser = StructuredOutputParser.from_response_schemas(response_schemas)
+```
+
+Mã code trên minh họa quá trình định nghĩa schema, mặc dù chi tiết sâu hơn không được thảo luận ở đây. Lớp này không mang lại lợi thế đặc biệt nào; lớp `PydanticOutputParser` cung cấp xác thực (validation) và tính linh hoạt nâng cao cho các tác vụ phức tạp hơn, và `CommaSeparatedOutputParser` phù hợp cho các ứng dụng đơn giản hơn.
+
+**2. Sửa Lỗi (Fixing Errors)**
+
+Parsers đóng vai trò là công cụ mạnh mẽ để trích xuất thông tin từ prompts và cung cấp mức độ xác thực nhất định. Tuy nhiên, chúng không thể đảm bảo phản hồi chính xác cho mọi trường hợp sử dụng. Ví dụ, trong một kịch bản mà một ứng dụng được triển khai, phản hồi của mô hình đối với yêu cầu của người dùng không đầy đủ, dẫn đến việc parser tạo ra lỗi. `OutputFixingParser` và `RetryOutputParser` hoạt động như các biện pháp an toàn (fail-safes). Các lớp này thêm một lớp vào phản hồi của mô hình để khắc phục các lỗi.
+
+💡 Các phương pháp sau hoạt động với lớp `PydanticOutputParser` vì đây là lớp duy nhất có phương thức xác thực.
+
+**2-1. OutputFixingParser**
+
+Phương pháp này nhằm mục đích sửa lỗi phân tích cú pháp bằng cách kiểm tra phản hồi của mô hình so với mô tả parser đã định nghĩa bằng cách sử dụng Mô hình Ngôn ngữ Lớn (LLM) để giải quyết vấn đề. Để nhất quán với phần còn lại của cuốn sách, GPT-3.5 sẽ được sử dụng, nhưng bất kỳ mô hình tương thích nào cũng sẽ hoạt động. Bước đầu tiên định nghĩa schema dữ liệu Pydantic. Chúng ta đang giới thiệu một lỗi điển hình có thể phát sinh.
+
+```python
+from langchain.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+from typing import List
+
+# Define your desired data structure.
+class Suggestions(BaseModel):
+    words: List[str] = Field(description="""list of substitue words based on context""")
+    reasons: List[str] = Field(description="""the reasoning of why this word fits the context""")
+
+parser = PydanticOutputParser(pydantic_object=Suggestions)
+
+missformatted_output = '{"words": ["conduct", "manner"], "reasoning": ["refers to the way someone acts in a particular situation.", "refers to the way someone behaves in a particular situation."]}'
+
+parser.parse(missformatted_output)
+```
+
+Kết quả sẽ là lỗi `ValidationError` và `OutputParserException` vì key `reasoning` không đúng với schema đã định nghĩa là `reasons`.
+
+```python
+from langchain.output_parsers import OutputFixingParser
+
+outputfixing_parser = OutputFixingParser.from_llm(parser=parser, llm=model)
+outputfixing_parser.parse(missformatted_output)
+```
+
+Kết quả sau khi dùng `OutputFixingParser` sẽ sửa lại key `reasoning` thành `reasons` và parse đúng theo schema.
+
+Tuy nhiên, cần lưu ý rằng việc giải quyết các vấn đề với lớp `OutputFixingParser` không phải lúc nào cũng khả thi. Ví dụ sau đây minh họa việc sử dụng lớp `OutputFixingParser` để giải quyết lỗi liên quan đến key bị thiếu.
+
+```python
+missformatted_output = '{"words": ["conduct", "manner"]}'
+
+outputfixing_parser = OutputFixingParser.from_llm(parser=parser, llm=model)
+
+outputfixing_parser.parse(missformatted_output)
+```
+
+Kết quả cho thấy mô hình nhận ra sự vắng mặt của key `reasons` trong phản hồi nhưng thiếu ngữ cảnh để sửa phản hồi. Do đó, nó tạo ra một danh sách với một mục duy nhất, trong khi mong đợi là có một lý do cho mỗi từ. Hạn chế này nhấn mạnh sự cần thiết đôi khi phải có một phương pháp linh hoạt hơn như lớp `RetryOutputParser`.
+
+**2-2. RetryOutputParser (Bộ phân tích đầu ra thử lại)**
+
+Có những tình huống mà bộ phân tích (parser) cần truy cập cả đầu ra (output) và prompt để hiểu đầy đủ ngữ cảnh, như ví dụ trước đó đã nêu. Bước đầu tiên là định nghĩa các biến cần thiết. Các đoạn mã tiếp theo khởi tạo LLM, parser và prompt đã được mô tả trong các phần trước.
+
+```python
+from langchain.prompts import PromptTemplate
+from langchain.output_parsers import PydanticOutputParser
+from pydantic import BaseModel, Field
+from typing import List
+
+# Định nghĩa cấu trúc dữ liệu.
+class Suggestions(BaseModel):
+    words: List[str] = Field(description="""danh sách các từ thay thế dựa trên ngữ cảnh""")
+    reasons: List[str] = Field(description="""lý do tại sao từ này phù hợp với ngữ cảnh""")
+
+parser = PydanticOutputParser(pydantic_object=Suggestions)
+
+# Định nghĩa prompt.
+template = """
+Đưa ra danh sách các đề xuất để thay thế target_word được chỉ định dựa trên ngữ cảnh được trình bày và lý do cho mỗi từ.
+{format_instructions}
+target_word={target_word}
+context={context}
+"""
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=["target_word", "context"],
+    partial_variables={"format_instructions": parser.get_format_instructions()}
+)
+
+model_input = prompt.format_prompt(target_word="behaviour", 
+context="""The behaviour of the students in the classroom was disruptive and made it difficult for the teacher to conduct the lesson.""")
+```
+
+Bây giờ, đầu ra bị định dạng sai (missformatted_output) tương tự có thể được xử lý bằng lớp `RetryWithErrorOutputParser`. Lớp này nhận parser đã định nghĩa và một model để tạo một đối tượng parser mới. Tuy nhiên, hàm `parse_with_prompt`, chịu trách nhiệm sửa lỗi phân tích, yêu cầu cả đầu ra được tạo và prompt.
+
+```python
+from langchain.output_parsers import RetryWithErrorOutputParser
+
+missformatted_output = '{"words": ["conduct", "manner"]}'
+
+retry_parser = RetryWithErrorOutputParser.from_llm(parser=parser, llm=model)
+
+retry_parser.parse_with_prompt(missformatted_output, model_input)
+```
+
+Kết quả:
+
+```
+Suggestions(words=['conduct', 'manner'], 
+reasons=["""The behaviour of the students in the classroom was disruptive and made it difficult for the teacher to conduct the lesson, so 'conduct' is a suitable substitute.""", 
+"""The students' behaviour was inappropriate, so 'manner' is a suitable substitute."""])
+```
+
+Kết quả cho thấy rằng `RetryOutputParser` đã giải quyết thành công vấn đề mà `OutputFixingParser` không thể. Parser hướng dẫn model tạo ra một lý do cho mỗi từ, như yêu cầu.
+
+Trong môi trường production, phương pháp được khuyến nghị để tích hợp các kỹ thuật này là sử dụng phương pháp `try...except...` để xử lý lỗi. Chiến lược này nắm bắt các lỗi phân tích trong khối `except` và cố gắng sửa chúng bằng các lớp đã đề cập. Phương pháp này giúp đơn giản hóa quy trình và hạn chế số lượng lệnh gọi API, từ đó giảm chi phí liên quan.
+
+
 ### Improving Our News Articles Summarizer
 ### Creating Knowledge Graphs from Textual Data: Unveiling Hidden Connections
+
