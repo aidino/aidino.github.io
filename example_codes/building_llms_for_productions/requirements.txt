@@ -17,6 +17,7 @@ pandas
 scipy
 langchain
 langchain_community
+langchain_openai
 pypdf
 llama-index 
 llama-index-vector-stores-chroma 
