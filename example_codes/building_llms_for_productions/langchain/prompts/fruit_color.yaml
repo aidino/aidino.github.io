@@ -1,0 +1,8 @@
+_type: "prompt"
+template: "{v1} - {v2} - What is the color of {fruit1} and {fruit2}?"
+input_variables:
+  - fruit1
+  - fruit2
+partial_variables:
+  v1: "HIHI"
+  v2: "HAHA"
